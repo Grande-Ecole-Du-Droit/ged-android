@@ -1,60 +1,40 @@
 package com.upsaclay.message.domain
 
-import com.google.gson.GsonBuilder
-import com.upsaclay.common.domain.LocalDateTimeAdapter
+import com.upsaclay.common.domain.entity.FCMData
+import com.upsaclay.common.domain.entity.FCMDataType
+import com.upsaclay.common.domain.entity.FCMMessage
+import com.upsaclay.common.domain.entity.FCMNotification
+import com.upsaclay.common.domain.entity.User
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.ConversationMessage
-import com.upsaclay.message.domain.entity.ConversationUI
-import com.upsaclay.message.domain.entity.Message
-import java.time.LocalDateTime
+import com.upsaclay.message.domain.entity.ConversationUi
 
-object ConversationMapper {
-    fun toConversation(conversationUI: ConversationUI) = Conversation(
-        id = conversationUI.id,
-        interlocutor = conversationUI.interlocutor,
-        createdAt = conversationUI.createdAt,
-        state = conversationUI.state
+fun ConversationUi.toConversation() = Conversation(
+    id = id,
+    interlocutor = interlocutor,
+    createdAt = createdAt,
+    state = state
+)
+
+fun ConversationMessage.toConversationUI() = ConversationUi(
+    id = conversation.id,
+    interlocutor = conversation.interlocutor,
+    lastMessage = lastMessage,
+    createdAt = conversation.createdAt,
+    state = conversation.state
+)
+
+fun ConversationMessage.toFcm(user: User) = FCMMessage(
+    recipientId = conversation.interlocutor.id,
+    notification = FCMNotification(
+        title = user.fullName,
+        body = lastMessage.content.take(100)
+    ),
+    data = FCMData(
+        type = FCMDataType.MESSAGE,
+        value = ConversationMessage(
+            conversation = conversation.copy(interlocutor = user),
+            lastMessage = lastMessage
+        )
     )
-
-    fun toConversationUI(conversationMessage: ConversationMessage): ConversationUI {
-        return ConversationUI(
-            id = conversationMessage.conversation.id,
-            interlocutor = conversationMessage.conversation.interlocutor,
-            lastMessage = conversationMessage.lastMessage,
-            createdAt = conversationMessage.conversation.createdAt,
-            state = conversationMessage.conversation.state
-        )
-    }
-
-    fun toConversationMessage(conversation: Conversation, message: Message): ConversationMessage {
-        return ConversationMessage(
-            conversation = conversation,
-            lastMessage = message
-        )
-    }
-
-    fun toJson(conversation: Conversation): String {
-        return GsonBuilder()
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter)
-            .create()
-            .toJson(conversation)
-    }
-
-    fun conversationFromJson(conversationJson: String): Conversation? {
-        return runCatching {
-            GsonBuilder()
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter)
-                .create()
-                .fromJson(conversationJson, Conversation::class.java)
-        }.getOrNull()
-    }
-
-    fun conversationMessageFromJson(conversationMessageJson: String): ConversationMessage? {
-        return runCatching {
-            GsonBuilder()
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter)
-                .create()
-                .fromJson(conversationMessageJson, ConversationMessage::class.java)
-        }.getOrNull()
-    }
-}
+)

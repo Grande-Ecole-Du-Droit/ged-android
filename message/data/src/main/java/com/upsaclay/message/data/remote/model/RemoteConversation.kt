@@ -2,18 +2,30 @@ package com.upsaclay.message.data.remote.model
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.PropertyName
-import com.upsaclay.message.data.model.ConversationField
+import com.upsaclay.message.data.model.ConversationField.CONVERSATION_ID
+import com.upsaclay.message.data.model.ConversationField.CREATED_AT
+import com.upsaclay.message.data.model.ConversationField.Remote.DELETE_BY
+import com.upsaclay.message.data.model.ConversationField.Remote.DELETE_TIME
+import com.upsaclay.message.data.model.ConversationField.Remote.PARTICIPANTS
 
 internal data class RemoteConversation(
-    @get:PropertyName(ConversationField.CONVERSATION_ID)
-    @set:PropertyName(ConversationField.CONVERSATION_ID)
-    var conversationId: Int = 0,
+    @get:PropertyName(CONVERSATION_ID)
+    @set:PropertyName(CONVERSATION_ID)
+    var conversationId: String = "",
 
-    @get:PropertyName(ConversationField.Remote.PARTICIPANTS)
-    @set:PropertyName(ConversationField.Remote.PARTICIPANTS)
+    @get:PropertyName(PARTICIPANTS)
+    @set:PropertyName(PARTICIPANTS)
     var participants: List<String> = emptyList(),
 
-    @get:PropertyName(ConversationField.CREATED_AT)
-    @set:PropertyName(ConversationField.CREATED_AT)
-    var createdAt: Timestamp = Timestamp.now()
+    @get:PropertyName(CREATED_AT)
+    @set:PropertyName(CREATED_AT)
+    var createdAt: Timestamp = Timestamp.now(),
+
+    @get:PropertyName(DELETE_BY)
+    @set:PropertyName(DELETE_BY)
+    var deleteBy: Map<String, Boolean> = mapOf(),
+
+    @get:PropertyName(DELETE_TIME)
+    @set:PropertyName(DELETE_TIME)
+    var deleteTime: Map<String, Timestamp>? = null
 )

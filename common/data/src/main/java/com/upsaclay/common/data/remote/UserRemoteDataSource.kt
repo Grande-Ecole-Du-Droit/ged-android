@@ -1,21 +1,18 @@
 package com.upsaclay.common.data.remote
 
 import com.upsaclay.common.data.UserMapper
+import com.upsaclay.common.data.exceptions.parseOracleException
 import com.upsaclay.common.data.formatHttpError
-import com.upsaclay.common.data.parseOracleException
 import com.upsaclay.common.data.remote.api.UserFirestoreApi
 import com.upsaclay.common.data.remote.api.UserRetrofitApi
-import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.entity.ForbiddenException
 import com.upsaclay.common.domain.entity.InternalServerException
 import com.upsaclay.common.domain.entity.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
 import java.net.HttpURLConnection
 
 internal class UserRemoteDataSource(
@@ -55,19 +52,17 @@ internal class UserRemoteDataSource(
                 val response = userRetrofitApi.updateProfilePictureFileName(userId, fileName)
                 if (!response.isSuccessful) {
                     val errorMessage = formatHttpError("Error updating profile picture file name", response)
-                    e(errorMessage)
                     throw InternalServerException(errorMessage)
                 }
             }.join()
         }
     }
 
-    suspend fun deleteProfilePictureUrl(userId: String) {
+    suspend fun deleteProfilePictureFileName(userId: String) {
         withContext(Dispatchers.IO) {
             val response = userRetrofitApi.deleteProfilePictureFileName(userId)
             if (!response.isSuccessful) {
                 val errorMessage = formatHttpError("Error deleting profile picture file name", response)
-                e(errorMessage)
                 throw InternalServerException(errorMessage)
             }
             launch { userFirestoreApi.updateProfilePictureFileName(userId, null) }

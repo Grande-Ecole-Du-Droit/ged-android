@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -104,7 +105,7 @@ private fun Image(
                 .clip(CircleShape)
         },
         onLoading = { ColorPainter(color) },
-        error = ColorPainter(color)
+        error = painterResource(R.drawable.default_profile_picture)
     )
 }
 
@@ -138,7 +139,7 @@ private fun ImageWithIcon(
                     .clip(CircleShape)
             },
             onLoading = { ColorPainter(color) },
-            error = ColorPainter(color)
+            error = painterResource(R.drawable.default_profile_picture)
         )
 
         Box(

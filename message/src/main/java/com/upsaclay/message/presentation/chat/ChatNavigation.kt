@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.upsaclay.message.domain.ConversationMapper
+import com.upsaclay.message.domain.JsonConverter
 import com.upsaclay.message.domain.entity.Conversation
 import kotlinx.serialization.Serializable
 
@@ -14,8 +14,10 @@ import kotlinx.serialization.Serializable
 fun NavController.navigateToChat(
     conversation: Conversation,
     navOptions: NavOptionsBuilder.() -> Unit = {}
-) = navigate(route = ChatRoute(ConversationMapper.toJson(conversation))) {
-    navOptions()
+) {
+    navigate(route = ChatRoute(JsonConverter.fromConversation(conversation))) {
+        navOptions()
+    }
 }
 
 fun NavGraphBuilder.chatScreen(
@@ -23,8 +25,7 @@ fun NavGraphBuilder.chatScreen(
 ) {
     composable<ChatRoute> { entry ->
         val conversation = entry.toRoute<ChatRoute>().conversationJson
-            .let { ConversationMapper.conversationFromJson(it) }
-            ?: return@composable onBackClick()
+            .let { JsonConverter.toConversation(it) } ?: return@composable onBackClick()
 
         ChatDestination(
             conversation = conversation,

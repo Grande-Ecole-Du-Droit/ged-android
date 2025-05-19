@@ -5,7 +5,6 @@ import com.upsaclay.authentication.presentation.authentication.AuthenticationVie
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.userFixture
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalCoroutinesApi::class)

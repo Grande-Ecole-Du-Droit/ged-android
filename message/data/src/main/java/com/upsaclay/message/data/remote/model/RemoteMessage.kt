@@ -11,7 +11,7 @@ internal data class RemoteMessage(
 
     @get:PropertyName(MessageField.CONVERSATION_ID)
     @set:PropertyName(MessageField.CONVERSATION_ID)
-    var conversationId: Int = 0,
+    var conversationId: String = "",
 
     @get:PropertyName(MessageField.SENDER_ID)
     @set:PropertyName(MessageField.SENDER_ID)
@@ -25,21 +25,11 @@ internal data class RemoteMessage(
     @set:PropertyName(MessageField.CONTENT)
     var content: String = "",
 
-    @get:PropertyName(MessageField.MESSAGE_TIMESTAMP)
-    @set:PropertyName(MessageField.MESSAGE_TIMESTAMP)
+    @get:PropertyName(MessageField.TIMESTAMP)
+    @set:PropertyName(MessageField.TIMESTAMP)
     var timestamp: Timestamp = Timestamp.now(),
 
-    @get:PropertyName(MessageField.Remote.SEEN)
-    @set:PropertyName(MessageField.Remote.SEEN)
-    var seen: RemoteSeen? = null
-)
-
-internal data class RemoteSeen(
-    @get:PropertyName(MessageField.Remote.SEEN_VALUE)
-    @set:PropertyName(MessageField.Remote.SEEN_VALUE)
-    var value: Boolean = true,
-
-    @get:PropertyName(MessageField.Remote.SEEN_TIME)
-    @set:PropertyName(MessageField.Remote.SEEN_TIME)
-    var time: Timestamp = Timestamp.now(),
+    @get:PropertyName(MessageField.SEEN)
+    @set:PropertyName(MessageField.SEEN)
+    var seen: Boolean = false
 )

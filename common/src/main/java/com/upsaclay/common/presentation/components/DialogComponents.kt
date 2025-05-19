@@ -1,6 +1,5 @@
 package com.upsaclay.common.presentation.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -20,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.upsaclay.common.R
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.spacing
+import com.upsaclay.common.utils.Phones
 
 @Composable
 fun SimpleDialog(
@@ -126,7 +125,7 @@ fun LoadingDialog(message: String = stringResource(id = R.string.loading)) {
  =====================================================================
  */
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Phones
 @Composable
 private fun SimpleDialogPreview() {
     GedoiseTheme {
@@ -135,13 +134,13 @@ private fun SimpleDialogPreview() {
             text = "There is the text area",
             confirmText = "Confirm",
             cancelText = "Cancel",
-            onConfirm = { },
-            onCancel = { },
+            onConfirm = {},
+            onCancel = {},
         )
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Phones
 @Composable
 private fun SensibleActionDialogPreview() {
     GedoiseTheme {
@@ -150,14 +149,14 @@ private fun SensibleActionDialogPreview() {
             text = "Do you want to do this sensible action ?",
             confirmText = "Delete",
             cancelText = "Cancel",
-            onConfirm = { },
-            onCancel = { },
-            onDismiss = { }
+            onConfirm = {},
+            onCancel = {},
+            onDismiss = {}
         )
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Phones
 @Composable
 private fun LoadingDialogPreview() {
     GedoiseTheme {

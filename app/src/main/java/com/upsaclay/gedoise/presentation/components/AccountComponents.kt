@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,14 +21,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.upsaclay.common.presentation.components.BackTopBar
 import com.upsaclay.common.presentation.components.ClickableItem
 import com.upsaclay.common.presentation.components.EditTopBar
-import com.upsaclay.common.presentation.components.BackTopBar
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.gedoise.R
-import com.upsaclay.gedoise.domain.entities.AccountInfo
+import com.upsaclay.gedoise.presentation.profile.account.AccountInfo
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,12 +100,9 @@ internal fun AccountModelBottomSheet(
 
 @Composable
 internal fun AccountInfoItem(
-    modifier: Modifier = Modifier,
     accountInfo: AccountInfo
 ) {
-    Column(
-        modifier = modifier.padding(vertical = MaterialTheme.spacing.smallMedium)
-    ) {
+    Column {
         Text(
             text = accountInfo.label,
             color = MaterialTheme.colorScheme.previewText,

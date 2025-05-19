@@ -11,7 +11,7 @@ data class User(
     val email: String,
     val schoolLevel: String,
     val isMember: Boolean = false,
-    val profilePictureUrl: String? = null
+    val profilePictureFileName: String? = null
 ) {
     val fullName: String = "${firstName.uppercaseFirstLetter()} ${lastName.uppercaseFirstLetter()}"
 }

@@ -8,8 +8,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable data class ReadAnnouncementRoute(val announcementId: String)
 
-fun NavController.navigateToReadAnnouncement(announcementId: String) =
+fun NavController.navigateToReadAnnouncement(announcementId: String) {
     navigate(route = ReadAnnouncementRoute(announcementId))
+}
 
 fun NavGraphBuilder.readAnnouncementScreen(
     onBackClick: () -> Unit,

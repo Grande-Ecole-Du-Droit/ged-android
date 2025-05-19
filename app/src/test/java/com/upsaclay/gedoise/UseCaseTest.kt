@@ -6,13 +6,11 @@ import com.upsaclay.common.domain.entity.FcmToken
 import com.upsaclay.common.domain.repository.CredentialsRepository
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
+import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase
 import com.upsaclay.gedoise.domain.usecase.FCMTokenUseCase
-import com.upsaclay.gedoise.domain.usecase.StartListeningDataUseCase
-import com.upsaclay.gedoise.domain.usecase.StopListeningDataUseCase
-import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.repository.ConversationRepository
-import com.upsaclay.message.domain.usecase.ListenRemoteConversationsUseCase
-import com.upsaclay.message.domain.usecase.ListenRemoteMessagesUseCase
+import com.upsaclay.message.domain.repository.MessageRepository
+import com.upsaclay.message.domain.usecase.ListenRemoteConversationsMessagesUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -34,12 +32,10 @@ class UseCaseTest {
     private val credentialsRepository: CredentialsRepository = mockk()
     private val connectivityObserver: ConnectivityObserver = mockk()
 
-    private val listenRemoteMessagesUseCase: ListenRemoteMessagesUseCase = mockk()
-    private val listenRemoteConversationsUseCase: ListenRemoteConversationsUseCase = mockk()
+    private val listenRemoteConversationsMessagesUseCase: ListenRemoteConversationsMessagesUseCase = mockk()
 
     private lateinit var clearDataUseCase: ClearDataUseCase
-    private lateinit var startListeningDataUseCase: StartListeningDataUseCase
-    private lateinit var stopListeningDataUseCase: StopListeningDataUseCase
+    private lateinit var dataListeningUseCase: DataListeningUseCase
     private lateinit var fcmTokenUseCase: FCMTokenUseCase
 
     private val testScope = TestScope(UnconfinedTestDispatcher())
@@ -47,10 +43,8 @@ class UseCaseTest {
 
     @Before
     fun setUp() {
-        every { listenRemoteConversationsUseCase.start() } returns Unit
-        every { listenRemoteConversationsUseCase.stop() } returns Unit
-        every { listenRemoteMessagesUseCase.start() } returns Unit
-        every { listenRemoteMessagesUseCase.stop() } returns Unit
+        every { listenRemoteConversationsMessagesUseCase.start() } returns Unit
+        every { listenRemoteConversationsMessagesUseCase.stop() } returns Unit
         every { authenticationRepository.isAuthenticated } returns MutableStateFlow(true)
         every { connectivityObserver.isConnected } returns MutableStateFlow(true)
         coEvery { userRepository.deleteCurrentUser() } returns Unit
@@ -67,14 +61,8 @@ class UseCaseTest {
             messageRepository = messageRepository
         )
 
-        startListeningDataUseCase = StartListeningDataUseCase(
-            listenRemoteMessagesUseCase = listenRemoteMessagesUseCase,
-            listenRemoteConversationsUseCase = listenRemoteConversationsUseCase
-        )
-
-        stopListeningDataUseCase = StopListeningDataUseCase(
-            listenRemoteMessagesUseCase = listenRemoteMessagesUseCase,
-            listenRemoteConversationsUseCase = listenRemoteConversationsUseCase
+        dataListeningUseCase = DataListeningUseCase(
+            listenRemoteConversationsMessagesUseCase = listenRemoteConversationsMessagesUseCase
         )
 
         fcmTokenUseCase = FCMTokenUseCase(
@@ -100,21 +88,19 @@ class UseCaseTest {
     @Test
     fun startListeningDataUseCase_should_start_listening_data() = runTest {
         // When
-        startListeningDataUseCase()
+        dataListeningUseCase.start()
 
         // Then
-        every { listenRemoteConversationsUseCase.start() }
-        every { listenRemoteMessagesUseCase.start() }
+        every { listenRemoteConversationsMessagesUseCase.start() }
     }
 
     @Test
     fun stopListeningDataUseCase_should_stop_listening_data() = runTest {
         // When
-        stopListeningDataUseCase()
+        dataListeningUseCase.stop()
 
         // Then
-        every { listenRemoteConversationsUseCase.stop() }
-        every { listenRemoteMessagesUseCase.stop() }
+        every { listenRemoteConversationsMessagesUseCase.stop() }
     }
 
     @Test

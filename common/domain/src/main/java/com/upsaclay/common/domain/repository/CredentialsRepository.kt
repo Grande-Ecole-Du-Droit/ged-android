@@ -1,7 +1,6 @@
 package com.upsaclay.common.domain.repository
 
 import com.upsaclay.common.domain.entity.FcmToken
-import kotlinx.coroutines.flow.Flow
 
 interface CredentialsRepository {
     suspend fun getUnsentFcmToken(): FcmToken?

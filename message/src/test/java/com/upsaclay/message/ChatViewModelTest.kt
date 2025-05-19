@@ -1,18 +1,15 @@
 package com.upsaclay.message
 
-import com.upsaclay.common.domain.entity.UserNotFoundException
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.NotificationUseCase
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.message.domain.conversationFixture
-import com.upsaclay.message.domain.conversationsMessageFixture
 import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.entity.Message
-import com.upsaclay.message.domain.entity.Seen
 import com.upsaclay.message.domain.messagesFixture
-import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.repository.ConversationRepository
-import com.upsaclay.message.domain.usecase.CreateConversationUseCase
+import com.upsaclay.message.domain.repository.MessageRepository
+import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import com.upsaclay.message.presentation.chat.ChatViewModel
 import io.mockk.coEvery
@@ -24,7 +21,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
@@ -32,11 +28,12 @@ import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChatViewModelTest {
-    private val createConversationUseCase: CreateConversationUseCase = mockk()
     private val userRepository: UserRepository = mockk()
+    private val conversationRepository: ConversationRepository = mockk()
     private val messageRepository: MessageRepository = mockk()
     private val sendMessageUseCase: SendMessageUseCase = mockk()
     private val notificationUseCase: NotificationUseCase = mockk()
+    private val getUnreadMessagesUseCase: GetUnreadMessagesUseCase = mockk()
 
     private lateinit var chatViewModel: ChatViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -46,22 +43,24 @@ class ChatViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         every { userRepository.user } returns MutableStateFlow(userFixture)
-        every { messageRepository.getMessages(any()) } returns flowOf(messagesFixture)
-        every { messageRepository.getUnreadMessages(any()) } returns flowOf(messagesFixture)
-        coEvery { messageRepository.addMessage(any()) } returns Unit
-        coEvery { messageRepository.updateMessage(any()) } returns Unit
-        coEvery { createConversationUseCase(any()) } returns Unit
+        every { userRepository.currentUser } returns userFixture
+        every { getUnreadMessagesUseCase() } returns flowOf(emptyList())
+        every { messageRepository.getLocalMessages(any()) } returns flowOf(messagesFixture)
+        coEvery { conversationRepository.unDeleteRemoteConversation(any(), any()) }
+        coEvery { conversationRepository.createRemoteConversation(any(), any()) }
+        coEvery { messageRepository.createRemoteMessage(any()) } returns Unit
+        coEvery { messageRepository.updateSeenMessage(any()) } returns Unit
         coEvery { notificationUseCase.clearNotifications(any()) } returns Unit
-        coEvery { notificationUseCase.sendNotificationToFCM<Message>(any(), any()) } returns Unit
+        coEvery { notificationUseCase.sendNotification<Message>(any(), any()) } returns Unit
 
         chatViewModel = ChatViewModel(
             conversation = conversationFixture,
             userRepository = userRepository,
+            conversationRepository = conversationRepository,
             messageRepository = messageRepository,
-            createConversationUseCase = createConversationUseCase,
             sendMessageUseCase = sendMessageUseCase,
             notificationUseCase = notificationUseCase,
-
+            getUnreadMessagesUseCase = getUnreadMessagesUseCase
         )
     }
 
@@ -71,7 +70,7 @@ class ChatViewModelTest {
         val text = "Hello"
 
         // When
-        chatViewModel.onTextChanged(text)
+        chatViewModel.onTextChange(text)
 
         // Then
         assertEquals(text, chatViewModel.uiState.value.text)
@@ -80,7 +79,7 @@ class ChatViewModelTest {
     @Test
     fun send_message_should_send_message() {
         // Given
-        chatViewModel.onTextChanged("Hello")
+        chatViewModel.onTextChange("Hello")
 
         // When
         chatViewModel.sendMessage()
@@ -92,7 +91,7 @@ class ChatViewModelTest {
     @Test
     fun send_message_should_reset_text_to_send() {
         // Given
-        chatViewModel.onTextChanged("Hello")
+        chatViewModel.onTextChange("Hello")
 
         // When
         chatViewModel.sendMessage()
@@ -104,16 +103,19 @@ class ChatViewModelTest {
     @Test
     fun send_message_should_create_conversation_when_it_is_not_created() {
         // Given
-        val conversation = conversationFixture.copy(state = ConversationState.NOT_CREATED)
+        val conversation = conversationFixture.copy(
+            state = ConversationState.DRAFT
+        )
         chatViewModel = ChatViewModel(
             conversation = conversation,
             userRepository = userRepository,
+            conversationRepository = conversationRepository,
             messageRepository = messageRepository,
-            createConversationUseCase = createConversationUseCase,
             sendMessageUseCase = sendMessageUseCase,
-            notificationUseCase = notificationUseCase
+            notificationUseCase = notificationUseCase,
+            getUnreadMessagesUseCase = getUnreadMessagesUseCase
         )
-        chatViewModel.onTextChanged("Hello")
+        chatViewModel.onTextChange("Hello")
 
         // When
         chatViewModel.sendMessage()
@@ -125,47 +127,26 @@ class ChatViewModelTest {
     @Test
     fun send_message_should_not_create_conversation_when_it_is_created() {
         // Given
-        val conversation = conversationFixture.copy(state = ConversationState.CREATED)
-        chatViewModel = ChatViewModel(
-            conversation = conversationFixture,
-            userRepository = userRepository,
-            messageRepository = messageRepository,
-            createConversationUseCase = createConversationUseCase,
-            sendMessageUseCase = sendMessageUseCase,
-            notificationUseCase = notificationUseCase
+        val conversation = conversationFixture.copy(
+            state = ConversationState.CREATED
         )
-        chatViewModel.onTextChanged("Hello")
+        chatViewModel = ChatViewModel(
+            conversation = conversation,
+            userRepository = userRepository,
+            conversationRepository = conversationRepository,
+            messageRepository = messageRepository,
+            sendMessageUseCase = sendMessageUseCase,
+            notificationUseCase = notificationUseCase,
+            getUnreadMessagesUseCase = getUnreadMessagesUseCase
+        )
+        chatViewModel.onTextChange("Hello")
 
         // When
         chatViewModel.sendMessage()
 
         // Then
-        coVerify(exactly = 0) { createConversationUseCase(conversation) }
+        coVerify(exactly = 0) { conversationRepository.createRemoteConversation(conversation, userFixture.id) }
         coVerify { sendMessageUseCase(any(), any(), any()) }
-    }
-
-    @Test
-    fun unseen_messages_should_be_seen() {
-        // Given
-        val messages = messagesFixture
-            .filterNot { it.isSeen() }
-            .filter { it.senderId != userFixture.id }
-        every { messageRepository.getUnreadMessages(any()) } returns flowOf(messages)
-
-        // When
-        chatViewModel = ChatViewModel(
-            conversation = conversationFixture,
-            userRepository = userRepository,
-            messageRepository = messageRepository,
-            createConversationUseCase = createConversationUseCase,
-            sendMessageUseCase = sendMessageUseCase,
-            notificationUseCase = notificationUseCase
-        )
-
-        // Then
-        messages.forEach {
-            coVerify { messageRepository.updateMessage(it.copy(seen = Seen())) }
-        }
     }
 
     @Test
@@ -174,13 +155,14 @@ class ChatViewModelTest {
         chatViewModel = ChatViewModel(
             conversation = conversationFixture,
             userRepository = userRepository,
+            conversationRepository = conversationRepository,
             messageRepository = messageRepository,
-            createConversationUseCase = createConversationUseCase,
             sendMessageUseCase = sendMessageUseCase,
-            notificationUseCase = notificationUseCase
+            notificationUseCase = notificationUseCase,
+            getUnreadMessagesUseCase = getUnreadMessagesUseCase
         )
 
         // Then
-        coVerify { notificationUseCase.clearNotifications(conversationFixture.id.toString()) }
+        coVerify { notificationUseCase.clearNotifications(conversationFixture.id) }
     }
 }

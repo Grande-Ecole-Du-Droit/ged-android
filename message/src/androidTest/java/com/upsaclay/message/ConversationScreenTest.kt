@@ -7,7 +7,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import com.upsaclay.common.domain.userFixture2
-import com.upsaclay.message.domain.conversationUIFixture
+import com.upsaclay.message.domain.conversationUiFixture
 import com.upsaclay.message.domain.conversationsUIFixture
 import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.presentation.conversation.ConversationDestination
@@ -20,7 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class ConversationScreenUITest {
+class ConversationScreenTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
@@ -61,7 +61,7 @@ class ConversationScreenUITest {
     fun read_conversations_item_should_be_displayed_when_last_message_is_read() {
         // Given
         every { conversationViewModel.uiState } returns
-                MutableStateFlow(uiState.copy(conversations = listOf(conversationUIFixture)))
+                MutableStateFlow(uiState.copy(conversations = listOf(conversationUiFixture)))
 
         // When
         rule.setContent {
@@ -83,11 +83,11 @@ class ConversationScreenUITest {
     @Test
     fun unread_conversations_item_should_be_displayed_when_last_message_is_not_read_and_not_sent_by_interlocutor() {
         // Given
-        val lastMessage = messageFixture.copy(seen = null, senderId = userFixture2.id)
+        val lastMessage = messageFixture.copy(seen = false, senderId = userFixture2.id)
         every { conversationViewModel.uiState } returns
                 MutableStateFlow(
                     uiState.copy(
-                        conversations = listOf(conversationUIFixture.copy(lastMessage = lastMessage))
+                        conversations = listOf(conversationUiFixture.copy(lastMessage = lastMessage))
                     )
                 )
 

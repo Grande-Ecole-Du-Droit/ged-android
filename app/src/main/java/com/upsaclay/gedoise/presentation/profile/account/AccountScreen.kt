@@ -35,7 +35,6 @@ import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.common.utils.mediumPadding
 import com.upsaclay.gedoise.R
-import com.upsaclay.gedoise.domain.entities.AccountScreenState
 import com.upsaclay.gedoise.presentation.components.AccountModelBottomSheet
 import com.upsaclay.gedoise.presentation.components.AccountTopBar
 import kotlinx.coroutines.flow.collectLatest
@@ -164,7 +163,7 @@ fun AccountScreen(
                             modifier = Modifier.testTag(stringResource(id = R.string.account_screen_profile_picture_tag)),
                             isEdited = screenState == AccountScreenState.EDIT,
                             profilePictureUri = profilePictureUri,
-                            profilePictureUrl = user.profilePictureUrl,
+                            profilePictureUrl = user.profilePictureFileName,
                             onClick = {
                                 if (screenState == AccountScreenState.EDIT) {
                                     singlePhotoPickerLauncher.launch(
@@ -188,7 +187,7 @@ fun AccountScreen(
                                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                                     )
                                 },
-                                showDeleteProfilePicture = user.profilePictureUrl != null,
+                                showDeleteProfilePicture = user.profilePictureFileName != null,
                                 onDeleteProfilePictureClick = {
                                     showDeleteProfilePictureDialog = true
                                 }

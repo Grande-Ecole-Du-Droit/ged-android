@@ -6,21 +6,15 @@ data class Message(
     val id: Int,
     val senderId: String,
     val recipientId: String,
-    val conversationId: Int,
+    val conversationId: String,
     val content: String,
     val date: LocalDateTime,
-    val seen: Seen? = null,
+    val seen: Boolean = false,
     val state: MessageState,
-) {
-    fun isSeen() = seen?.value ?: false
-}
-
-data class Seen (
-    val value: Boolean = true,
-    val time: LocalDateTime = LocalDateTime.now()
 )
+
 enum class MessageState {
     SENT,
-    ERROR,
-    LOADING
+    SENDING,
+    ERROR
 }

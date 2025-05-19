@@ -34,8 +34,7 @@ internal class ImageRemoteDataSource(
             val response = imageApi.uploadImage(multipartBody)
             if (!response.isSuccessful) {
                 val errorMessage = formatHttpError("Error uploading image", response)
-                e(errorMessage)
-                throw InternalServerException()
+                throw InternalServerException(errorMessage)
             }
         }
     }
@@ -45,7 +44,6 @@ internal class ImageRemoteDataSource(
             val response = imageApi.deleteImage(imageName)
             if (!response.isSuccessful) {
                 val errorMessage = formatHttpError("Error deleting image", response)
-                e(errorMessage)
                 throw IOException(errorMessage)
             }
         }

@@ -22,7 +22,7 @@ internal class UserLocalDataSource(private val userDataStore: UserDataStore) {
         }
     }
 
-    suspend fun deleteProfilePictureUrl() {
+    suspend fun deleteProfilePictureFileName() {
         userDataStore.getCurrentUserFlow().firstOrNull()?.let { userDTO ->
             userDataStore.storeCurrentUser(userDTO.copy(userProfilePictureFileName = null))
         }

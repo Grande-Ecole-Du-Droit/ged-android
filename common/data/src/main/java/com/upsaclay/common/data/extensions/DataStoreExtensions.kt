@@ -1,4 +1,4 @@
-package com.upsaclay.common.data
+package com.upsaclay.common.data.extensions
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

@@ -8,8 +8,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable data class SecondRegistrationRoute(val firstName: String, val lastName: String)
 
-fun NavController.navigateToSecondRegistration(firstName: String, lastName: String) =
+fun NavController.navigateToSecondRegistration(firstName: String, lastName: String) {
     navigate(route = SecondRegistrationRoute(firstName, lastName))
+}
 
 fun NavGraphBuilder.secondRegistrationScreen(
     onBackClick: () -> Unit,

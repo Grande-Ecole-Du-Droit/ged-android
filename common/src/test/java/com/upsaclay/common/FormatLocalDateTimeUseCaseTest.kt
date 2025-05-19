@@ -1,10 +1,10 @@
-package com.upsaclay.common.domain
+package com.upsaclay.common
 
-import com.upsaclay.common.domain.usecase.FormatLocalDateTimeUseCase
+import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
+import junit.framework.TestCase.assertEquals
+import org.junit.Test
 import java.time.LocalDateTime
 import java.util.Locale
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class FormatLocalDateTimeUseCaseTest {
     private val formatLocalDateTimeUseCase = FormatLocalDateTimeUseCase

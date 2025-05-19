@@ -2,13 +2,11 @@ package com.upsaclay.news.data.remote
 
 import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.domain.entity.InternalServerException
-import com.upsaclay.common.domain.entity.ServerCommunicationException
 import com.upsaclay.news.data.AnnouncementMapper
 import com.upsaclay.news.data.remote.api.AnnouncementApi
 import com.upsaclay.news.domain.entity.Announcement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.annotations.ApiStatus.Internal
 import timber.log.Timber.Forest.e
 import java.io.IOException
 import java.net.ConnectException

@@ -62,6 +62,6 @@ class UpdateProfilePictureUseCaseTest {
 
         // Then
         coVerify { userRepository.updateProfilePictureFileName(userFixture.id, any()) }
-        coVerify { imageRepository.deleteImage(userFixture.profilePictureUrl!!.substringAfterLast("/")) }
+        coVerify { imageRepository.deleteImage(userFixture.profilePictureFileName!!.substringAfterLast("/")) }
     }
 }

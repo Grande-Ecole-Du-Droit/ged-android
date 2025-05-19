@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,13 +21,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.upsaclay.common.domain.entity.ElapsedTime
-import com.upsaclay.common.domain.usecase.FormatLocalDateTimeUseCase
 import com.upsaclay.common.domain.usecase.GetElapsedTimeUseCase
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
-import com.upsaclay.news.R
+import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
 import com.upsaclay.news.domain.announcementFixture
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.domain.entity.AnnouncementState
@@ -75,7 +72,7 @@ internal fun AnnouncementHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ProfilePicture(
-            url = announcement.author.profilePictureUrl,
+            url = announcement.author.profilePictureFileName,
             scale = 0.45f
         )
 
@@ -153,7 +150,7 @@ internal fun AnnouncementItem(
             verticalAlignment = Alignment.Top
         ) {
             ProfilePicture(
-                url = announcement.author.profilePictureUrl,
+                url = announcement.author.profilePictureFileName,
                 scale = 0.5f
             )
 

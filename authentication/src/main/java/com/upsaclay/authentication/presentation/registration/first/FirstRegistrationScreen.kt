@@ -4,10 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,7 +21,6 @@ import com.upsaclay.authentication.presentation.components.RegistrationScaffold
 import com.upsaclay.common.domain.extensions.uppercaseFirstLetter
 import com.upsaclay.common.presentation.components.PrimaryButton
 import com.upsaclay.common.presentation.theme.GedoiseTheme
-import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.common.utils.mediumPadding
 import org.koin.androidx.compose.koinViewModel

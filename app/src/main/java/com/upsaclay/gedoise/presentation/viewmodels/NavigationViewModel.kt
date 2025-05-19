@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.upsaclay.authentication.AuthenticationBaseRoute
 import com.upsaclay.authentication.AuthenticationRoute
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
-import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.gedoise.domain.repository.ScreenRepository
 import com.upsaclay.gedoise.presentation.navigation.SplashScreenRoute
 import com.upsaclay.gedoise.presentation.navigation.TopLevelDestination
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.reflect.KClass
 
 class NavigationViewModel(
     private val getUnreadMessagesUseCase: GetUnreadMessagesUseCase,
@@ -106,15 +104,8 @@ class NavigationViewModel(
 
     private fun navigate(route: Any) {
         val routes = when(route) {
-            ChatRoute -> {
-                arrayOf(
-                    ConversationRoute,
-                    route
-                )
-            }
-
+            ChatRoute -> arrayOf(ConversationRoute, route)
             AuthenticationRoute -> arrayOf(route)
-
             else -> return
         }
 

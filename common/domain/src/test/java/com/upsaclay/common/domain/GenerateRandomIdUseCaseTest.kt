@@ -1,16 +1,16 @@
 package com.upsaclay.common.domain
 
-import com.upsaclay.common.domain.usecase.GenerateIdUseCase
+import com.upsaclay.common.domain.usecase.GenerateRandomIdUseCase
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertNotEquals
 
-class GenerateIdUseCaseTest {
-    private lateinit var generateIdUseCase: GenerateIdUseCase
+class GenerateRandomIdUseCaseTest {
+    private lateinit var generateIdUseCase: GenerateRandomIdUseCase
 
     @Before
     fun setUp() {
-        generateIdUseCase = GenerateIdUseCase
+        generateIdUseCase = GenerateRandomIdUseCase
     }
 
     @Test

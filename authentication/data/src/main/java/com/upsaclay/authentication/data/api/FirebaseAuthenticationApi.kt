@@ -7,9 +7,5 @@ interface FirebaseAuthenticationApi {
 
     suspend fun signOut()
 
-    suspend fun sendVerificationEmail()
-
-    suspend fun isUserEmailVerified(): Boolean
-
     fun isAuthenticated(): Boolean
 }

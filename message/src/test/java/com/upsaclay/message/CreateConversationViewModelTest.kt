@@ -6,6 +6,7 @@ import com.upsaclay.common.domain.usersFixture
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.repository.ConversationRepository
+import com.upsaclay.message.domain.usecase.CreateConversationUseCase
 import com.upsaclay.message.presentation.conversation.create.CreateConversationViewModel
 import io.mockk.coEvery
 import io.mockk.every
@@ -13,19 +14,18 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CreateConversationViewModelTest {
     private val userRepository: UserRepository = mockk()
     private val conversationRepository: ConversationRepository = mockk()
+    private val createConversationUseCase: CreateConversationUseCase = mockk()
 
     private lateinit var createConversationViewModel: CreateConversationViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -35,28 +35,30 @@ class CreateConversationViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         every { userRepository.user } returns MutableStateFlow(userFixture)
-        coEvery { conversationRepository.getConversationFromLocal(any()) } returns conversationFixture
+        every { userRepository.currentUser } returns userFixture
+        coEvery { conversationRepository.getLocalConversation(any()) } returns conversationFixture
         coEvery { userRepository.getUsers() } returns usersFixture
 
         createConversationViewModel = CreateConversationViewModel(
             conversationRepository = conversationRepository,
-            userRepository = userRepository
+            userRepository = userRepository,
+            createConversationUseCase = createConversationUseCase,
         )
     }
 
     @Test
-    fun getConversation_should_generate_new_conversation_when_not_exist() {
+    fun getConversation_should_generate_new_conversation_when_not_exist() = runTest {
         // Given
-        coEvery { conversationRepository.getConversationFromLocal(any()) } returns null
+        coEvery { conversationRepository.getLocalConversation(any()) } returns null
         val interlocutor = userFixture
-        val state = ConversationState.NOT_CREATED
+        val state = ConversationState.DRAFT
 
         // When
         val result = createConversationViewModel.getConversation(userFixture)
 
         // Then
-        assertEquals(interlocutor, result.interlocutor)
-        assertEquals(state, result.state)
+        assertEquals(interlocutor, result?.interlocutor)
+        assertEquals(state, result?.state)
     }
 
     @Test
@@ -78,6 +80,7 @@ class CreateConversationViewModelTest {
         createConversationViewModel = CreateConversationViewModel(
             conversationRepository = conversationRepository,
             userRepository = userRepository,
+            createConversationUseCase = createConversationUseCase,
         )
 
         // Then

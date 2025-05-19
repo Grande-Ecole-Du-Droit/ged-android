@@ -12,8 +12,9 @@ import kotlinx.serialization.Serializable
 @Serializable data object NewsBaseRoute
 @Serializable data object NewsRoute
 
-fun NavController.navigateToNews(navOptions: NavOptions? = null) =
+fun NavController.navigateToNews(navOptions: NavOptions? = null) {
     navigate(route = NewsRoute, navOptions = navOptions)
+}
 
 fun NavGraphBuilder.newsSection(
     onAnnouncementClick: (String) -> Unit,

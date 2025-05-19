@@ -27,7 +27,6 @@ import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.gedoise.R
-import com.upsaclay.gedoise.domain.entities.AccountInfo
 import com.upsaclay.gedoise.presentation.components.AccountInfoItem
 
 @Composable
@@ -51,10 +50,13 @@ fun AccountInfoItems(user: User) {
         )
     )
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(top = MaterialTheme.spacing.smallMedium),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
+    ) {
         accountInfos.forEach { accountInfo ->
             AccountInfoItem(
-                modifier = Modifier.fillMaxWidth(),
                 accountInfo = accountInfo
             )
         }
@@ -62,7 +64,6 @@ fun AccountInfoItems(user: User) {
         if (user.isMember) {
             MemberAccountInfoItem(
                 modifier = Modifier
-                    .padding(top = MaterialTheme.spacing.smallMedium)
                     .testTag(stringResource(id = R.string.account_screen_member_tag))
             )
         }
@@ -93,6 +94,11 @@ private fun MemberAccountInfoItem(
         )
     }
 }
+
+data class AccountInfo(
+    val label: String,
+    val value: String
+)
 
 /*
  =====================================================================

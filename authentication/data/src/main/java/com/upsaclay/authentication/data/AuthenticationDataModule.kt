@@ -1,8 +1,8 @@
 package com.upsaclay.authentication.data
 
-import com.upsaclay.authentication.data.local.AuthenticationLocalDataSource
 import com.upsaclay.authentication.data.api.FirebaseAuthenticationApi
 import com.upsaclay.authentication.data.api.FirebaseAuthenticationApiImpl
+import com.upsaclay.authentication.data.local.AuthenticationLocalDataSource
 import com.upsaclay.authentication.data.repository.AuthenticationRepositoryImpl
 import com.upsaclay.authentication.data.repository.firebase.FirebaseAuthenticationRepository
 import com.upsaclay.authentication.data.repository.firebase.FirebaseAuthenticationRepositoryImpl

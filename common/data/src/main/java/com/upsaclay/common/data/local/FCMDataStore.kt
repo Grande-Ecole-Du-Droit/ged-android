@@ -6,11 +6,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.upsaclay.common.data.getGsonFlowValue
-import com.upsaclay.common.data.getGsonValue
-import com.upsaclay.common.data.setGsonValue
+import com.upsaclay.common.data.extensions.getGsonValue
+import com.upsaclay.common.data.extensions.setGsonValue
 import com.upsaclay.common.domain.entity.FcmToken
-import kotlinx.coroutines.flow.Flow
 
 class FCMDataStore(context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "credentials")

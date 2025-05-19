@@ -5,7 +5,6 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.isNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.navigation.testing.TestNavHostController
 import com.upsaclay.news.domain.announcementFixture
 import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementDestination
 import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementViewModel
@@ -17,7 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class EditAnnouncementScreenUITest {
+class EditAnnouncementScreenTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 

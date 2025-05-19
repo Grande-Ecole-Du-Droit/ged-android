@@ -1,6 +1,5 @@
-package com.upsaclay.common.data
+package com.upsaclay.common.data.exceptions
 
-import com.upsaclay.common.data.remote.ServerResponse
 import com.upsaclay.common.domain.entity.InternalServerException
 
 class DataIntegrityViolationException(

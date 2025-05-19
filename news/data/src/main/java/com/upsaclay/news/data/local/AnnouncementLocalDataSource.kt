@@ -8,11 +8,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 internal class AnnouncementLocalDataSource(private val announcementDao: AnnouncementDao) {
-    suspend fun getAnnouncements(): Flow<List<Announcement>> = withContext(Dispatchers.IO) {
-        announcementDao.getAnnouncements().map { localAnnouncements ->
+    fun getAnnouncements(): Flow<List<Announcement>> = announcementDao.getAnnouncements()
+        .map { localAnnouncements ->
             localAnnouncements.map(AnnouncementMapper::toDomain)
         }
-    }
 
     suspend fun insertAnnouncement(announcement: Announcement) {
         withContext(Dispatchers.IO) {

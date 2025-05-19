@@ -5,8 +5,6 @@ import com.upsaclay.common.data.remote.ImageRemoteDataSource
 import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.repository.ImageRepository
 import java.io.File
-import java.io.IOException
-import java.net.ConnectException
 
 internal class ImageRepositoryImpl(
     private val imageRemoteDataSource: ImageRemoteDataSource

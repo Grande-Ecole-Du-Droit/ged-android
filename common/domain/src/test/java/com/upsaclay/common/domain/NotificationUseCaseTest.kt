@@ -30,7 +30,7 @@ class NotificationUseCaseTest {
     @Test
     fun sendNotificationToFCM_should_send_notification() = runTest {
         // When
-        notificationUseCase.sendNotificationToFCM(fcmFixture)
+        notificationUseCase.sendNotification(fcmFixture)
 
         // Then
         coVerify { fcmNotificationSender.sendNotification(any()) }

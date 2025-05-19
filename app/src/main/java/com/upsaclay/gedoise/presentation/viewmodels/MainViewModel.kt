@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
-import com.upsaclay.gedoise.domain.usecase.StartListeningDataUseCase
-import com.upsaclay.gedoise.domain.usecase.StopListeningDataUseCase
+import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
@@ -16,8 +15,7 @@ import kotlinx.coroutines.launch
 class MainViewModel(
     private val userRepository: UserRepository,
     private val authenticationRepository: AuthenticationRepository,
-    private val startListeningDataUseCase: StartListeningDataUseCase,
-    private val stopListeningDataUseCase: StopListeningDataUseCase,
+    private val dataListeningUseCase: DataListeningUseCase,
     private val clearDataUseCase: ClearDataUseCase
 ): ViewModel() {
     fun startListening() {
@@ -31,9 +29,9 @@ class MainViewModel(
                 .filterNotNull()
                 .collectLatest {
                     if (it) {
-                        startListeningDataUseCase()
+                        dataListeningUseCase.start()
                     } else {
-                        stopListeningDataUseCase()
+                        dataListeningUseCase.stop()
                         delay(2000)
                         clearDataUseCase()
                     }

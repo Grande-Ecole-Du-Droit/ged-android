@@ -16,15 +16,13 @@ data class LocalMessage(
     @ColumnInfo(name = MessageField.RECIPIENT_ID)
     val recipientId: String,
     @ColumnInfo(name = MessageField.CONVERSATION_ID)
-    val conversationId: Int,
+    val conversationId: String,
     @ColumnInfo(name = MessageField.CONTENT)
     val content: String,
-    @ColumnInfo(name = MessageField.MESSAGE_TIMESTAMP)
+    @ColumnInfo(name = MessageField.TIMESTAMP)
     val messageTimestamp: Long,
-    @ColumnInfo(name = MessageField.Local.SEEN_VALUE)
-    val seenValue: Boolean?,
-    @ColumnInfo(name = MessageField.Local.SEEN_TIMESTAMP)
-    val seenTimestamp: Long?,
-    @ColumnInfo(name = MessageField.MESSAGE_STATE)
+    @ColumnInfo(name = MessageField.SEEN)
+    val seen: Boolean,
+    @ColumnInfo(name = MessageField.Local.STATE)
     val state: String
 )

@@ -3,12 +3,13 @@ package com.upsaclay.news.data.repository
 import com.upsaclay.news.data.local.AnnouncementLocalDataSource
 import com.upsaclay.news.data.remote.AnnouncementRemoteDataSource
 import com.upsaclay.news.domain.entity.Announcement
+import com.upsaclay.news.domain.entity.AnnouncementState
 import com.upsaclay.news.domain.repository.AnnouncementRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 internal class AnnouncementRepositoryImpl(
@@ -16,16 +17,15 @@ internal class AnnouncementRepositoryImpl(
     private val announcementLocalDataSource: AnnouncementLocalDataSource,
     scope: CoroutineScope
 ) : AnnouncementRepository {
-    private val _announcements = MutableStateFlow<List<Announcement>>(emptyList())
+    private val _announcements = announcementLocalDataSource.getAnnouncements()
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
+        )
     override val announcements: Flow<List<Announcement>> = _announcements
 
     init {
-        scope.launch {
-            announcementLocalDataSource.getAnnouncements().collect {
-                _announcements.value = it
-            }
-        }
-
         scope.launch {
             refreshAnnouncements()
         }
@@ -42,8 +42,10 @@ internal class AnnouncementRepositoryImpl(
     override suspend fun refreshAnnouncements() {
         val remoteAnnouncements = runCatching { announcementRemoteDataSource.getAnnouncement() }.getOrElse { return }
 
-        val announcementToDelete = _announcements.value.filterNot { remoteAnnouncements.contains(it) }
-        announcementToDelete.forEach { announcementLocalDataSource.deleteAnnouncement(it) }
+        val announcementsToDelete = _announcements.value
+            .filter { it.state == AnnouncementState.PUBLISHED }
+            .filterNot { remoteAnnouncements.contains(it) }
+        announcementsToDelete.forEach { announcementLocalDataSource.deleteAnnouncement(it) }
 
         val announcementsToUpsert = remoteAnnouncements.filterNot { _announcements.value.contains(it) }
         announcementsToUpsert.forEach { announcementLocalDataSource.upsertAnnouncement(it) }

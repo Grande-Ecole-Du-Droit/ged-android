@@ -9,14 +9,12 @@ class NotificationUseCase(
     private val fcmNotificationSender: FCMNotificationSender,
     private val sharedEventsUseCase: SharedEventsUseCase
 ) {
-    suspend fun <T>sendNotificationToFCM(
-        fcmMessage: FCMMessage<T>,
-        gson: Gson = Gson()
-    ) {
+    suspend fun <T>sendNotification(fcmMessage: FCMMessage<T>, gson: Gson = Gson()) {
         fcmNotificationSender.sendNotification(gson.toJson(fcmMessage))
     }
 
     suspend fun clearNotifications(notificationGroupId: String) {
-        sharedEventsUseCase.sendSharedEvent(SystemEvent.ClearNotifications(notificationGroupId))
+        val event = SystemEvent.ClearNotifications(notificationGroupId)
+        sharedEventsUseCase.sendSharedEvent(event)
     }
 }

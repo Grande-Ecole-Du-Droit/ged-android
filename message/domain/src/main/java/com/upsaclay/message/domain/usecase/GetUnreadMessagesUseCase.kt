@@ -23,7 +23,7 @@ class GetUnreadMessagesUseCase(
                 .mapLatest { conversationsMessage ->
                     conversationsMessage
                         .map { it.lastMessage }
-                        .filter { it.senderId != user.id  && !it.isSeen() }
+                        .filter { it.senderId != user.id  && !it.seen }
                 }
         }
 }

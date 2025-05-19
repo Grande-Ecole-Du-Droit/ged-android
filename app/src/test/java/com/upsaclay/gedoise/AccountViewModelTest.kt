@@ -5,7 +5,7 @@ import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.DeleteProfilePictureUseCase
 import com.upsaclay.common.domain.usecase.UpdateProfilePictureUseCase
 import com.upsaclay.common.domain.userFixture
-import com.upsaclay.gedoise.domain.entities.AccountScreenState
+import com.upsaclay.gedoise.presentation.profile.account.AccountScreenState
 import com.upsaclay.gedoise.presentation.profile.account.AccountViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify

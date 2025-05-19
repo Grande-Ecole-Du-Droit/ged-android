@@ -28,10 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.usecase.FormatLocalDateTimeUseCase
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
+import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.common.utils.mediumPadding
 import com.upsaclay.message.R
@@ -39,9 +39,6 @@ import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.presentation.chat.ChatViewModel.MessageEvent
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import java.time.Duration
 
@@ -90,7 +87,7 @@ internal fun MessageFeed(
 
                 val previousSenderId = previousMessage?.senderId ?: ""
                 val sameSender = previousSenderId == message.senderId
-                val showSeenMessage = isLastMessage && isSender && message.seen?.value == true
+                val showSeenMessage = isLastMessage && isSender && message.seen
 
                 val sameTime = previousMessage?.let {
                     Duration.between(it.date, message.date).toMinutes() < 2L
@@ -115,7 +112,7 @@ internal fun MessageFeed(
                             .testTag(stringResource(R.string.chat_screen_receive_message_item_tag) + index),
                         message = message,
                         displayProfilePicture = displayProfilePicture,
-                        profilePictureUrl = interlocutor.profilePictureUrl
+                        profilePictureUrl = interlocutor.profilePictureFileName
                     )
                 }
 

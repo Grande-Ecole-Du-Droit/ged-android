@@ -1,45 +1,39 @@
 package com.upsaclay.message.data.local
 
 import com.upsaclay.message.data.local.dao.MessageDao
-import com.upsaclay.message.data.mapper.MessageMapper
+import com.upsaclay.message.data.mapper.toDomain
+import com.upsaclay.message.data.mapper.toLocal
 import com.upsaclay.message.domain.entity.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
 
-
 internal class MessageLocalDataSource(private val messageDao: MessageDao) {
-    fun getMessages(conversationId: Int): Flow<List<Message>> =
+    fun getMessages(conversationId: String): Flow<List<Message>> =
         messageDao.getMessages(conversationId).map { messages ->
-            messages.map(MessageMapper::toDomain)
+            messages.map { it.toDomain() }
         }
 
-    fun getUnreadMessages(conversationId: Int): Flow<List<Message>> =
-        messageDao.getUnreadMessages(conversationId).map { messages ->
-            messages.map(MessageMapper::toDomain)
-        }
-
-    suspend fun insertMessage(message: Message) {
+    suspend fun createMessage(message: Message) {
         withContext(Dispatchers.IO) {
-            messageDao.insertMessage(MessageMapper.toLocal(message))
+            messageDao.insertMessage(message.toLocal())
         }
     }
 
     suspend fun updateMessage(message: Message) {
         withContext(Dispatchers.IO) {
-            messageDao.updateMessage(MessageMapper.toLocal(message))
+            messageDao.updateMessage(message.toLocal())
         }
     }
 
     suspend fun upsertMessage(message: Message) {
         withContext(Dispatchers.IO) {
-            messageDao.upsertMessage(MessageMapper.toLocal(message))
+            messageDao.upsertMessage(message.toLocal())
         }
     }
 
-    suspend fun deleteMessages(conversationId: Int) {
+    suspend fun deleteMessages(conversationId: String) {
         withContext(Dispatchers.IO) {
             messageDao.deleteMessages(conversationId)
         }

@@ -20,7 +20,7 @@ class UserNotFoundException(
     override val cause: Throwable? = null
 ): Exception()
 
-class DuplicateUserException(
+class DuplicateDataException(
     override val message: String? = null,
     override val cause: Throwable? = null,
 ) : Exception()
@@ -29,11 +29,3 @@ class ForbiddenException(
     override val message: String? = null,
     override val cause: Throwable? = null
 ): Exception()
-
-interface ErrorType {
-    data object TooManyRequestsError: ErrorType
-    data object InternalServerError: ErrorType
-    data object ServerConnectError: ErrorType
-    data object NetworkError: ErrorType
-    data object UnknownError: ErrorType
-}

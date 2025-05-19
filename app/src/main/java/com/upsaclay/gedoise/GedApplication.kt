@@ -1,9 +1,6 @@
 package com.upsaclay.gedoise
 
 import android.app.Application
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.FirebaseFirestoreSettings
-import com.google.firebase.firestore.firestore
 import com.upsaclay.authentication.authenticationModule
 import com.upsaclay.authentication.data.authenticationDataModule
 import com.upsaclay.authentication.domain.authenticationDomainModule

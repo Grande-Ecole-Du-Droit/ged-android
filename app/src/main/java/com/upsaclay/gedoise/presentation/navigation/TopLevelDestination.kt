@@ -3,7 +3,6 @@ package com.upsaclay.gedoise.presentation.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.upsaclay.common.R
-import com.upsaclay.gedoise.presentation.profile.ProfileBaseRoute
 import com.upsaclay.message.presentation.conversation.ConversationRoute
 import com.upsaclay.news.presentation.NewsRoute
 import kotlin.reflect.KClass

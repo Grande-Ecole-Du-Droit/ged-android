@@ -1,6 +1,7 @@
 package com.upsaclay.news.presentation.news
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,44 +35,48 @@ fun RecentAnnouncementContent(
 ) {
     val sortedAnnouncements = announcements.sortedByDescending { it.date }
 
-    Text(
-        text = stringResource(id = R.string.recent_announcements),
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier
-            .padding(horizontal = MaterialTheme.spacing.medium)
-            .testTag(stringResource(id = R.string.news_screen_empty_announcement_text_tag))
-    )
-
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Column(
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small)
     ) {
-        if (announcements.isEmpty()) {
-            item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(id = R.string.no_announcement),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.previewText,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
-            }
-        } else {
-            items(sortedAnnouncements) { announcement ->
-                AnnouncementItem(
-                    modifier = Modifier.testTag(stringResource(R.string.news_screen_recent_announcements_tag)),
-                    announcement = announcement,
-                    onClick = {
-                        if (announcement.state != AnnouncementState.PUBLISHED) {
-                            onNotCreateAnnouncementClick(announcement)
-                        } else {
-                            onAnnouncementClick(announcement.id)
+        Text(
+            text = stringResource(id = R.string.recent_announcements),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(horizontal = MaterialTheme.spacing.medium)
+                .testTag(stringResource(id = R.string.news_screen_empty_announcement_text_tag))
+        )
+
+        LazyColumn(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (announcements.isEmpty()) {
+                item {
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(id = R.string.no_announcement),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.previewText,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
+                }
+            } else {
+                items(sortedAnnouncements) { announcement ->
+                    AnnouncementItem(
+                        modifier = Modifier.testTag(stringResource(R.string.news_screen_recent_announcements_tag)),
+                        announcement = announcement,
+                        onClick = {
+                            if (announcement.state != AnnouncementState.PUBLISHED) {
+                                onNotCreateAnnouncementClick(announcement)
+                            } else {
+                                onAnnouncementClick(announcement.id)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

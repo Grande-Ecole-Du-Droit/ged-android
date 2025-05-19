@@ -2,101 +2,61 @@ package com.upsaclay.message.presentation.conversation.create
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
+import com.upsaclay.common.domain.entity.UserNotFoundException
 import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.common.domain.usecase.GenerateIdUseCase
+import com.upsaclay.message.R
 import com.upsaclay.message.domain.entity.Conversation
-import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.repository.ConversationRepository
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import com.upsaclay.message.domain.usecase.CreateConversationUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 
 class CreateConversationViewModel(
     private val conversationRepository: ConversationRepository,
+    private val createConversationUseCase: CreateConversationUseCase,
     private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CreateConversationUiState())
     val uiState: StateFlow<CreateConversationUiState> = _uiState
-
+    private val _event = MutableSharedFlow<SingleUiEvent>()
+    val event: SharedFlow<SingleUiEvent> = _event
     private var defaultUsers: List<User> = emptyList()
-    private val user: Flow<User?> = userRepository.user
 
     init {
         fetchUsers()
-        listenQuery()
     }
 
-    fun getConversation(interlocutor: User): Conversation {
-        return runBlocking { conversationRepository.getConversationFromLocal(interlocutor.id) }
-            ?: newConversation(interlocutor)
-    }
-
-    private fun newConversation(interlocutor: User): Conversation {
-        return Conversation(
-            id = GenerateIdUseCase.intId,
-            interlocutor = interlocutor,
-            createdAt = LocalDateTime.now(),
-            state = ConversationState.NOT_CREATED
-        )
+    suspend fun getConversation(interlocutor: User): Conversation? {
+        return runCatching {
+            conversationRepository.getLocalConversation(interlocutor.id) ?: run {
+                val user = requireNotNull(userRepository.currentUser)
+                createConversationUseCase.generateNewConversation(user.id, interlocutor)
+            }
+        }
+            .onFailure { _event.emit(SingleUiEvent.Error(mapErrorMessage(it))) }
+            .getOrNull()
     }
 
     fun onQueryChange(userName: String) {
-        _uiState.update {
-            it.copy(
-                query = userName
-            )
-        }
-    }
-
-    private fun listenQuery() {
-        viewModelScope.launch {
-            _uiState
-                .distinctUntilChangedBy { it.query }
-                .map { it.query }
-                .collectLatest { query ->
-                    _uiState.update { it.copy(loading = true) }
-                    delay(500)
-                    getFilteredUsers(query)
-                        .also { users ->
-                            _uiState.update {
-                                it.copy(
-                                    users = users,
-                                    loading = false
-                                )
-                            }
-                        }
-                }
+        _uiState.update { it.copy(query = userName) }
+        getFilteredUsers(userName).also { users ->
+            _uiState.update { it.copy(users = users) }
         }
     }
 
     private fun fetchUsers() {
-        _uiState.update {
-            it.copy(
-                loading = true
-            )
-        }
-
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             userRepository.getUsers()
-                .filter { it.id != user.firstOrNull()?.id }
+                .filter { it.id != userRepository.currentUser?.id }
                 .also { users ->
-                    _uiState.update {
-                        it.copy(
-                            users = users,
-                            loading = false
-                        )
-                    }
-
+                    _uiState.update { it.copy(users = users, loading = false) }
                     defaultUsers = users
                 }
         }
@@ -110,6 +70,13 @@ class CreateConversationViewModel(
                it.firstName.contains(query, ignoreCase = true) ||
                        it.lastName.contains(query, ignoreCase = true)
            }
+        }
+    }
+
+    private fun mapErrorMessage(e: Throwable): Int {
+        return when (e) {
+            is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
+            else -> com.upsaclay.common.R.string.unknown_error
         }
     }
 

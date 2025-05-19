@@ -33,10 +33,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.userFixture
+import com.upsaclay.common.presentation.components.BackTopBar
 import com.upsaclay.common.presentation.components.ClickableItem
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.components.SensibleActionDialog
-import com.upsaclay.common.presentation.components.BackTopBar
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.darkGray
 import com.upsaclay.common.presentation.theme.lightGray
@@ -71,7 +71,11 @@ fun ProfileScreen(
     onBackClick: () -> Unit
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
-    val dividerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.darkGray else MaterialTheme.colorScheme.    lightGray
+    val dividerColor = if (isSystemInDarkTheme()) {
+        MaterialTheme.colorScheme.darkGray
+    } else {
+        MaterialTheme.colorScheme.lightGray
+    }
 
     DisposableEffect(Unit) {
         onDispose { showLogoutDialog = false }
@@ -110,7 +114,7 @@ fun ProfileScreen(
             ) {
                 Column {
                     TopSection(
-                        profilePictureUrl = user.profilePictureUrl,
+                        profilePictureUrl = user.profilePictureFileName,
                         userFullName = user.fullName
                     )
 

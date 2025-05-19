@@ -10,8 +10,9 @@ import kotlinx.serialization.Serializable
 data class ThirdRegistrationRoute(val firstName: String, val lastName: String, val schoolLevel: String)
 
 
-fun NavController.navigateToThirdRegistration(firstName: String, lastName: String, schoolLevel: String) =
+fun NavController.navigateToThirdRegistration(firstName: String, lastName: String, schoolLevel: String) {
     navigate(route = ThirdRegistrationRoute(firstName, lastName, schoolLevel))
+}
 
 fun NavGraphBuilder.thirdRegistrationScreen(
     onBackClick: () -> Unit,

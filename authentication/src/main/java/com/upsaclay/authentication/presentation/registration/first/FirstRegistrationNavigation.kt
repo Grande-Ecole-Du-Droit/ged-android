@@ -7,7 +7,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object FirstRegistrationRoute
 
-fun NavController.navigateToFirstRegistration() = navigate(route = FirstRegistrationRoute)
+fun NavController.navigateToFirstRegistration() {
+    navigate(route = FirstRegistrationRoute)
+}
 
 fun NavGraphBuilder.firstRegistrationScreen(
     onBackClick: () -> Unit,

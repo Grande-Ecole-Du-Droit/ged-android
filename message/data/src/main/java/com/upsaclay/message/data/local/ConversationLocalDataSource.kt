@@ -1,7 +1,8 @@
 package com.upsaclay.message.data.local
 
 import com.upsaclay.message.data.local.dao.ConversationDao
-import com.upsaclay.message.data.mapper.ConversationMapper
+import com.upsaclay.message.data.mapper.toConversation
+import com.upsaclay.message.data.mapper.toLocal
 import com.upsaclay.message.domain.entity.Conversation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -9,29 +10,22 @@ import kotlinx.coroutines.flow.map
 internal class ConversationLocalDataSource(
     private val conversationDao: ConversationDao
 ) {
-    fun getConversations(): Flow<List<Conversation>> {
-        return conversationDao.getConversations().map { conversations ->
-            conversations.map(ConversationMapper::toConversation)
-        }
-    }
+    fun getFlowLocalConversation(interlocutorId: String): Flow<Conversation?> =
+        conversationDao.getFlowConversation(interlocutorId).map { it?.toConversation() }
 
     suspend fun getConversation(interlocutorId: String): Conversation? =
-        conversationDao.getConversation(interlocutorId)?.let(ConversationMapper::toConversation)
+        conversationDao.getConversation(interlocutorId)?.toConversation()
 
-    suspend fun insertConversation(conversation: Conversation) {
-        conversationDao.insertConversation(ConversationMapper.toLocal(conversation))
-    }
-
-    suspend fun updateConversation(conversation: Conversation) {
-        conversationDao.updateConversation(ConversationMapper.toLocal(conversation))
+    suspend fun createConversation(conversation: Conversation) {
+        conversationDao.insertConversation(conversation.toLocal())
     }
 
     suspend fun upsertConversation(conversation: Conversation) {
-        conversationDao.upsertConversation(ConversationMapper.toLocal(conversation))
+        conversationDao.upsertConversation(conversation.toLocal())
     }
 
     suspend fun deleteConversation(conversation: Conversation) {
-        conversationDao.deleteConversation(ConversationMapper.toLocal(conversation))
+        conversationDao.deleteConversation(conversation.toLocal())
     }
 
     suspend fun deleteConversations() {

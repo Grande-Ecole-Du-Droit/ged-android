@@ -1,42 +1,38 @@
 package com.upsaclay.message.data.model
 
 internal object ConversationField {
-    const val CONVERSATION_ID = "conversation_id"
+    const val CONVERSATION_ID = "conversationId"
     const val CREATED_AT = "created_at"
-    const val CONVERSATION_STATE = "conversation_state"
 
     object Remote {
         const val PARTICIPANTS = "participants"
+        const val DELETE_BY = "deleteBy"
+        const val DELETE_TIME = "deleteTime"
     }
 
     object Local {
-        const val INTERLOCUTOR_ID = "interlocutor_id"
-        const val INTERLOCUTOR_FIRST_NAME = "interlocutor_first_name"
-        const val INTERLOCUTOR_LAST_NAME = "interlocutor_last_name"
-        const val INTERLOCUTOR_EMAIL = "interlocutor_email"
-        const val INTERLOCUTOR_SCHOOL_LEVEL = "interlocutor_school_level"
-        const val INTERLOCUTOR_IS_MEMBER = "interlocutor_is_member"
-        const val INTERLOCUTOR_PROFILE_PICTURE_FILE_NAME = "interlocutor_profile_picture_file_name"
+        const val INTERLOCUTOR_ID = "interlocutorId"
+        const val INTERLOCUTOR_FIRST_NAME = "interlocutorFirstName"
+        const val INTERLOCUTOR_LAST_NAME = "interlocutorLastName"
+        const val INTERLOCUTOR_EMAIL = "interlocutorEmail"
+        const val INTERLOCUTOR_SCHOOL_LEVEL = "interlocutorSchoolLevel"
+        const val INTERLOCUTOR_IS_MEMBER = "interlocutorIsMember"
+        const val INTERLOCUTOR_PROFILE_PICTURE_FILE_NAME = "interlocutorProfilePictureFileName"
+        const val CONVERSATION_STATE = "conversationState"
+        const val CONVERSATION_DELETE_TIME = "conversationDeleteTime"
     }
 }
 
 internal object MessageField {
-    const val MESSAGE_ID = "message_id"
-    const val CONVERSATION_ID = "conversation_id"
-    const val SENDER_ID = "sender_id"
-    const val RECIPIENT_ID = "recipient_id"
-    const val CONTENT = "text"
-    const val MESSAGE_TIMESTAMP = "message_timestamp"
-    const val MESSAGE_STATE = "message_state"
-
-    object Remote {
-        const val SEEN = "seen"
-        const val SEEN_VALUE = "$SEEN.value"
-        const val SEEN_TIME = "$SEEN.time"
-    }
+    const val MESSAGE_ID = "messageId"
+    const val CONVERSATION_ID = "conversationId"
+    const val SENDER_ID = "senderId"
+    const val RECIPIENT_ID = "recipientId"
+    const val CONTENT = "content"
+    const val TIMESTAMP = "timestamp"
+    const val SEEN = "seen"
 
     object Local {
-        const val SEEN_VALUE = "seen_value"
-        const val SEEN_TIMESTAMP = "seen_time"
+        const val STATE = "messageState"
     }
 }

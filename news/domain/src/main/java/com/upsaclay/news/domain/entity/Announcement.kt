@@ -19,5 +19,5 @@ data class Announcement(
 enum class AnnouncementState {
     PUBLISHED,
     SENDING,
-    ERROR,
+    ERROR
 }

@@ -8,7 +8,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object CreateConversationRoute
 
-fun NavController.navigateToCreateConversation() = navigate(route = CreateConversationRoute)
+fun NavController.navigateToCreateConversation() {
+    navigate(route = CreateConversationRoute)
+}
 
 fun NavGraphBuilder.createConversationScreen(
     onBackClick: () -> Unit,

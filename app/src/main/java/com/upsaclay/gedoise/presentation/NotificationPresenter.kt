@@ -21,12 +21,12 @@ import androidx.core.graphics.drawable.IconCompat
 import com.upsaclay.common.R
 import com.upsaclay.common.domain.entity.SystemEvent
 import com.upsaclay.common.domain.entity.User
+import com.upsaclay.common.domain.extensions.toLong
 import com.upsaclay.common.domain.repository.ImageRepository
-import com.upsaclay.common.domain.usecase.ConvertDateUseCase
-import com.upsaclay.common.domain.usecase.GenerateIdUseCase
+import com.upsaclay.common.domain.usecase.GenerateRandomIdUseCase
 import com.upsaclay.common.domain.usecase.SharedEventsUseCase
 import com.upsaclay.gedoise.domain.repository.ScreenRepository
-import com.upsaclay.message.domain.ConversationMapper
+import com.upsaclay.message.domain.JsonConverter
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.ConversationMessage
 import com.upsaclay.message.domain.entity.Message
@@ -61,7 +61,7 @@ class NotificationPresenter(
         val message = conversationMessage.lastMessage
         val interlocutor = conversationMessage.conversation.interlocutor
         val intent = makeConversationIntent(conversationMessage.conversation)
-        val userIcon = createUserIcon(interlocutor.profilePictureUrl)
+        val userIcon = createUserIcon(interlocutor.profilePictureFileName)
         val user = buildPerson(interlocutor, userIcon)
 
         val notification = buildMessageNotification(
@@ -93,11 +93,11 @@ class NotificationPresenter(
         }
     }
 
-    private fun isCurrentMessageScreen(conversationId: Int): Boolean {
+    private fun isCurrentMessageScreen(conversationId: String): Boolean {
         val messageScreen = screenRepository.currentRoute as? ChatRoute
         return messageScreen
             ?.conversationJson
-            ?.let { ConversationMapper.conversationFromJson(it) }
+            ?.let(JsonConverter::toConversation)
             ?.id == conversationId
     }
 
@@ -127,7 +127,7 @@ class NotificationPresenter(
             (bitmap.width / 2).toFloat(),
             paint
         )
-        paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
         canvas.drawBitmap(bitmap, rect, rect, paint)
 
         return output
@@ -135,13 +135,13 @@ class NotificationPresenter(
 
     private fun makeConversationIntent(conversation: Conversation): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra(MainActivity.CONVERSATION_ID_EXTRA, ConversationMapper.toJson(conversation))
+            putExtra(MainActivity.CONVERSATION_ID_EXTRA, JsonConverter.fromConversation(conversation))
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
 
         return PendingIntent.getActivity(
             context,
-            GenerateIdUseCase.intId,
+            GenerateRandomIdUseCase.intId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -167,17 +167,17 @@ class NotificationPresenter(
     private fun buildMessageNotification(
         interlocutor: User,
         message: Message,
-        conversationId: Int,
+        conversationId: String,
         person: Person,
         intent: PendingIntent
     ): Notification {
-        val messageKey = ConvertDateUseCase.toTimestamp(message.date).toString()
+        val messageKey = message.date.toLong().toString()
 
         val notificationBuilder = NotificationCompat.Builder(context, MESSAGE_CHANNEL_ID)
             .setContentTitle(interlocutor.fullName)
             .setContentText(message.content)
             .setSmallIcon(R.drawable.ic_notification)
-            .setGroup(conversationId.toString())
+            .setGroup(conversationId)
             .setSortKey(messageKey)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setContentIntent(intent)
@@ -186,12 +186,12 @@ class NotificationPresenter(
                 NotificationCompat.MessagingStyle(person)
                     .addMessage(
                         message.content,
-                        ConvertDateUseCase.toTimestamp(message.date),
+                        message.date.toLong(),
                         person
                     )
             )
 
-        val newGroup = notificationManager.activeNotifications.none { it.notification.group == conversationId.toString() }
+        val newGroup = notificationManager.activeNotifications.none { it.notification.group == conversationId }
 
         if (newGroup) {
             notificationBuilder.setGroupSummary(true)

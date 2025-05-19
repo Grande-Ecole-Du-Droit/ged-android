@@ -32,6 +32,6 @@ data class LocalAnnouncement(
     val userSchoolLevel: String,
     @ColumnInfo("USER_IS_MEMBER")
     val userIsMember: Boolean,
-    @ColumnInfo("USER_PROFILE_PICTURE_URL")
-    val userProfilePictureUrl: String?
+    @ColumnInfo("USER_PROFILE_PICTURE_FILE_NAME")
+    val userProfilePictureFileName: String?
 )

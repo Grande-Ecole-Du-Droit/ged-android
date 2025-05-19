@@ -9,8 +9,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EditAnnouncementRoute(val announcementId: String)
 
-fun NavController.navigateToEditAnnouncement(announcementId: String) =
+fun NavController.navigateToEditAnnouncement(announcementId: String) {
     navigate(route = EditAnnouncementRoute(announcementId))
+}
 
 fun NavGraphBuilder.editAnnouncementScreen(
     onBackClick: () -> Unit
