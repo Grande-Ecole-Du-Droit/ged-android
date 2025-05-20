@@ -10,6 +10,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDateTime
 
 class CreateConversationUseCaseTest {
     private val conversationRepository: ConversationRepository = mockk()
@@ -66,9 +67,9 @@ class CreateConversationUseCaseTest {
     }
 
     @Test
-    fun createRemotely_should_undelete_delete_conversation() = runTest {
+    fun createRemotely_should_undelete_soft_deleted_conversation() = runTest {
         // Given
-        val conversation = conversationFixture.copy(state = ConversationState.DELETED)
+        val conversation = conversationFixture.copy(state = ConversationState.SOFT_DELETED)
 
         // When
         useCase.createRemotely(conversation, userFixture.id, userFixture2.id)
@@ -76,6 +77,23 @@ class CreateConversationUseCaseTest {
         // Then
         coEvery {
             conversationRepository.unDeleteRemoteConversation(conversation, userFixture.id)
+        }
+    }
+
+    @Test
+    fun createRemotely_should_create_conversation_when_creating_state_more_than_10_seconds() = runTest {
+        // Given
+        val conversation = conversationFixture.copy(
+            createdAt = LocalDateTime.now().minusSeconds(11),
+            state = ConversationState.CREATING
+        )
+
+        // When
+        useCase.createRemotely(conversation, userFixture.id, userFixture2.id)
+
+        // Then
+        coEvery {
+            conversationRepository.createRemoteConversation(conversation, userFixture2.id)
         }
     }
 

@@ -8,7 +8,7 @@ internal interface ConversationApi {
 
     suspend fun getConversation(conversationId: String): RemoteConversation?
 
-    suspend fun createConversation(remoteConversation: RemoteConversation)
+    suspend fun createConversation(conversationId: String, data: Map<String, Any>)
 
     suspend fun updateConversation(conversationId: String, data: Map<String, Any>)
 

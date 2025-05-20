@@ -15,12 +15,6 @@ data class Conversation(
     @Serializable(with = LocalDateTimeSerializer::class)
     val deleteTime: LocalDateTime? = null
 ) {
-    fun shouldBeUpdated(): Boolean {
-        return state == ConversationState.DRAFT
-                || state == ConversationState.DELETED
-                || state == ConversationState.ERROR
-    }
-
     override fun equals(other: Any?): Boolean {
         if (other !is Conversation) return false
 
@@ -43,6 +37,6 @@ enum class ConversationState {
     DRAFT,
     CREATING,
     CREATED,
-    DELETED,
+    SOFT_DELETED,
     ERROR
 }

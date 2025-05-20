@@ -47,11 +47,11 @@ internal class ConversationApiImpl: ConversationApi {
         }
     }
 
-    override suspend fun createConversation(remoteConversation: RemoteConversation) {
+    override suspend fun createConversation(conversationId: String, data: Map<String, Any>) {
         suspendCoroutine { continuation ->
             conversationsCollection
-                .document(remoteConversation.conversationId)
-                .set(remoteConversation, SetOptions.merge())
+                .document(conversationId)
+                .set(data, SetOptions.merge())
                 .addOnSuccessListener { continuation.resume(Unit) }
                 .addOnFailureListener { continuation.resumeWithException(it) }
         }

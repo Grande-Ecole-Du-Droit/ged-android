@@ -12,7 +12,7 @@ class DeleteConversationUseCase(
 ) {
     suspend operator fun invoke(conversation: Conversation, userId: String) {
         conversationRepository.getRemoteConversationState(conversation.id, conversation.interlocutor.id)?.let { state ->
-            if (state == ConversationState.DELETED) {
+            if (state == ConversationState.SOFT_DELETED) {
                 conversationRepository.hardDeleteConversation(conversation.id)
                 messageRepository.deleteRemoteMessages(conversation.id)
             } else {

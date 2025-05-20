@@ -8,6 +8,7 @@ import com.upsaclay.common.domain.extensions.toLocalDateTime
 import com.upsaclay.common.domain.extensions.toLong
 import com.upsaclay.message.data.local.model.LocalConversation
 import com.upsaclay.message.data.local.model.LocalConversationMessage
+import com.upsaclay.message.data.model.ConversationField
 import com.upsaclay.message.data.remote.model.RemoteConversation
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.ConversationMessage
@@ -36,10 +37,7 @@ internal fun Conversation.toRemote(userId: String) = RemoteConversation(
     deleteBy = mapOf(
         userId to false,
         interlocutor.id to false
-    ),
-    deleteTime = deleteTime?.let {
-        mapOf(userId to it.toTimestamp())
-    }
+    )
 )
 
 fun LocalConversation.toConversation(): Conversation {
@@ -67,13 +65,25 @@ internal fun RemoteConversation.toConversation(userId: String, interlocutor: Use
         id = conversationId,
         interlocutor = interlocutor,
         state = if (deleteBy[interlocutor.id] == true) {
-            ConversationState.DELETED
+            ConversationState.SOFT_DELETED
         } else {
             ConversationState.CREATED
         },
         createdAt = createdAt.toLocalDateTime(),
         deleteTime = deleteTime?.get(userId)?.toLocalDateTime()
     )
+
+internal fun RemoteConversation.toMap(): Map<String, Any> {
+    val data = mutableMapOf<String, Any>()
+    data[ConversationField.CONVERSATION_ID] = conversationId
+    data[ConversationField.Remote.PARTICIPANTS] = participants
+    data[ConversationField.CREATED_AT] = createdAt
+    data[ConversationField.Remote.DELETE_BY] = deleteBy
+    deleteTime?.let {
+        data[ConversationField.Remote.DELETE_TIME] = it
+    }
+    return data
+}
 
 fun LocalConversationMessage.toConversationMessage() = ConversationMessage(
     conversation = this.toConversation(),

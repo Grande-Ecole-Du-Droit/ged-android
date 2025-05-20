@@ -97,7 +97,7 @@ class ListenRemoteConversationsMessagesUseCaseTest {
         // Given
         val date = LocalDateTime.now()
         val conversation = conversationFixture.copy(
-            state = ConversationState.DELETED,
+            state = ConversationState.SOFT_DELETED,
             deleteTime = date
         )
         coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(conversation)

@@ -32,7 +32,7 @@ class DeleteConversationUseCaseTest {
     @Test
     fun deleteConversation_should_hard_delete_remote_conversation_and_message_when_state_is_deleted() = runTest {
         // When
-        useCase(conversationFixture.copy(state = ConversationState.DELETED), userFixture.id)
+        useCase(conversationFixture.copy(state = ConversationState.SOFT_DELETED), userFixture.id)
 
         // Then
         coEvery { conversationRepository.hardDeleteConversation(conversationFixture.id) }

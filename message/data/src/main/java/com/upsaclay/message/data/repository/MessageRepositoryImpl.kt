@@ -25,9 +25,7 @@ internal class MessageRepositoryImpl(
     override suspend fun createRemoteMessage(message: Message) {
         handleNetworkException(
             message = "Failed to create message",
-            block = {
-                messageRemoteDataSource.createMessage(message)
-            }
+            block = { messageRemoteDataSource.createMessage(message) }
         )
     }
 

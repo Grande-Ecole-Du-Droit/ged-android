@@ -79,7 +79,7 @@ class SendMessageUseCaseTest {
     @Test
     fun sendMessageUseCase_should_enable_conversation_when_state_is_deleted() = runTest {
         // Given
-        val conversation = conversationFixture.copy(state = ConversationState.DELETED)
+        val conversation = conversationFixture.copy(state = ConversationState.SOFT_DELETED)
 
         // When
         useCase(conversation, userFixture, "content")

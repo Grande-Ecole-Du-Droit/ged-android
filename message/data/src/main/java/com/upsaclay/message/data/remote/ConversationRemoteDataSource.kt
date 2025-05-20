@@ -1,6 +1,7 @@
 package com.upsaclay.message.data.remote
 
 import com.google.firebase.Timestamp
+import com.upsaclay.message.data.mapper.toMap
 import com.upsaclay.message.data.mapper.toRemote
 import com.upsaclay.message.data.model.ConversationField
 import com.upsaclay.message.data.remote.api.ConversationApi
@@ -18,7 +19,7 @@ internal class ConversationRemoteDataSource(private val conversationApi: Convers
         return withContext(Dispatchers.IO) {
             conversationApi.getConversation(conversationId)?.let {
                 if (it.deleteBy[interlocutorId] == true) {
-                    ConversationState.DELETED
+                    ConversationState.SOFT_DELETED
                 } else {
                     ConversationState.CREATED
                 }
@@ -27,8 +28,9 @@ internal class ConversationRemoteDataSource(private val conversationApi: Convers
     }
 
     suspend fun createConversation(conversation: Conversation, userId: String) {
+        val data = conversation.toRemote(userId).toMap()
         withContext(Dispatchers.IO) {
-            conversationApi.createConversation(conversation.toRemote(userId))
+            conversationApi.createConversation(conversation.id, data)
         }
     }
 
