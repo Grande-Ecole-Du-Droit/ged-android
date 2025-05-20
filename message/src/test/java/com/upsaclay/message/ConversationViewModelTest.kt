@@ -5,6 +5,7 @@ import com.upsaclay.common.domain.userFixture
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.conversationsMessageFixture
 import com.upsaclay.message.domain.repository.ConversationMessageRepository
+import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
 import com.upsaclay.message.presentation.conversation.ConversationViewModel
 import io.mockk.coEvery
@@ -22,6 +23,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ConversationViewModelTest {
+    private val conversationRepository: ConversationRepository = mockk()
     private val conversationMessageRepository: ConversationMessageRepository = mockk()
     private val userRepository: UserRepository = mockk()
     private val deleteConversationUseCase: DeleteConversationUseCase = mockk()
@@ -34,10 +36,13 @@ class ConversationViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         every { userRepository.currentUser } returns userFixture
+        coEvery { conversationRepository.getLocalConversation(any()) } returns conversationFixture
+        coEvery { conversationRepository.createRemoteConversation(any(), any()) } returns Unit
         every { conversationMessageRepository.conversationsMessage } returns flowOf(conversationsMessageFixture)
-        coEvery { deleteConversationUseCase(any()) } returns Unit
+        coEvery { deleteConversationUseCase(any(), any()) } returns Unit
 
         conversationViewModel = ConversationViewModel(
+            userRepository = userRepository,
             conversationMessageRepository = conversationMessageRepository,
             deleteConversationUseCase = deleteConversationUseCase
         )
@@ -49,6 +54,6 @@ class ConversationViewModelTest {
         conversationViewModel.deleteConversation(conversationFixture)
 
         // Then
-        coVerify { deleteConversationUseCase(conversationFixture) }
+        coVerify { deleteConversationUseCase(conversationFixture, userFixture.id) }
     }
 }

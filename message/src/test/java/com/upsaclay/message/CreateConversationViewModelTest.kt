@@ -36,6 +36,7 @@ class CreateConversationViewModelTest {
 
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
+        coEvery { createConversationUseCase.generateNewConversation(any(), any()) } returns conversationFixture
         coEvery { conversationRepository.getLocalConversation(any()) } returns conversationFixture
         coEvery { userRepository.getUsers() } returns usersFixture
 
@@ -50,15 +51,12 @@ class CreateConversationViewModelTest {
     fun getConversation_should_generate_new_conversation_when_not_exist() = runTest {
         // Given
         coEvery { conversationRepository.getLocalConversation(any()) } returns null
-        val interlocutor = userFixture
-        val state = ConversationState.DRAFT
 
         // When
         val result = createConversationViewModel.getConversation(userFixture)
 
         // Then
-        assertEquals(interlocutor, result?.interlocutor)
-        assertEquals(state, result?.state)
+        assertEquals(conversationFixture, result)
     }
 
     @Test
