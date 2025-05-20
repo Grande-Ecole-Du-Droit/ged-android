@@ -3,6 +3,7 @@ package com.upsaclay.news.presentation.news
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -12,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -56,7 +58,7 @@ fun NewsDestination(
 private fun NewsScreen(
     user: User?,
     refreshing: Boolean,
-    announcements: List<Announcement>,
+    announcements: List<Announcement>?,
     bottomBar: @Composable () -> Unit,
     onRefresh: () -> Unit,
     onAnnouncementClick: (String) -> Unit,
@@ -86,7 +88,7 @@ private fun NewsScreen(
     Scaffold(
         topBar = {
             NewsTopBar(
-                userProfilePictureUrl = user?.profilePictureUrl,
+                userProfilePictureUrl = user?.profilePictureFileName,
                 onProfilePictureClick = onProfilePictureClick
             )
         },
@@ -107,7 +109,12 @@ private fun NewsScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.smallMedium)
                 ) {
+                    if (announcements == null) {
+                        return@Column
+                    }
+
                     RecentAnnouncementContent(
+                        modifier = Modifier.weight(1f),
                         announcements = announcements,
                         onAnnouncementClick = onAnnouncementClick,
                         onNotCreateAnnouncementClick = {

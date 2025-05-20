@@ -51,7 +51,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.upsaclay.common.domain.usecase.FormatLocalDateTimeUseCase
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.black
@@ -60,6 +59,7 @@ import com.upsaclay.common.presentation.theme.chatInputForeground
 import com.upsaclay.common.presentation.theme.cursor
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.presentation.theme.white
+import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
 import com.upsaclay.message.R
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
@@ -95,7 +95,7 @@ fun SentMessageItem(
             val iconColor = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray
 
             AnimatedVisibility(
-                visible = message.state == MessageState.LOADING
+                visible = message.state == MessageState.SENDING
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
@@ -326,7 +326,7 @@ private fun SentMessageItemPreview() {
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
 
-            SentMessageItem(message = messageFixture.copy(state = MessageState.LOADING))
+            SentMessageItem(message = messageFixture.copy(state = MessageState.SENDING))
         }
     }
 }

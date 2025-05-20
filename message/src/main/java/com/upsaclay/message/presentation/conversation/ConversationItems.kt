@@ -28,15 +28,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.upsaclay.common.domain.entity.ElapsedTime
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.usecase.FormatLocalDateTimeUseCase
 import com.upsaclay.common.domain.usecase.GetElapsedTimeUseCase
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
+import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
 import com.upsaclay.message.R
-import com.upsaclay.message.domain.conversationUIFixture
-import com.upsaclay.message.domain.entity.ConversationUI
+import com.upsaclay.message.domain.conversationUiFixture
+import com.upsaclay.message.domain.entity.ConversationUi
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.messageFixture2
@@ -45,7 +45,7 @@ import com.upsaclay.message.domain.messageFixture2
 @Composable
 fun ConversationItem(
     modifier: Modifier = Modifier,
-    conversation: ConversationUI,
+    conversation: ConversationUi,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
@@ -89,7 +89,7 @@ fun ConversationItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ProfilePicture(
-            url = conversation.interlocutor.profilePictureUrl,
+            url = conversation.interlocutor.profilePictureFileName,
             scale = 0.5f
         )
 
@@ -102,7 +102,7 @@ fun ConversationItem(
             val text = if (message.state == MessageState.SENT) message.content else stringResource(R.string.sending)
             val isNotSender = message.senderId == conversation.interlocutor.id
 
-            if (isNotSender && !message.isSeen()) {
+            if (isNotSender && !message.seen) {
                 UnreadConversationItem(
                     modifier = Modifier
                         .weight(1f)
@@ -225,7 +225,7 @@ private fun ReadConversationItemPreview() {
     GedoiseTheme {
         ConversationItem(
             modifier = Modifier.fillMaxWidth(),
-            conversation = conversationUIFixture,
+            conversation = conversationUiFixture,
             onClick = { },
             onLongClick = { }
         )
@@ -238,7 +238,7 @@ private fun UnreadConversationItemPreview() {
     GedoiseTheme {
         ConversationItem(
             modifier = Modifier.fillMaxWidth(),
-            conversation = conversationUIFixture.copy(
+            conversation = conversationUiFixture.copy(
                 lastMessage = messageFixture2
             ),
             onClick = { },

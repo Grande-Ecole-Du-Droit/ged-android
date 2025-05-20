@@ -17,7 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class ReadAnnouncementScreenUITest {
+class ReadAnnouncementScreenTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 

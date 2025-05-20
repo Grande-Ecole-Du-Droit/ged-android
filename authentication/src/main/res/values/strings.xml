@@ -9,7 +9,6 @@
     <string name="password">Mot de passe</string>
     <string name="sign_up">S\'inscrire</string>
     <string name="not_register_yet">Pas encore inscrit ?</string>
-    <string name="invalid_credentials_error">Adresse e-mail ou mot de passe incorrect</string>
     <string name="mandatory_field">Champ obligatoire</string>
 
     <string name="registration">Inscription</string>
@@ -18,12 +17,11 @@
     <string name="enter_email_password">Saisissez votre adresse e-mail et votre mot de passe</string>
     <string name="select_level_school">Sélectionnez votre niveau d\'étude</string>
 
-    <string name="unrecognized_account">Compte universitaire non reconnu</string>
-    <string name="error_incorrect_email_format">Veuillez entrer une adresse e-mail valide</string>
-    <string name="error_password_length">Le mot de passe doit comporter au moins 8 caractères</string>
+    <string name="invalid_credentials_error">Adresse e-mail ou mot de passe incorrect</string>
+    <string name="incorrect_email_format_error">Veuillez entrer une adresse e-mail valide</string>
+    <string name="password_length_error">Le mot de passe doit comporter au moins 8 caractères</string>
     <string name="email_already_associated">Cette adresse e-mail est déjà utilisée.</string>
     <string name="user_not_white_listed">L\'inscription est actuellement limitée aux utilisateurs autorisés.</string>
-    <string name="authenticated_user_not_found">L\'utilisateur n\'a pas été trouvé. Veuillez réessayer.</string>
 
     <string name="authentication_screen_login_button_tag">Authentication Screen Login Button Tag</string>
     <string name="authentication_screen_registration_button_tag">Authentication Screen Registration Button Tag</string>

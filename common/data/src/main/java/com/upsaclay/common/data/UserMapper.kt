@@ -1,20 +1,20 @@
 package com.upsaclay.common.data
 
-import com.upsaclay.common.data.local.UserLocal
+import com.upsaclay.common.data.local.LocalUser
 import com.upsaclay.common.data.remote.FirestoreUser
 import com.upsaclay.common.domain.UrlUtils.formatProfilePictureUrl
 import com.upsaclay.common.domain.UrlUtils.getFileNameFromUrl
 import com.upsaclay.common.domain.entity.User
 
 internal object UserMapper {
-    fun toDTO(user: User) = UserLocal(
+    fun toDTO(user: User) = LocalUser(
         userId = if (user.id == "") null else user.id,
         userFirstName = user.firstName,
         userLastName = user.lastName,
         userEmail = user.email,
         userSchoolLevel = user.schoolLevel,
         userIsMember = if (user.isMember) 1 else 0,
-        userProfilePictureFileName = getFileNameFromUrl(user.profilePictureUrl)
+        userProfilePictureFileName = getFileNameFromUrl(user.profilePictureFileName)
     )
 
     fun toFirestoreUser(user: User) = FirestoreUser(
@@ -25,27 +25,17 @@ internal object UserMapper {
         email = user.email,
         schoolLevel = user.schoolLevel,
         isMember = user.isMember,
-        profilePictureFileName = getFileNameFromUrl(user.profilePictureUrl)
+        profilePictureFileName = getFileNameFromUrl(user.profilePictureFileName)
     )
 
-    fun toFirestoreUser(userLocal: UserLocal) = FirestoreUser(
-        userId = userLocal.userId ?: "",
-        firstName = userLocal.userFirstName,
-        lastName = userLocal.userLastName,
-        email = userLocal.userEmail,
-        schoolLevel = userLocal.userSchoolLevel,
-        isMember = userLocal.userIsMember == 1,
-        profilePictureFileName = userLocal.userProfilePictureFileName
-    )
-
-    fun toDomain(userLocal: UserLocal) = User(
-        id = userLocal.userId ?: "",
-        firstName = userLocal.userFirstName,
-        lastName = userLocal.userLastName,
-        email = userLocal.userEmail,
-        schoolLevel = userLocal.userSchoolLevel,
-        isMember = userLocal.userIsMember == 1,
-        profilePictureUrl = formatProfilePictureUrl(userLocal.userProfilePictureFileName)
+    fun toDomain(localUser: LocalUser) = User(
+        id = localUser.userId ?: "",
+        firstName = localUser.userFirstName,
+        lastName = localUser.userLastName,
+        email = localUser.userEmail,
+        schoolLevel = localUser.userSchoolLevel,
+        isMember = localUser.userIsMember == 1,
+        profilePictureFileName = formatProfilePictureUrl(localUser.userProfilePictureFileName)
     )
 
     fun toDomain(firestoreUser: FirestoreUser) = User(
@@ -55,6 +45,6 @@ internal object UserMapper {
         email = firestoreUser.email,
         schoolLevel = firestoreUser.schoolLevel,
         isMember = firestoreUser.isMember,
-        profilePictureUrl = formatProfilePictureUrl(firestoreUser.profilePictureFileName)
+        profilePictureFileName = formatProfilePictureUrl(firestoreUser.profilePictureFileName)
     )
 }

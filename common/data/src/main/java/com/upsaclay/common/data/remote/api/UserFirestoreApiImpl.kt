@@ -1,6 +1,7 @@
 package com.upsaclay.common.data.remote.api
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import com.upsaclay.common.data.UserField
 import com.upsaclay.common.data.remote.FirestoreUser
@@ -11,9 +12,10 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+private const val TABLE_NAME = "users"
 
 internal class UserFirestoreApiImpl : UserFirestoreApi {
-    private val usersCollection = Firebase.firestore.collection("users")
+    private val usersCollection = Firebase.firestore.collection(TABLE_NAME)
 
     override suspend fun getUser(userId: String): FirestoreUser? = suspendCoroutine { continuation ->
         usersCollection.document(userId).get()
@@ -21,10 +23,7 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
                 val user = snapshot.toObject(FirestoreUser::class.java)
                 continuation.resume(user)
             }
-            .addOnFailureListener { e ->
-                e("Error getting firestore user", e)
-                continuation.resumeWithException(e)
-            }
+            .addOnFailureListener { continuation.resumeWithException(it) }
     }
 
     override suspend fun getUserFlow(userId: String): Flow<FirestoreUser?> = callbackFlow {
@@ -45,20 +44,17 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
     }
 
     override suspend fun getUserWithEmail(userEmail: String): FirestoreUser? = suspendCoroutine { continuation ->
-        usersCollection.whereEqualTo(UserField.Remote.EMAIL, userEmail).get()
+        usersCollection.whereEqualTo(UserField.Remote.EMAIL, userEmail)
+            .get()
             .addOnSuccessListener { snapshot ->
                 val user = snapshot.documents.firstOrNull()?.toObject(FirestoreUser::class.java)
                 continuation.resume(user)
             }
-            .addOnFailureListener { e ->
-                e("Error getting firestore user with email", e)
-                continuation.resumeWithException(e)
-            }
+            .addOnFailureListener { continuation.resumeWithException(it) }
     }
 
     override suspend fun getUsers(): List<FirestoreUser> = suspendCoroutine { continuation ->
         usersCollection
-            .limit(30)
             .get()
             .addOnSuccessListener { snapshot ->
                 val users = snapshot?.documents?.mapNotNull {
@@ -67,18 +63,14 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
 
                 continuation.resume(users)
             }
-            .addOnFailureListener { e ->
-                e("Error getting firestore users", e)
-                continuation.resume(emptyList())
-            }
+            .addOnFailureListener { continuation.resume(emptyList()) }
     }
 
     override suspend fun createUser(firestoreUser: FirestoreUser) {
         suspendCoroutine { continuation ->
             usersCollection.document(firestoreUser.userId).set(firestoreUser)
                 .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it)
-                }
+                .addOnFailureListener { continuation.resumeWithException(it) }
         }
     }
 
@@ -87,10 +79,16 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
             usersCollection.document(userId)
                 .update(UserField.Remote.PROFILE_PICTURE_FILE_NAME, fileName)
                 .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { e ->
-                    e("Error update firestore user pofile picture", e)
-                    continuation.resumeWithException(e)
-                }
+                .addOnFailureListener { continuation.resumeWithException(it) }
+        }
+    }
+
+    override suspend fun deleteProfilePictureFileName(userId: String) {
+        suspendCoroutine { continuation ->
+            usersCollection.document(userId)
+                .update(UserField.Remote.PROFILE_PICTURE_FILE_NAME, FieldValue.delete())
+                .addOnSuccessListener { continuation.resume(Unit) }
+                .addOnFailureListener { continuation.resumeWithException(it) }
         }
     }
 

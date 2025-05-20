@@ -21,10 +21,7 @@ fun PrimaryButton(
     Button(
         modifier = modifier,
         enabled = isEnable,
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.white
-        )
+        onClick = onClick
     ) {
         Text(text = text)
     }
@@ -39,7 +36,7 @@ fun PrimaryButton(
 @Preview
 @Composable
 private fun PrimaryButtonPreview() {
-    GedoiseTheme(darkTheme = true) {
+    GedoiseTheme {
         PrimaryButton(
             modifier = Modifier.fillMaxWidth(),
             text = "Primary Button",

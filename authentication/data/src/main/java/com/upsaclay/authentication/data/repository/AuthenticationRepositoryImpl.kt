@@ -4,8 +4,6 @@ import com.upsaclay.authentication.data.local.AuthenticationLocalDataSource
 import com.upsaclay.authentication.data.repository.firebase.FirebaseAuthenticationRepository
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 internal class AuthenticationRepositoryImpl(
@@ -13,16 +11,12 @@ internal class AuthenticationRepositoryImpl(
     private val authenticationLocalDataSource: AuthenticationLocalDataSource,
     private val scope: CoroutineScope
 ) : AuthenticationRepository {
-    private val _isAuthenticated = MutableStateFlow<Boolean?>(null)
-    override val isAuthenticated: Flow<Boolean?> = _isAuthenticated
+    override val isAuthenticated = authenticationLocalDataSource.getAuthenticationState()
 
     init {
         scope.launch {
             if (!firebaseAuthenticationRepository.isAuthenticated()) {
                 setAuthenticated(false)
-            }
-            authenticationLocalDataSource.getAuthenticationState().collect {
-                _isAuthenticated.value = it
             }
         }
     }

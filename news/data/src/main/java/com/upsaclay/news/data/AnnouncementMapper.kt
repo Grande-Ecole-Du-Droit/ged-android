@@ -2,7 +2,8 @@ package com.upsaclay.news.data
 
 import com.upsaclay.common.domain.UrlUtils.formatProfilePictureUrl
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.usecase.ConvertDateUseCase
+import com.upsaclay.common.domain.extensions.toLocalDateTime
+import com.upsaclay.common.domain.extensions.toLong
 import com.upsaclay.news.data.local.model.LocalAnnouncement
 import com.upsaclay.news.data.remote.model.RemoteAnnouncement
 import com.upsaclay.news.data.remote.model.RemoteAnnouncementWithUser
@@ -14,7 +15,7 @@ internal object AnnouncementMapper {
         announcementId = announcement.id,
         announcementTitle = announcement.title,
         announcementContent = announcement.content,
-        announcementDate = ConvertDateUseCase.toTimestamp(announcement.date),
+        announcementDate = announcement.date.toLong(),
         announcementState = announcement.state,
         userId = announcement.author.id,
         userFirstName = announcement.author.firstName,
@@ -22,14 +23,14 @@ internal object AnnouncementMapper {
         userEmail = announcement.author.email,
         userSchoolLevel = announcement.author.schoolLevel,
         userIsMember = announcement.author.isMember,
-        userProfilePictureUrl = announcement.author.profilePictureUrl
+        userProfilePictureFileName = announcement.author.profilePictureFileName
     )
 
     fun toDomain(localAnnouncement: LocalAnnouncement) = Announcement(
         id = localAnnouncement.announcementId,
         title = localAnnouncement.announcementTitle,
         content = localAnnouncement.announcementContent,
-        date = ConvertDateUseCase.toLocalDateTime(localAnnouncement.announcementDate),
+        date = localAnnouncement.announcementDate.toLocalDateTime(),
         author = User(
             id = localAnnouncement.userId,
             firstName = localAnnouncement.userFirstName,
@@ -37,7 +38,7 @@ internal object AnnouncementMapper {
             email = localAnnouncement.userEmail,
             schoolLevel = localAnnouncement.userSchoolLevel,
             isMember = localAnnouncement.userIsMember,
-            profilePictureUrl = localAnnouncement.userProfilePictureUrl
+            profilePictureFileName = localAnnouncement.userProfilePictureFileName
         ),
         state = localAnnouncement.announcementState
     )
@@ -46,7 +47,7 @@ internal object AnnouncementMapper {
         id = remoteAnnouncement.announcementId,
         title = remoteAnnouncement.announcementTitle,
         content = remoteAnnouncement.announcementContent,
-        date = ConvertDateUseCase.toLocalDateTime(remoteAnnouncement.announcementDate),
+        date = remoteAnnouncement.announcementDate.toLocalDateTime(),
         author = User(
             id = remoteAnnouncement.userId,
             firstName = remoteAnnouncement.userFirstName,
@@ -54,7 +55,7 @@ internal object AnnouncementMapper {
             email = remoteAnnouncement.userEmail,
             schoolLevel = remoteAnnouncement.userSchoolLevel,
             isMember = remoteAnnouncement.userIsMember == 1,
-            profilePictureUrl = formatProfilePictureUrl(remoteAnnouncement.profilePictureFileName)
+            profilePictureFileName = formatProfilePictureUrl(remoteAnnouncement.profilePictureFileName)
         ),
         state = AnnouncementState.PUBLISHED
     )
@@ -63,7 +64,7 @@ internal object AnnouncementMapper {
         announcementId = announcement.id,
         announcementTitle = announcement.title,
         announcementContent = announcement.content,
-        announcementDate = ConvertDateUseCase.toTimestamp(announcement.date),
+        announcementDate = announcement.date.toLong(),
         userId = announcement.author.id
     )
 }

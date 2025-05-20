@@ -1,4 +1,4 @@
-package com.upsaclay.common.domain.usecase
+package com.upsaclay.common.utils
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

@@ -1,63 +1,53 @@
 package com.upsaclay.message.data.mapper
 
-import com.google.firebase.Timestamp
-import com.upsaclay.common.domain.usecase.ConvertDateUseCase
+import com.upsaclay.common.data.extensions.toLocalDateTime
+import com.upsaclay.common.data.extensions.toTimestamp
+import com.upsaclay.common.domain.extensions.toLocalDateTime
+import com.upsaclay.common.domain.extensions.toLong
 import com.upsaclay.message.data.local.model.LocalMessage
 import com.upsaclay.message.data.remote.model.RemoteMessage
-import com.upsaclay.message.data.remote.model.RemoteSeen
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
-import com.upsaclay.message.domain.entity.Seen
-import java.time.Instant
-import java.time.ZoneOffset
 
-internal object MessageMapper {
-    fun toDomain(remoteMessage: RemoteMessage) = Message(
-        id = remoteMessage.messageId,
-        senderId = remoteMessage.senderId,
-        recipientId = remoteMessage.recipientId,
-        conversationId = remoteMessage.conversationId,
-        content = remoteMessage.content,
-        date = ConvertDateUseCase.toLocalDateTime(remoteMessage.timestamp.toInstant()),
-        seen = remoteMessage.seen?.let { Seen(it.value, ConvertDateUseCase.toLocalDateTime(it.time.toInstant())) },
-        state = MessageState.SENT
-    )
+internal fun RemoteMessage.toDomain() = Message(
+    id = messageId,
+    senderId = senderId,
+    recipientId = recipientId,
+    conversationId = conversationId,
+    content = content,
+    date = timestamp.toLocalDateTime(),
+    seen = seen,
+    state = MessageState.SENT
+)
 
-    fun toDomain(localMessage: LocalMessage) = Message(
-        id = localMessage.messageId,
-        senderId = localMessage.senderId,
-        recipientId = localMessage.recipientId,
-        conversationId = localMessage.conversationId,
-        content = localMessage.content,
-        date = Instant.ofEpochMilli(localMessage.messageTimestamp).atZone(ZoneOffset.UTC).toLocalDateTime(),
-        seen = if (localMessage.seenValue != null && localMessage.seenTimestamp != null) {
-            Seen(
-                value = localMessage.seenValue,
-                time = ConvertDateUseCase.toLocalDateTime(localMessage.seenTimestamp)
-            )
-        } else null,
-        state = MessageState.valueOf(localMessage.state)
-    )
+fun LocalMessage.toDomain() = Message(
+    id = messageId,
+    senderId = senderId,
+    recipientId = recipientId,
+    conversationId = conversationId,
+    content = content,
+    date = messageTimestamp.toLocalDateTime(),
+    seen = seen,
+    state = MessageState.valueOf(state)
+)
 
-    fun toLocal(message: Message) = LocalMessage(
-        messageId = message.id,
-        senderId = message.senderId,
-        recipientId = message.recipientId,
-        conversationId = message.conversationId,
-        content = message.content,
-        messageTimestamp = message.date.toInstant(ZoneOffset.UTC).toEpochMilli(),
-        seenValue = message.seen?.value,
-        seenTimestamp = message.seen?.time?.let { ConvertDateUseCase.toTimestamp(it) },
-        state = message.state.name
-    )
+fun Message.toLocal() = LocalMessage(
+    messageId = id,
+    senderId = senderId,
+    recipientId = recipientId,
+    conversationId = conversationId,
+    content = content,
+    messageTimestamp = date.toLong(),
+    seen = seen,
+    state = state.name
+)
 
-    fun toRemote(message: Message) = RemoteMessage(
-        messageId = message.id,
-        conversationId = message.conversationId,
-        senderId = message.senderId,
-        recipientId = message.recipientId,
-        content = message.content,
-        timestamp = Timestamp(message.date.atZone(ZoneOffset.UTC).toInstant()),
-        seen = message.seen?.let { RemoteSeen(it.value, Timestamp(it.time.atZone(ZoneOffset.UTC).toInstant())) }
-    )
-}
+internal fun Message.toRemote() = RemoteMessage(
+    messageId = id,
+    conversationId = conversationId,
+    senderId = senderId,
+    recipientId = recipientId,
+    content = content,
+    timestamp = date.toTimestamp(),
+    seen = seen
+)

@@ -7,33 +7,36 @@ import java.time.LocalDateTime
 
 @Serializable
 data class Conversation(
-    val id: Int,
+    val id: String,
     val interlocutor: User,
     @Serializable(with = LocalDateTimeSerializer::class)
     val createdAt: LocalDateTime,
-    val state: ConversationState
+    val state: ConversationState,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val deleteTime: LocalDateTime? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (other !is Conversation) return false
 
-        return id == other.id &&
-                interlocutor == other.interlocutor &&
-                createdAt.withNano(0) == other.createdAt.withNano(0) &&
-                state == other.state
+        return id == other.id
+                && interlocutor == other.interlocutor
+                && state == other.state
+                && deleteTime?.withNano(0) == other.deleteTime?.withNano(0)
     }
 
     override fun hashCode(): Int {
-        var result = id
+        var result = id.hashCode()
         result = 31 * result + interlocutor.hashCode()
-        result = 31 * result + createdAt.withNano(0).hashCode()
         result = 31 * result + state.hashCode()
+        result = 31 * result + (deleteTime?.hashCode() ?: 0)
         return result
     }
 }
 
 enum class ConversationState {
-    DEFAULT,
-    LOADING,
+    DRAFT,
+    CREATING,
     CREATED,
-    NOT_CREATED
+    SOFT_DELETED,
+    ERROR
 }

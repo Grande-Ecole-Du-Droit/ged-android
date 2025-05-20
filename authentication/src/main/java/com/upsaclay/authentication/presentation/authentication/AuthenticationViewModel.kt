@@ -12,12 +12,14 @@ import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.TooManyRequestException
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.VerifyEmailFormatUseCase
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 class AuthenticationViewModel(
     private val authenticationRepository: AuthenticationRepository,
@@ -51,11 +53,13 @@ class AuthenticationViewModel(
 
         viewModelScope.launch {
             try {
-                authenticationRepository.loginWithEmailAndPassword(email, password)
-                userRepository.getUserWithEmail(email)?.let {
-                    userRepository.setCurrentUser(it)
-                    authenticationRepository.setAuthenticated(true)
-                } ?: throw InvalidCredentialsException()
+                withTimeout(10000) {
+                    authenticationRepository.loginWithEmailAndPassword(email, password)
+                    userRepository.getUserWithEmail(email)?.let {
+                        userRepository.setCurrentUser(it)
+                        authenticationRepository.setAuthenticated(true)
+                    } ?: throw InvalidCredentialsException()
+                }
             } catch (e: Exception) {
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
                 resetPassword()
@@ -88,7 +92,7 @@ class AuthenticationViewModel(
     private fun validateEmail(email: String): Int? {
         return when {
             email.isBlank() -> R.string.mandatory_field
-            !VerifyEmailFormatUseCase(email) -> R.string.error_incorrect_email_format
+            !VerifyEmailFormatUseCase(email) -> R.string.incorrect_email_format_error
             else -> null
         }
     }
@@ -109,6 +113,8 @@ class AuthenticationViewModel(
             is InternalServerException -> com.upsaclay.common.R.string.internal_server_error
 
             is NetworkErrorException -> com.upsaclay.common.R.string.unknown_network_error
+
+            is TimeoutCancellationException -> com.upsaclay.common.R.string.timeout_error
 
             else -> com.upsaclay.common.R.string.unknown_error
         }

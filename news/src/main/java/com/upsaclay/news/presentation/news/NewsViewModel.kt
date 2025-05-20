@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -69,7 +68,7 @@ class NewsViewModel(
 
     internal data class NewsUiState(
         val user: User? = null,
-        val announcements: List<Announcement> = emptyList(),
+        val announcements: List<Announcement>? = null,
         val refreshing: Boolean = false
     )
 }

@@ -56,12 +56,11 @@ dependencies {
     implementation(libs.jakewharton.timber)
 
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlin.test)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.koin.test)
+    testImplementation(libs.koin.test.junit4)
 
     implementation(project(":common:domain"))
 }

@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.upsaclay.authentication.R
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
-import com.upsaclay.common.domain.entity.DuplicateUserException
+import com.upsaclay.common.domain.entity.DuplicateDataException
 import com.upsaclay.common.domain.entity.ForbiddenException
 import com.upsaclay.common.domain.entity.InternalServerException
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.common.domain.usecase.GenerateIdUseCase
+import com.upsaclay.common.domain.usecase.GenerateRandomIdUseCase
 import com.upsaclay.common.domain.usecase.VerifyEmailFormatUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +35,7 @@ class ThirdRegistrationViewModel(
     private val _event = MutableSharedFlow<SingleUiEvent>()
     val event: SharedFlow<SingleUiEvent> = _event
 
-    private val userId = GenerateIdUseCase.stringId
+    private val userId = GenerateRandomIdUseCase.stringId
 
     fun onEmailChange(email: String) {
         _uiState.update {
@@ -66,7 +66,7 @@ class ThirdRegistrationViewModel(
         viewModelScope.launch {
             try {
                 if (userRepository.isUserExist(email)) {
-                    throw DuplicateUserException()
+                    throw DuplicateDataException()
                 }
 
                 val user = User(
@@ -107,7 +107,7 @@ class ThirdRegistrationViewModel(
     private fun validatePassword(password: String): Int? {
         return when {
             password.isBlank() -> R.string.mandatory_field
-            password.length < MIN_PASSWORD_LENGTH -> R.string.error_password_length
+            password.length < MIN_PASSWORD_LENGTH -> R.string.password_length_error
             else -> null
         }
     }
@@ -115,7 +115,7 @@ class ThirdRegistrationViewModel(
     private fun validateEmail(email: String): Int? {
         return when {
             email.isBlank() -> R.string.mandatory_field
-            !VerifyEmailFormatUseCase(email) -> R.string.error_incorrect_email_format
+            !VerifyEmailFormatUseCase(email) -> R.string.incorrect_email_format_error
             else -> null
         }
     }
@@ -125,7 +125,7 @@ class ThirdRegistrationViewModel(
             is NetworkErrorException -> com.upsaclay.common.R.string.unknown_network_error
             is ConnectException -> com.upsaclay.common.R.string.server_connection_error
             is ForbiddenException -> R.string.user_not_white_listed
-            is DuplicateUserException -> R.string.email_already_associated
+            is DuplicateDataException -> R.string.email_already_associated
             is SocketTimeoutException -> com.upsaclay.common.R.string.timeout_error
             is InternalServerException -> com.upsaclay.common.R.string.internal_server_error
             else -> com.upsaclay.common.R.string.unknown_error

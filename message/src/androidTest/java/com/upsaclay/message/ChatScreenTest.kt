@@ -1,29 +1,22 @@
 package com.upsaclay.message
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.isNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performScrollTo
-import androidx.navigation.testing.TestNavHostController
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messageFixture2
-import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.presentation.chat.ChatDestination
 import com.upsaclay.message.presentation.chat.ChatViewModel
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class ChatScreenUITest {
+class ChatScreenTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 

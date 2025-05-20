@@ -1,7 +1,6 @@
 package com.upsaclay.gedoise.data.repository
 
 import com.upsaclay.gedoise.domain.repository.ScreenRepository
-import kotlin.reflect.KClass
 
 internal class ScreenRepositoryImpl: ScreenRepository {
     private var _currentRoute: Any? = null

@@ -1,55 +1,60 @@
 package com.upsaclay.message.data.repository
 
-import androidx.paging.PagingData
+import com.upsaclay.common.data.exceptions.handleNetworkException
 import com.upsaclay.message.data.local.MessageLocalDataSource
 import com.upsaclay.message.data.remote.MessageRemoteDataSource
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.repository.MessageRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
+import java.time.LocalDateTime
 
 internal class MessageRepositoryImpl(
     private val messageLocalDataSource: MessageLocalDataSource,
     private val messageRemoteDataSource: MessageRemoteDataSource
 ): MessageRepository {
-    override fun getMessages(conversationId: Int): Flow<List<Message>> =
+    override fun getLocalMessages(conversationId: String): Flow<List<Message>> =
         messageLocalDataSource.getMessages(conversationId)
 
-    override fun getUnreadMessages(conversationId: Int): Flow<List<Message>> =
-        messageLocalDataSource.getUnreadMessages(conversationId)
+    override fun getRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<List<Message>> =
+        messageRemoteDataSource.listenMessages(conversationId, offsetTime)
 
-    override fun getRemoteMessages(conversationId: Int): Flow<List<Message>> =
-        messageRemoteDataSource.listenMessages(conversationId)
-
-    override suspend fun addMessage(message: Message) {
-        messageLocalDataSource.insertMessage(message)
-        messageRemoteDataSource.createMessage(message)
+    override suspend fun createLocalMessage(message: Message) {
+        messageLocalDataSource.createMessage(message)
     }
 
-    override suspend fun updateMessage(message: Message) {
-        messageLocalDataSource.updateMessage(message)
-        messageRemoteDataSource.updateMessage(message)
+    override suspend fun createRemoteMessage(message: Message) {
+        handleNetworkException(
+            message = "Failed to create message",
+            block = { messageRemoteDataSource.createMessage(message) }
+        )
     }
 
-    override suspend fun upsertMessage(message: Message) {
+    override suspend fun updateSeenMessage(message: Message) {
+        handleNetworkException(
+            message = "Failed to update seen message",
+            block = {
+                messageRemoteDataSource.updateSeenMessage(message)
+                messageLocalDataSource.updateMessage(message)
+            }
+        )
+    }
+
+    override suspend fun upsertLocalMessage(message: Message) {
         messageLocalDataSource.upsertMessage(message)
     }
 
-    override suspend fun deleteMessages(conversationId: Int) {
+    override suspend fun deleteLocalMessages(conversationId: String) {
         messageLocalDataSource.deleteMessages(conversationId)
-        messageRemoteDataSource.deleteMessages(conversationId)
+    }
+
+    override suspend fun deleteRemoteMessages(conversationId: String) {
+        handleNetworkException(
+            message = "Failed to delete messages",
+            block = { messageRemoteDataSource.deleteMessages(conversationId) }
+        )
     }
 
     override suspend fun deleteLocalMessages() {
         messageLocalDataSource.deleteMessages()
-    }
-
-    override suspend fun listenRemoteMessages(conversationId: Int) {
-        messageRemoteDataSource.listenMessages(conversationId)
-            .collect { messages ->
-                messages.forEach {
-                    messageLocalDataSource.upsertMessage(it)
-                }
-            }
     }
 }

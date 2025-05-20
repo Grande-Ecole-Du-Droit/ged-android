@@ -16,5 +16,7 @@ internal interface UserFirestoreApi {
 
     suspend fun updateProfilePictureFileName(userId: String, fileName: String?)
 
+    suspend fun deleteProfilePictureFileName(userId: String)
+
     suspend fun isUserExist(email: String): Boolean
 }

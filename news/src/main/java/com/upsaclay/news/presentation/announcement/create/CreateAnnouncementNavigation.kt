@@ -7,7 +7,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object CreateAnnouncementRoute
 
-fun NavController.navigateToCreateAnnouncement() = navigate(route = CreateAnnouncementRoute)
+fun NavController.navigateToCreateAnnouncement() {
+    navigate(route = CreateAnnouncementRoute)
+}
 
 fun NavGraphBuilder.createAnnouncementScreen(
     onBackClick: () -> Unit,

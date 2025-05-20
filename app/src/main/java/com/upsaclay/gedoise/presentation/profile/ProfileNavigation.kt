@@ -6,14 +6,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.upsaclay.common.domain.entity.User
 import kotlinx.serialization.Serializable
 
 @Serializable data object ProfileBaseRoute
 @Serializable data object ProfileRoute
 
-fun NavController.navigateToProfile(navOptions: NavOptions? = null) =
+fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
     navigate(route = ProfileBaseRoute, navOptions = navOptions)
+}
 
 fun NavGraphBuilder.profileSection(
     onAccountClick: () -> Unit,

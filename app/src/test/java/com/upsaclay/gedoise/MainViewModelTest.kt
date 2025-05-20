@@ -6,8 +6,7 @@ import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.common.domain.usersFixture
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
-import com.upsaclay.gedoise.domain.usecase.StartListeningDataUseCase
-import com.upsaclay.gedoise.domain.usecase.StopListeningDataUseCase
+import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase
 import com.upsaclay.gedoise.presentation.viewmodels.MainViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,8 +26,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
     private val userRepository: UserRepository = mockk()
-    private val startListeningDataUseCase: StartListeningDataUseCase = mockk()
-    private val stopListeningDataUseCase: StopListeningDataUseCase = mockk()
+    private val dataListeningUseCase: DataListeningUseCase = mockk()
     private val clearDataUseCase: ClearDataUseCase = mockk()
     private val authenticationRepository: AuthenticationRepository = mockk()
 
@@ -46,16 +44,15 @@ class MainViewModelTest {
         coEvery { userRepository.getUser(any()) } returns userFixture
         coEvery { userRepository.setCurrentUser(any()) } returns Unit
         coEvery { userRepository.deleteCurrentUser() } returns Unit
-        coEvery { startListeningDataUseCase() } returns Unit
-        coEvery { stopListeningDataUseCase() } returns Unit
+        coEvery { dataListeningUseCase.start() } returns Unit
+        coEvery { dataListeningUseCase.stop() } returns Unit
         coEvery { clearDataUseCase() } returns Unit
         coEvery { authenticationRepository.logout() } returns Unit
 
         mainViewModel = MainViewModel(
             userRepository = userRepository,
             authenticationRepository = authenticationRepository,
-            startListeningDataUseCase = startListeningDataUseCase,
-            stopListeningDataUseCase = stopListeningDataUseCase,
+            dataListeningUseCase = dataListeningUseCase,
             clearDataUseCase = clearDataUseCase
         )
     }
@@ -66,7 +63,7 @@ class MainViewModelTest {
         mainViewModel.startListening()
 
         // Then
-        coVerify { startListeningDataUseCase() }
+        coVerify { dataListeningUseCase.start() }
     }
 
     @Test
@@ -78,7 +75,7 @@ class MainViewModelTest {
         mainViewModel.startListening()
 
         // Then
-        coVerify { stopListeningDataUseCase() }
+        coVerify { dataListeningUseCase.stop() }
     }
 
     @Test

@@ -3,23 +3,22 @@ package com.upsaclay.gedoise
 import androidx.room.Room
 import com.upsaclay.common.AndroidConnectivityObserver
 import com.upsaclay.common.data.GED_SERVER_QUALIFIER
-import com.upsaclay.common.domain.e
-import com.upsaclay.gedoise.data.GedoiseDatabase
-import com.upsaclay.common.data.remote.api.FCMApi
 import com.upsaclay.common.data.local.FCMDataStore
 import com.upsaclay.common.data.local.FCMLocalDataSource
-import com.upsaclay.gedoise.data.repository.ScreenRepositoryImpl
+import com.upsaclay.common.data.remote.api.FCMApi
 import com.upsaclay.common.domain.ConnectivityObserver
+import com.upsaclay.common.domain.e
+import com.upsaclay.gedoise.data.GedoiseDatabase
+import com.upsaclay.gedoise.data.repository.ScreenRepositoryImpl
 import com.upsaclay.gedoise.domain.repository.ScreenRepository
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
-import com.upsaclay.gedoise.domain.usecase.StartListeningDataUseCase
-import com.upsaclay.gedoise.domain.usecase.StopListeningDataUseCase
+import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase
 import com.upsaclay.gedoise.domain.usecase.FCMTokenUseCase
 import com.upsaclay.gedoise.presentation.NotificationPresenter
+import com.upsaclay.gedoise.presentation.profile.ProfileViewModel
 import com.upsaclay.gedoise.presentation.profile.account.AccountViewModel
 import com.upsaclay.gedoise.presentation.viewmodels.MainViewModel
 import com.upsaclay.gedoise.presentation.viewmodels.NavigationViewModel
-import com.upsaclay.gedoise.presentation.profile.ProfileViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,11 +37,11 @@ private val BACKGROUND_SCOPE = named("BackgroundScope")
 val appModule = module {
     single<CoroutineScope>(BACKGROUND_SCOPE) {
         CoroutineScope(
-            SupervisorJob() +
-                    Dispatchers.IO +
-                    CoroutineExceptionHandler { coroutineContext, throwable ->
-                        e("Uncaught error in backgroundScope", throwable)
-                    }
+    SupervisorJob() +
+            Dispatchers.IO +
+            CoroutineExceptionHandler { coroutineContext, throwable ->
+                e("Uncaught error in backgroundScope", throwable)
+            }
         )
     }
 
@@ -72,8 +71,7 @@ val appModule = module {
     viewModelOf(::MainViewModel)
 
     singleOf(::ClearDataUseCase)
-    singleOf(::StartListeningDataUseCase)
-    singleOf(::StopListeningDataUseCase)
+    singleOf(::DataListeningUseCase)
 
     singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
     singleOf(::FCMLocalDataSource)

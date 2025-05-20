@@ -2,7 +2,6 @@ package com.upsaclay.common.domain.repository
 
 import com.upsaclay.common.domain.entity.User
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
     val user: Flow<User?>

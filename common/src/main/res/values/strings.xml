@@ -29,6 +29,7 @@
     <string name="deletion">Supression...</string>
     <string name="loading">Chargement...</string>
     <string name="search">Rechercher</string>
+    <string name="ok">OK</string>
     <string name="arrow_back_icon_description">Retour en arrière</string>
     <string name="ged_logo_description">Logo de l\'université de La Grande École du Droit</string>
     <string name="profile_picture_description">Photo de profil de l\'utilisateur</string>
@@ -57,6 +58,7 @@
     <string name="unknown_network_error">Une erreur réseau est survenue.</string>
     <string name="occurred_error">Une erreur est survenue</string>
     <string name="too_many_request_error">Vous avez effectué trop de requêtes. Veuillez réessayer dans quelques minutes.</string>
-    <string name="user_not_found">Aucun utilisateur trouvé</string>
-    <string name="timeout_error">Le serveur a mis trop de temps à répondre. Veuillez réessayer</string>
+    <string name="user_not_found_title_dialog">Utilisateur non trouvé</string>
+    <string name="user_not_found">L\'utilisateur n\'a pas été trouvé. Veuillez vous reconnecter.</string>
+    <string name="timeout_error">Le service a mis trop de temps à répondre. Veuillez réessayer</string>
 </resources>

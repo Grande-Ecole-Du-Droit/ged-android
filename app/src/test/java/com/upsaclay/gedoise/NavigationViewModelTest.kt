@@ -1,16 +1,14 @@
 package com.upsaclay.gedoise
 
-import com.google.gson.Gson
 import com.upsaclay.authentication.AuthenticationBaseRoute
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
 import com.upsaclay.authentication.presentation.registration.first.FirstRegistrationRoute
 import com.upsaclay.gedoise.domain.repository.ScreenRepository
 import com.upsaclay.gedoise.presentation.navigation.TopLevelDestination
 import com.upsaclay.gedoise.presentation.viewmodels.NavigationViewModel
-import com.upsaclay.message.domain.ConversationMapper
+import com.upsaclay.message.domain.JsonConverter
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.messageFixture
-import com.upsaclay.message.domain.messageFixture2
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
 import com.upsaclay.message.presentation.chat.ChatRoute
@@ -26,7 +24,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NavigationViewModelTest {
@@ -89,7 +86,7 @@ class NavigationViewModelTest {
     @Test
     fun intentToNavigate_should_update_intentScreen() = runTest {
         // Given
-        val screen = ChatRoute(ConversationMapper.toJson(conversationFixture))
+        val screen = ChatRoute(JsonConverter.fromConversation(conversationFixture))
 
         // When
         navigationViewModel = NavigationViewModel(
@@ -109,7 +106,7 @@ class NavigationViewModelTest {
     fun should_navigate_to_screen_when_authenticated() = runTest {
         // Given
         every { authenticationRepository.isAuthenticated } returns flowOf(true)
-        val screen = ChatRoute(ConversationMapper.toJson(conversationFixture))
+        val screen = ChatRoute(JsonConverter.fromConversation(conversationFixture))
 
         // When
         navigationViewModel = NavigationViewModel(
@@ -129,7 +126,7 @@ class NavigationViewModelTest {
     fun should_navigate_to_authentication_screen_when_unauthenticated() = runTest {
         // Given
         every { authenticationRepository.isAuthenticated } returns flowOf(false)
-        val screen = ChatRoute(ConversationMapper.toJson(conversationFixture))
+        val screen = ChatRoute(JsonConverter.fromConversation(conversationFixture))
 
         // When
         navigationViewModel = NavigationViewModel(

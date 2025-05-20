@@ -2,23 +2,24 @@ package com.upsaclay.message.domain.repository
 
 import com.upsaclay.message.domain.entity.Message
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 interface MessageRepository {
-    fun getMessages(conversationId: Int): Flow<List<Message>>
+    fun getLocalMessages(conversationId: String): Flow<List<Message>>
 
-    fun getUnreadMessages(conversationId: Int): Flow<List<Message>>
+    fun getRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<List<Message>>
 
-    fun getRemoteMessages(conversationId: Int): Flow<List<Message>>
+    suspend fun createLocalMessage(message: Message)
 
-    suspend fun addMessage(message: Message)
+    suspend fun createRemoteMessage(message: Message)
 
-    suspend fun updateMessage(message: Message)
+    suspend fun updateSeenMessage(message: Message)
 
-    suspend fun upsertMessage(message: Message)
+    suspend fun upsertLocalMessage(message: Message)
 
     suspend fun deleteLocalMessages()
 
-    suspend fun deleteMessages(conversationId: Int)
+    suspend fun deleteRemoteMessages(conversationId: String)
 
-    suspend fun listenRemoteMessages(conversationId: Int)
+    suspend fun deleteLocalMessages(conversationId: String)
 }

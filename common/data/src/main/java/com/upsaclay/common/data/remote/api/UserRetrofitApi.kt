@@ -1,28 +1,19 @@
 package com.upsaclay.common.data.remote.api
 
-import com.upsaclay.common.data.local.UserLocal
+import com.upsaclay.common.data.local.LocalUser
 import com.upsaclay.common.data.remote.ServerResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
 internal interface UserRetrofitApi {
-
-    @GET("users/{id}")
-    suspend fun getUser(@Path("id") userId: String): Response<UserLocal>
-
-    @FormUrlEncoded
-    @POST("users/get-user-with-email")
-    suspend fun getUserWithEmail(@Field("USER_EMAIL") userEmail: String): Response<UserLocal>
-
     @POST("users/create")
-    suspend fun createUser(@Body user: UserLocal): Response<ServerResponse>
+    suspend fun createUser(@Body user: LocalUser): Response<ServerResponse>
 
     @FormUrlEncoded
     @PUT("users/profile-picture-file-name")

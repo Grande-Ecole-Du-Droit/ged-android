@@ -12,29 +12,37 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.usersFixture
+import com.upsaclay.common.presentation.components.BackTopBar
 import com.upsaclay.common.presentation.components.CircularProgressBar
 import com.upsaclay.common.presentation.components.SimpleSearchBar
-import com.upsaclay.common.presentation.components.BackTopBar
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.message.R
 import com.upsaclay.message.domain.entity.Conversation
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -44,14 +52,33 @@ fun CreateConversationDestination(
     viewModel: CreateConversationViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val showSnackBar = { message: String ->
+        scope.launch {
+            snackbarHostState.showSnackbar(message = message)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect {
+            if (it is SingleUiEvent.Error) {
+                showSnackBar(context.getString(it.messageId))
+            }
+        }
+    }
 
     CreateConversationScreen(
         users = uiState.users,
         query = uiState.query,
         loading = uiState.loading,
+        snackbarHostState = snackbarHostState,
         onQueryChange = viewModel::onQueryChange,
         onUserClick = { user ->
-            onCreateConversationClick(viewModel.getConversation(user))
+            scope.launch {
+                viewModel.getConversation(user)?.let(onCreateConversationClick)
+            }
         },
         onBackClick = onBackClick
     )
@@ -62,6 +89,7 @@ fun CreateConversationScreen(
     users: List<User>,
     query: String,
     loading: Boolean,
+    snackbarHostState: SnackbarHostState = SnackbarHostState(),
     onQueryChange: (String) -> Unit,
     onUserClick: (User) -> Unit,
     onBackClick: () -> Unit
@@ -77,6 +105,11 @@ fun CreateConversationScreen(
                 },
                 title = stringResource(id = R.string.new_conversation)
             )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) {
+                Snackbar(it)
+            }
         }
     ) { paddingValues ->
         Column(

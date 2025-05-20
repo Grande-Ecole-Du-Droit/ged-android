@@ -3,14 +3,12 @@ package com.upsaclay.news.presentation.announcement.create
 import androidx.lifecycle.ViewModel
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.common.domain.usecase.GenerateIdUseCase
+import com.upsaclay.common.domain.usecase.GenerateRandomIdUseCase
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.domain.entity.AnnouncementState
 import com.upsaclay.news.domain.usecase.CreateAnnouncementUseCase
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import java.time.LocalDateTime
 
@@ -39,7 +37,7 @@ class CreateAnnouncementViewModel(
         val (title, content) = _uiState.value
 
         val announcement = Announcement(
-            id = GenerateIdUseCase.stringId,
+            id = GenerateRandomIdUseCase.stringId,
             title = if (title.isBlank()) null else title.trim(),
             content = content.trim(),
             date = LocalDateTime.now(),

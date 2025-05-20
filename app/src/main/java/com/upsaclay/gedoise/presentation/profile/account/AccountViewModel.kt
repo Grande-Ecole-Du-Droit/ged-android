@@ -4,13 +4,12 @@ import android.accounts.NetworkErrorException
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
+import com.upsaclay.common.domain.entity.UserNotFoundException
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.DeleteProfilePictureUseCase
 import com.upsaclay.common.domain.usecase.UpdateProfilePictureUseCase
-import com.upsaclay.gedoise.domain.entities.AccountScreenState
-import com.upsaclay.common.domain.entity.SingleUiEvent
-import com.upsaclay.common.domain.entity.UserNotFoundException
 import com.upsaclay.gedoise.R
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,7 +64,7 @@ class AccountViewModel(
             try {
                 val user = _uiState.value.user ?: throw UserNotFoundException()
                 updateState(loading = true)
-                user.profilePictureUrl?.let {
+                user.profilePictureFileName?.let {
                     deleteProfilePictureUseCase(user.id, it)
                 }
                 resetProfilePictureUri()
@@ -134,4 +133,9 @@ class AccountViewModel(
         val loading: Boolean = false,
         val screenState: AccountScreenState = AccountScreenState.READ,
     )
+}
+
+enum class AccountScreenState {
+    READ,
+    EDIT
 }

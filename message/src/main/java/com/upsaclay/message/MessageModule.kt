@@ -15,10 +15,11 @@ val messageModule = module {
         ChatViewModel(
             conversation = conversation,
             userRepository = get(),
+            conversationRepository = get(),
             messageRepository = get(),
             sendMessageUseCase = get(),
-            createConversationUseCase = get(),
-            notificationUseCase = get()
+            notificationUseCase = get(),
+            getUnreadMessagesUseCase = get()
         )
     }
 }

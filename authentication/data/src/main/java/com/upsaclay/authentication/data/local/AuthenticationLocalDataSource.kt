@@ -5,8 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.upsaclay.common.data.getFlowValue
-import com.upsaclay.common.data.setValue
+import com.upsaclay.common.data.extensions.getFlowValue
+import com.upsaclay.common.data.extensions.setValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,7 +21,6 @@ internal class AuthenticationLocalDataSource(context: Context) {
         store.setValue(authenticationKey, isAuthenticated)
     }
 
-    suspend fun getAuthenticationState(): Flow<Boolean> = withContext(Dispatchers.IO) {
+    fun getAuthenticationState(): Flow<Boolean> =
         store.getFlowValue(authenticationKey).map { it ?: false }
-    }
 }

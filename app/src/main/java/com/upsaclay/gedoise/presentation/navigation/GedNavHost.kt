@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.upsaclay.authentication.authenticationSection
@@ -23,7 +23,6 @@ import com.upsaclay.gedoise.presentation.profile.account.navigateToAccount
 import com.upsaclay.gedoise.presentation.profile.navigateToProfile
 import com.upsaclay.gedoise.presentation.profile.profileSection
 import com.upsaclay.gedoise.presentation.viewmodels.NavigationViewModel
-import com.upsaclay.message.domain.ConversationMapper
 import com.upsaclay.message.presentation.chat.chatScreen
 import com.upsaclay.message.presentation.chat.navigateToChat
 import com.upsaclay.message.presentation.conversation.conversationSection
@@ -81,6 +80,8 @@ fun GedNavHost(
         navController = navController,
         startDestination = uiState.startDestination
     ) {
+        composable<SplashScreenRoute> {}
+
         authenticationSection(
             onRegistrationClick = navController::navigateToFirstRegistration,
             onLoginClick = navController::navigateToNews

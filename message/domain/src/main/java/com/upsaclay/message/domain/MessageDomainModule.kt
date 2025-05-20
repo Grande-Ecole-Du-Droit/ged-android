@@ -4,8 +4,7 @@ import com.upsaclay.common.domain.e
 import com.upsaclay.message.domain.usecase.CreateConversationUseCase
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
 import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
-import com.upsaclay.message.domain.usecase.ListenRemoteConversationsUseCase
-import com.upsaclay.message.domain.usecase.ListenRemoteMessagesUseCase
+import com.upsaclay.message.domain.usecase.ListenRemoteConversationsMessagesUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -34,14 +33,8 @@ val messageDomainModule = module {
     singleOf(::SendMessageUseCase)
 
     single {
-        ListenRemoteConversationsUseCase(
-            conversationRepository = get(),
-            scope = get(BACKGROUND_SCOPE)
-        )
-    }
-
-    single {
-        ListenRemoteMessagesUseCase(
+        ListenRemoteConversationsMessagesUseCase(
+            userRepository = get(),
             conversationRepository = get(),
             messageRepository = get(),
             scope = get(BACKGROUND_SCOPE)

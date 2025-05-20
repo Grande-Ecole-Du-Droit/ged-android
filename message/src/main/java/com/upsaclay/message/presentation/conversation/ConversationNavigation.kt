@@ -12,8 +12,9 @@ import kotlinx.serialization.Serializable
 @Serializable data object ConversationBaseRoute
 @Serializable data object ConversationRoute
 
-fun NavController.navigateToConversation(navOptions: NavOptions? = null) =
+fun NavController.navigateToConversation(navOptions: NavOptions? = null) {
     navigate(route = ConversationBaseRoute, navOptions = navOptions)
+}
 
 fun NavGraphBuilder.conversationSection(
     onConversationClick: (Conversation) -> Unit,

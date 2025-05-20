@@ -6,8 +6,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.domain.userFixture2
-import com.upsaclay.gedoise.domain.entities.AccountScreenState
 import com.upsaclay.gedoise.presentation.profile.account.AccountScreen
+import com.upsaclay.gedoise.presentation.profile.account.AccountScreenState
 import com.upsaclay.gedoise.presentation.profile.account.AccountViewModel
 import io.mockk.every
 import io.mockk.mockk
@@ -17,7 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class AccountScreenUITest {
+class AccountScreenTest {
     private val uiStateFixture = AccountViewModel.AccountUiState(
         user = userFixture,
         screenState = AccountScreenState.READ,
@@ -28,17 +28,17 @@ class AccountScreenUITest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private val accountViewModel: AccountViewModel = mockk()
+    private val viewModel: AccountViewModel = mockk()
 
     @Before
     fun setUp() {
-        every { accountViewModel.uiState } returns MutableStateFlow(AccountViewModel.AccountUiState())
-        every { accountViewModel.event } returns MutableSharedFlow()
-        every { accountViewModel.onProfilePictureUriChange(any()) } returns Unit
-        every { accountViewModel.onScreenStateChange(any()) } returns Unit
-        every { accountViewModel.resetProfilePictureUri() } returns Unit
-        every { accountViewModel.deleteProfilePicture() } returns Unit
-        every { accountViewModel.resetValues() } returns Unit
+        every { viewModel.uiState } returns MutableStateFlow(AccountViewModel.AccountUiState())
+        every { viewModel.event } returns MutableSharedFlow()
+        every { viewModel.onProfilePictureUriChange(any()) } returns Unit
+        every { viewModel.onScreenStateChange(any()) } returns Unit
+        every { viewModel.resetProfilePictureUri() } returns Unit
+        every { viewModel.deleteProfilePicture() } returns Unit
+        every { viewModel.resetValues() } returns Unit
     }
 
     @Test
@@ -50,11 +50,11 @@ class AccountScreenUITest {
                 loading = uiStateFixture.loading,
                 screenState = uiStateFixture.screenState,
                 profilePictureUri = uiStateFixture.profilePictureUri,
-                onProfilePictureUriChange = accountViewModel::onProfilePictureUriChange,
-                onScreenStateChange = accountViewModel::onScreenStateChange,
-                onDeleteProfilePictureClick = accountViewModel::deleteProfilePicture,
-                onSaveProfilePictureClick = accountViewModel::resetValues,
-                onCancelUpdateProfilePictureClick = accountViewModel::resetValues,
+                onProfilePictureUriChange = viewModel::onProfilePictureUriChange,
+                onScreenStateChange = viewModel::onScreenStateChange,
+                onDeleteProfilePictureClick = viewModel::deleteProfilePicture,
+                onSaveProfilePictureClick = viewModel::resetValues,
+                onCancelUpdateProfilePictureClick = viewModel::resetValues,
                 onBackClick = { }
             )
         }
@@ -75,11 +75,11 @@ class AccountScreenUITest {
                 loading = uiStateFixture.loading,
                 screenState = uiStateFixture.screenState,
                 profilePictureUri = uiStateFixture.profilePictureUri,
-                onProfilePictureUriChange = accountViewModel::onProfilePictureUriChange,
-                onScreenStateChange = accountViewModel::onScreenStateChange,
-                onDeleteProfilePictureClick = accountViewModel::deleteProfilePicture,
-                onSaveProfilePictureClick = accountViewModel::resetValues,
-                onCancelUpdateProfilePictureClick = accountViewModel::resetValues,
+                onProfilePictureUriChange = viewModel::onProfilePictureUriChange,
+                onScreenStateChange = viewModel::onScreenStateChange,
+                onDeleteProfilePictureClick = viewModel::deleteProfilePicture,
+                onSaveProfilePictureClick = viewModel::resetValues,
+                onCancelUpdateProfilePictureClick = viewModel::resetValues,
                 onBackClick = { }
             )
         }
@@ -97,11 +97,11 @@ class AccountScreenUITest {
                 loading = uiStateFixture.loading,
                 screenState = uiStateFixture.screenState,
                 profilePictureUri = uiStateFixture.profilePictureUri,
-                onProfilePictureUriChange = accountViewModel::onProfilePictureUriChange,
-                onScreenStateChange = accountViewModel::onScreenStateChange,
-                onDeleteProfilePictureClick = accountViewModel::deleteProfilePicture,
-                onSaveProfilePictureClick = accountViewModel::resetValues,
-                onCancelUpdateProfilePictureClick = accountViewModel::resetValues,
+                onProfilePictureUriChange = viewModel::onProfilePictureUriChange,
+                onScreenStateChange = viewModel::onScreenStateChange,
+                onDeleteProfilePictureClick = viewModel::deleteProfilePicture,
+                onSaveProfilePictureClick = viewModel::resetValues,
+                onCancelUpdateProfilePictureClick = viewModel::resetValues,
                 onBackClick = { }
             )
         }
