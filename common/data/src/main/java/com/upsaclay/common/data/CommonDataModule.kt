@@ -43,7 +43,7 @@ private val BACKGROUND_SCOPE = named("BackgroundScope")
 val commonDataModule = module {
     single<Retrofit>(GED_SERVER_QUALIFIER) {
         Retrofit.Builder()
-            .baseUrl("https://gedserver.duckdns.org:3000")
+            .baseUrl(BuildConfig.SERVER_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
