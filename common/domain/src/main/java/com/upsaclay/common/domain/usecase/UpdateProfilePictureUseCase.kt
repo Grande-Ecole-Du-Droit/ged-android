@@ -6,6 +6,7 @@ import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.FileRepository
 import com.upsaclay.common.domain.repository.ImageRepository
 import com.upsaclay.common.domain.repository.UserRepository
+import kotlinx.coroutines.withTimeout
 
 class UpdateProfilePictureUseCase(
     private val fileRepository: FileRepository,
@@ -16,9 +17,11 @@ class UpdateProfilePictureUseCase(
         val fileName = getFileName(user.id)
         val file = fileRepository.createFileFromUri(fileName, profilePictureUri)
 
-        imageRepository.uploadImage(file)
-        userRepository.updateProfilePictureFileName(user.id, file.name)
-        user.profilePictureFileName?.let { deletePreviousProfilePicture(it) }
+        withTimeout(15000) {
+            imageRepository.uploadImage(file)
+            userRepository.updateProfilePictureFileName(user.id, file.name)
+            user.profilePictureFileName?.let { deletePreviousProfilePicture(it) }
+        }
     }
 
     private suspend fun deletePreviousProfilePicture(userProfilePictureUrl: String) {

@@ -11,6 +11,7 @@ import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.DeleteProfilePictureUseCase
 import com.upsaclay.common.domain.usecase.UpdateProfilePictureUseCase
 import com.upsaclay.gedoise.R
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -45,7 +46,7 @@ class AccountViewModel(
     fun updateProfilePicture() {
         viewModelScope.launch {
             try {
-                val user = _uiState.value.user ?: throw UserNotFoundException()
+                val user = requireNotNull(_uiState.value.user)
                 _uiState.value.profilePictureUri?.let { uri ->
                     updateState(loading = true)
                     updateProfilePictureUseCase(user, uri)
@@ -104,8 +105,9 @@ class AccountViewModel(
         return when (error) {
             is ConnectException -> com.upsaclay.common.R.string.server_connection_error
             is SocketTimeoutException -> com.upsaclay.common.R.string.timeout_error
-            is UserNotFoundException -> com.upsaclay.common.R.string.user_not_found
+            is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
             is NetworkErrorException -> com.upsaclay.common.R.string.unknown_network_error
+            is TimeoutCancellationException -> com.upsaclay.common.R.string.timeout_error
             is IOException -> com.upsaclay.common.R.string.unknown_network_error
             else -> com.upsaclay.common.R.string.unknown_error
         }
