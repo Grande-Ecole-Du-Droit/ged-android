@@ -44,19 +44,29 @@ class CreateConversationViewModel(
     }
 
     fun onQueryChange(userName: String) {
-        _uiState.update { it.copy(query = userName) }
+        _uiState.update {
+            it.copy(query = userName)
+        }
+
         getFilteredUsers(userName).also { users ->
-            _uiState.update { it.copy(users = users) }
+            _uiState.update {
+                it.copy(users = users)
+            }
         }
     }
 
     private fun fetchUsers() {
-        _uiState.update { it.copy(loading = true) }
+        _uiState.update {
+            it.copy(loading = true)
+        }
+
         viewModelScope.launch {
             userRepository.getUsers()
                 .filter { it.id != userRepository.currentUser?.id }
                 .also { users ->
-                    _uiState.update { it.copy(users = users, loading = false) }
+                    _uiState.update {
+                        it.copy(users = users, loading = false)
+                    }
                     defaultUsers = users
                 }
         }

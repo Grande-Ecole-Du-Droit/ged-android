@@ -12,6 +12,7 @@ import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.toFcm
+import kotlinx.coroutines.withTimeout
 import java.time.LocalDateTime
 
 class SendMessageUseCase(
@@ -27,7 +28,9 @@ class SendMessageUseCase(
         val message = newMessage(conversation, content, user.id)
         try {
             createDataLocally(conversation, message)
-            createDataRemotely(conversation, message, user.id)
+            withTimeout(15000) {
+                createDataRemotely(conversation, message, user.id)
+            }
             sendNotification(conversation, message, user)
         } catch (_: Exception) {
             messageRepository.upsertLocalMessage(message.copy(state = MessageState.ERROR))

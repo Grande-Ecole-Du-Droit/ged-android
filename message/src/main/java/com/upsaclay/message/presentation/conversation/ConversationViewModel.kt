@@ -12,6 +12,7 @@ import com.upsaclay.message.domain.entity.ConversationUi
 import com.upsaclay.message.domain.repository.ConversationMessageRepository
 import com.upsaclay.message.domain.toConversationUI
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -68,6 +69,7 @@ class ConversationViewModel(
             is ConnectException -> com.upsaclay.common.R.string.unknown_network_error
             is TooManyRequestException -> com.upsaclay.common.R.string.too_many_request_error
             is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
+            is TimeoutCancellationException -> com.upsaclay.common.R.string.timeout_error
             else -> com.upsaclay.common.R.string.unknown_error
         }
     }
