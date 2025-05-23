@@ -44,7 +44,7 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
     }
 
     override suspend fun getUserWithEmail(userEmail: String): FirestoreUser? = suspendCoroutine { continuation ->
-        usersCollection.whereEqualTo(UserField.Remote.EMAIL, userEmail)
+        usersCollection.whereEqualTo(UserField.EMAIL, userEmail)
             .get()
             .addOnSuccessListener { snapshot ->
                 val user = snapshot.documents.firstOrNull()?.toObject(FirestoreUser::class.java)
@@ -77,7 +77,7 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
     override suspend fun updateProfilePictureFileName(userId: String, fileName: String?) {
         suspendCoroutine { continuation ->
             usersCollection.document(userId)
-                .update(UserField.Remote.PROFILE_PICTURE_FILE_NAME, fileName)
+                .update(UserField.PROFILE_PICTURE_FILE_NAME, fileName)
                 .addOnSuccessListener { continuation.resume(Unit) }
                 .addOnFailureListener { continuation.resumeWithException(it) }
         }
@@ -86,14 +86,14 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
     override suspend fun deleteProfilePictureFileName(userId: String) {
         suspendCoroutine { continuation ->
             usersCollection.document(userId)
-                .update(UserField.Remote.PROFILE_PICTURE_FILE_NAME, FieldValue.delete())
+                .update(UserField.PROFILE_PICTURE_FILE_NAME, FieldValue.delete())
                 .addOnSuccessListener { continuation.resume(Unit) }
                 .addOnFailureListener { continuation.resumeWithException(it) }
         }
     }
 
     override suspend fun isUserExist(email: String): Boolean = suspendCoroutine { continuation ->
-        usersCollection.whereEqualTo(UserField.Remote.EMAIL, email).get()
+        usersCollection.whereEqualTo(UserField.EMAIL, email).get()
             .addOnSuccessListener { continuation.resume(!it.isEmpty) }
             .addOnFailureListener { continuation.resumeWithException(it) }
     }

@@ -18,8 +18,8 @@ internal interface UserRetrofitApi {
     @FormUrlEncoded
     @PUT("users/profile-picture-file-name")
     suspend fun updateProfilePictureFileName(
-        @Field("USER_ID") userId: String,
-        @Field("USER_PROFILE_PICTURE_FILE_NAME") userProfilePictureFileName: String
+        @Field("userId") userId: String,
+        @Field("userProfilePictureFileName") userProfilePictureFileName: String
     ): Response<ServerResponse>
 
     @DELETE("users/profile-picture-file-name/{userId}")
