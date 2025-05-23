@@ -1,10 +1,12 @@
 package com.upsaclay.common.data.remote
 
-import com.upsaclay.common.data.UserMapper
 import com.upsaclay.common.data.exceptions.parseOracleException
 import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.data.remote.api.UserFirestoreApi
 import com.upsaclay.common.data.remote.api.UserRetrofitApi
+import com.upsaclay.common.data.toDTO
+import com.upsaclay.common.data.toFirestoreUser
+import com.upsaclay.common.data.toUser
 import com.upsaclay.common.domain.entity.ForbiddenException
 import com.upsaclay.common.domain.entity.InternalServerException
 import com.upsaclay.common.domain.entity.User
@@ -20,22 +22,20 @@ internal class UserRemoteDataSource(
     private val userFirestoreApi: UserFirestoreApi
 ) {
     suspend fun getUser(userId: String): User? = withContext(Dispatchers.IO) {
-        userFirestoreApi.getUser(userId)
-            ?.let(UserMapper::toDomain)
+        userFirestoreApi.getUser(userId)?.toUser()
     }
 
     suspend fun getUserFlow(userId: String): Flow<User> = withContext(Dispatchers.IO) {
         userFirestoreApi.getUserFlow(userId)
-            .mapNotNull { it?.let(UserMapper::toDomain) }
+            .mapNotNull { it?.toUser() }
     }
 
     suspend fun getUserFirestoreWithEmail(userEmail: String): User? = withContext(Dispatchers.IO) {
-        userFirestoreApi.getUserWithEmail(userEmail)
-            ?.let(UserMapper::toDomain)
+        userFirestoreApi.getUserWithEmail(userEmail)?.toUser()
     }
 
     suspend fun getUsers(): List<User> = withContext(Dispatchers.IO) {
-        userFirestoreApi.getUsers().map(UserMapper::toDomain)
+        userFirestoreApi.getUsers().map { it.toUser() }
     }
 
     suspend fun createUser(user: User) {
@@ -74,7 +74,7 @@ internal class UserRemoteDataSource(
     }
 
     private suspend fun createUserWithOracle(user: User) {
-        val response = userRetrofitApi.createUser(UserMapper.toDTO(user))
+        val response = userRetrofitApi.createUser(user.toDTO())
         if (!response.isSuccessful) {
             val errorMessage = formatHttpError("Error creating user with Oracle", response)
             if (response.code() == HttpURLConnection.HTTP_FORBIDDEN) {
@@ -85,6 +85,6 @@ internal class UserRemoteDataSource(
     }
 
     private suspend fun createUserWithFirestore(user: User) {
-        userFirestoreApi.createUser(UserMapper.toFirestoreUser(user))
+        userFirestoreApi.createUser(user.toFirestoreUser())
     }
 }

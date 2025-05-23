@@ -1,6 +1,6 @@
 package com.upsaclay.common.data.remote.api
 
-import com.upsaclay.common.data.local.LocalUser
+import com.upsaclay.common.data.local.UserDTO
 import com.upsaclay.common.data.remote.ServerResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -13,7 +13,7 @@ import retrofit2.http.Path
 
 internal interface UserRetrofitApi {
     @POST("users/create")
-    suspend fun createUser(@Body user: LocalUser): Response<ServerResponse>
+    suspend fun createUser(@Body user: UserDTO): Response<ServerResponse>
 
     @FormUrlEncoded
     @PUT("users/profile-picture-file-name")

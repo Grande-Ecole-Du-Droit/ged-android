@@ -10,61 +10,59 @@ import com.upsaclay.news.data.remote.model.RemoteAnnouncementWithUser
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.domain.entity.AnnouncementState
 
-internal object AnnouncementMapper {
-    fun toLocal(announcement: Announcement) = LocalAnnouncement(
-        announcementId = announcement.id,
-        announcementTitle = announcement.title,
-        announcementContent = announcement.content,
-        announcementDate = announcement.date.toLong(),
-        announcementState = announcement.state,
-        userId = announcement.author.id,
-        userFirstName = announcement.author.firstName,
-        userLastName = announcement.author.lastName,
-        userEmail = announcement.author.email,
-        userSchoolLevel = announcement.author.schoolLevel,
-        userIsMember = announcement.author.isMember,
-        userProfilePictureFileName = announcement.author.profilePictureFileName
-    )
+fun Announcement.toLocal() = LocalAnnouncement(
+    announcementId = id,
+    announcementTitle = title,
+    announcementContent = content,
+    announcementDate = date.toLong(),
+    announcementState = state,
+    userId = author.id,
+    userFirstName = author.firstName,
+    userLastName = author.lastName,
+    userEmail = author.email,
+    userSchoolLevel = author.schoolLevel,
+    userIsMember = author.isMember,
+    userProfilePictureFileName = author.profilePictureFileName
+)
 
-    fun toDomain(localAnnouncement: LocalAnnouncement) = Announcement(
-        id = localAnnouncement.announcementId,
-        title = localAnnouncement.announcementTitle,
-        content = localAnnouncement.announcementContent,
-        date = localAnnouncement.announcementDate.toLocalDateTime(),
-        author = User(
-            id = localAnnouncement.userId,
-            firstName = localAnnouncement.userFirstName,
-            lastName = localAnnouncement.userLastName,
-            email = localAnnouncement.userEmail,
-            schoolLevel = localAnnouncement.userSchoolLevel,
-            isMember = localAnnouncement.userIsMember,
-            profilePictureFileName = localAnnouncement.userProfilePictureFileName
-        ),
-        state = localAnnouncement.announcementState
-    )
+fun LocalAnnouncement.toAnnouncement() = Announcement(
+    id = announcementId,
+    title = announcementTitle,
+    content = announcementContent,
+    date = announcementDate.toLocalDateTime(),
+    author = User(
+        id = userId,
+        firstName = userFirstName,
+        lastName = userLastName,
+        email = userEmail,
+        schoolLevel = userSchoolLevel,
+        isMember = userIsMember,
+        profilePictureFileName = userProfilePictureFileName
+    ),
+    state = announcementState
+)
 
-    fun toDomain(remoteAnnouncement: RemoteAnnouncementWithUser) = Announcement(
-        id = remoteAnnouncement.announcementId,
-        title = remoteAnnouncement.announcementTitle,
-        content = remoteAnnouncement.announcementContent,
-        date = remoteAnnouncement.announcementDate.toLocalDateTime(),
-        author = User(
-            id = remoteAnnouncement.userId,
-            firstName = remoteAnnouncement.userFirstName,
-            lastName = remoteAnnouncement.userLastName,
-            email = remoteAnnouncement.userEmail,
-            schoolLevel = remoteAnnouncement.userSchoolLevel,
-            isMember = remoteAnnouncement.userIsMember == 1,
-            profilePictureFileName = formatProfilePictureUrl(remoteAnnouncement.profilePictureFileName)
-        ),
-        state = AnnouncementState.PUBLISHED
-    )
+internal fun RemoteAnnouncementWithUser.toAnnouncement() = Announcement(
+    id = announcementId,
+    title = announcementTitle,
+    content = announcementContent,
+    date = announcementDate.toLocalDateTime(),
+    author = User(
+        id = userId,
+        firstName = userFirstName,
+        lastName = userLastName,
+        email = userEmail,
+        schoolLevel = userSchoolLevel,
+        isMember = userIsMember == 1,
+        profilePictureFileName = formatProfilePictureUrl(profilePictureFileName)
+    ),
+    state = AnnouncementState.PUBLISHED
+)
 
-    fun toRemote(announcement: Announcement) = RemoteAnnouncement(
-        announcementId = announcement.id,
-        announcementTitle = announcement.title,
-        announcementContent = announcement.content,
-        announcementDate = announcement.date.toLong(),
-        userId = announcement.author.id
-    )
-}
+internal fun Announcement.toRemote() = RemoteAnnouncement(
+    announcementId = id,
+    announcementTitle = title,
+    announcementContent = content,
+    announcementDate = date.toLong(),
+    userId = author.id
+)

@@ -16,13 +16,13 @@ internal class UserDataStore(context: Context) {
     private val store = context.dataStore
     private val userKey = stringPreferencesKey("userKey")
 
-    suspend fun storeCurrentUser(user: LocalUser) {
+    suspend fun storeCurrentUser(user: UserDTO) {
         store.setGsonValue(userKey, user)
     }
 
-    fun getCurrentUserFlow(): Flow<LocalUser?> = store.getGsonFlowValue<LocalUser>(userKey)
+    fun getCurrentUserFlow(): Flow<UserDTO?> = store.getGsonFlowValue<UserDTO>(userKey)
 
-    suspend fun getCurrentUser(): LocalUser? = store.getGsonValue(userKey)
+    suspend fun getCurrentUser(): UserDTO? = store.getGsonValue(userKey)
 
     suspend fun removeCurrentUser() {
         store.edit { it.remove(userKey) }
