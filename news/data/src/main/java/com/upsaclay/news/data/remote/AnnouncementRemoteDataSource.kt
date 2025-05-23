@@ -2,7 +2,6 @@ package com.upsaclay.news.data.remote
 
 import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.domain.entity.InternalServerException
-import com.upsaclay.news.data.AnnouncementMapper
 import com.upsaclay.news.data.remote.api.AnnouncementApi
 import com.upsaclay.news.data.toAnnouncement
 import com.upsaclay.news.data.toRemote

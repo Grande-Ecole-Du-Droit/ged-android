@@ -3,39 +3,39 @@ package com.upsaclay.news.data.remote.model
 import com.google.gson.annotations.SerializedName
 
 internal data class RemoteAnnouncement(
-    @SerializedName("ANNOUNCEMENT_ID")
+    @SerializedName("announcementId")
     val announcementId: String,
-    @SerializedName("ANNOUNCEMENT_TITLE")
+    @SerializedName("announcementTitle")
     val announcementTitle: String?,
-    @SerializedName("ANNOUNCEMENT_CONTENT")
+    @SerializedName("announcementContent")
     val announcementContent: String,
-    @SerializedName("ANNOUNCEMENT_DATE")
+    @SerializedName("announcementDate")
     val announcementDate: Long,
-    @SerializedName("USER_ID")
+    @SerializedName("userId")
     val userId: String
 )
 
 internal data class RemoteAnnouncementWithUser(
-    @SerializedName("ANNOUNCEMENT_ID")
+    @SerializedName("announcementId")
     val announcementId: String,
-    @SerializedName("ANNOUNCEMENT_TITLE")
+    @SerializedName("announcementTitle")
     val announcementTitle: String?,
-    @SerializedName("ANNOUNCEMENT_CONTENT")
+    @SerializedName("announcementContent")
     val announcementContent: String,
-    @SerializedName("ANNOUNCEMENT_DATE")
+    @SerializedName("announcementDate")
     val announcementDate: Long,
-    @SerializedName("USER_ID")
+    @SerializedName("userId")
     val userId: String,
-    @SerializedName("USER_FIRST_NAME")
+    @SerializedName("userFirstName")
     val userFirstName: String,
-    @SerializedName("USER_LAST_NAME")
+    @SerializedName("userLastName")
     val userLastName: String,
-    @SerializedName("USER_EMAIL")
+    @SerializedName("userEmail")
     val userEmail: String,
-    @SerializedName("USER_SCHOOL_LEVEL")
+    @SerializedName("userSchoolLevel")
     val userSchoolLevel: String,
-    @SerializedName("USER_IS_MEMBER")
+    @SerializedName("userIsMember")
     val userIsMember: Int,
-    @SerializedName("USER_PROFILE_PICTURE_FILE_NAME")
+    @SerializedName("userProfilePictureFileName")
     val profilePictureFileName: String?
 )

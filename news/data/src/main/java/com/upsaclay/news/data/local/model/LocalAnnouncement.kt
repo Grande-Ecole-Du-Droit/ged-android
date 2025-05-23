@@ -10,28 +10,28 @@ const val ANNOUNCEMENTS_TABLE = "announcements_table"
 @Entity(tableName = ANNOUNCEMENTS_TABLE)
 data class LocalAnnouncement(
     @PrimaryKey
-    @ColumnInfo(name = "ANNOUNCEMENT_ID")
+    @ColumnInfo(name = "announcementId")
     val announcementId: String,
-    @ColumnInfo(name = "ANNOUNCEMENT_TITLE")
+    @ColumnInfo(name = "announcementTitle")
     val announcementTitle: String?,
-    @ColumnInfo(name = "ANNOUNCEMENT_CONTENT")
+    @ColumnInfo(name = "announcementContent")
     val announcementContent: String,
-    @ColumnInfo(name = "ANNOUNCEMENT_DATE")
+    @ColumnInfo(name = "announcementDate")
     val announcementDate: Long,
-    @ColumnInfo(name = "ANNOUNCEMENT_STATE")
+    @ColumnInfo(name = "announcementState")
     val announcementState: AnnouncementState,
-    @ColumnInfo("USER_ID")
+    @ColumnInfo("userId")
     val userId: String,
-    @ColumnInfo("USER_FIRST_NAME")
+    @ColumnInfo("userFirstName")
     val userFirstName: String,
-    @ColumnInfo("USER_LAST_NAME")
+    @ColumnInfo("userLastName")
     val userLastName: String,
-    @ColumnInfo("USER_EMAIL")
+    @ColumnInfo("userEmail")
     val userEmail: String,
-    @ColumnInfo("USER_SCHOOL_LEVEL")
+    @ColumnInfo("userSchoolLevel")
     val userSchoolLevel: String,
-    @ColumnInfo("USER_IS_MEMBER")
+    @ColumnInfo("userIsMember")
     val userIsMember: Boolean,
-    @ColumnInfo("USER_PROFILE_PICTURE_FILE_NAME")
+    @ColumnInfo("userProfilePictureFileName")
     val userProfilePictureFileName: String?
 )
