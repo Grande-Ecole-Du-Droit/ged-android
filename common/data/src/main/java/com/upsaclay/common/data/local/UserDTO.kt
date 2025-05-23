@@ -3,9 +3,9 @@ package com.upsaclay.common.data.local
 import com.google.gson.annotations.SerializedName
 import com.upsaclay.common.data.UserField
 
-internal data class LocalUser(
+internal data class UserDTO(
     @SerializedName(UserField.Local.USER_ID)
-    val userId: String? = null,
+    val userId: String,
     @SerializedName(UserField.Local.USER_FIRST_NAME)
     val userFirstName: String,
     @SerializedName(UserField.Local.USER_LAST_NAME)

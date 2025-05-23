@@ -4,6 +4,8 @@ import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.domain.entity.InternalServerException
 import com.upsaclay.news.data.AnnouncementMapper
 import com.upsaclay.news.data.remote.api.AnnouncementApi
+import com.upsaclay.news.data.toAnnouncement
+import com.upsaclay.news.data.toRemote
 import com.upsaclay.news.domain.entity.Announcement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +20,7 @@ internal class AnnouncementRemoteDataSource(private val announcementApi: Announc
             val response = announcementApi.getAnnouncements()
             if (response.isSuccessful) {
                 val remoteAnnouncements = response.body().takeIf { it != null } ?: emptyList()
-                remoteAnnouncements.map(AnnouncementMapper::toDomain)
+                remoteAnnouncements.map { it.toAnnouncement() }
             } else {
                 val errorMessage = formatHttpError("Error getting remote announcements", response)
                 e(errorMessage)
@@ -33,7 +35,7 @@ internal class AnnouncementRemoteDataSource(private val announcementApi: Announc
     suspend fun createAnnouncement(announcement: Announcement) {
         withContext(Dispatchers.IO) {
             val response = try {
-                announcementApi.createAnnouncement(AnnouncementMapper.toRemote(announcement))
+                announcementApi.createAnnouncement(announcement.toRemote())
             }
             catch (e: ConnectException) {
                 e("Error creating remote announcement: ${e.message}")
@@ -84,7 +86,7 @@ internal class AnnouncementRemoteDataSource(private val announcementApi: Announc
     suspend fun updateAnnouncement(announcement: Announcement) {
         withContext(Dispatchers.IO) {
             val response = try {
-                announcementApi.updateAnnouncement(AnnouncementMapper.toRemote(announcement))
+                announcementApi.updateAnnouncement(announcement.toRemote())
             } catch (e: ConnectException) {
                 e("Error updating remote announcement: ${e.message}", e)
                 throw ConnectException()
