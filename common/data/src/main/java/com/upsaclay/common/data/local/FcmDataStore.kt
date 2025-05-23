@@ -10,7 +10,7 @@ import com.upsaclay.common.data.extensions.getGsonValue
 import com.upsaclay.common.data.extensions.setGsonValue
 import com.upsaclay.common.domain.entity.FcmToken
 
-class FCMDataStore(context: Context) {
+class FcmDataStore(context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "credentials")
     private val store = context.dataStore
     private val fcmTokenKey = stringPreferencesKey("fcmTokenKey")

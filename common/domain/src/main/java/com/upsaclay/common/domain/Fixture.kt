@@ -1,9 +1,10 @@
 package com.upsaclay.common.domain
 
-import com.upsaclay.common.domain.entity.FCMData
-import com.upsaclay.common.domain.entity.FCMDataType
-import com.upsaclay.common.domain.entity.FCMMessage
-import com.upsaclay.common.domain.entity.FCMNotification
+import com.upsaclay.common.domain.entity.FcmData
+import com.upsaclay.common.domain.entity.FcmDataType
+import com.upsaclay.common.domain.entity.FcmMessage
+import com.upsaclay.common.domain.entity.FcmNotification
+import com.upsaclay.common.domain.entity.FcmToken
 import com.upsaclay.common.domain.entity.User
 
 val userFixture = User(
@@ -38,14 +39,16 @@ val usersFixture = listOf(
     userFixture2
 )
 
-val fcmFixture = FCMMessage(
+val fcmMessageFixture = FcmMessage(
     recipientId = "1",
-    notification = FCMNotification(
+    notification = FcmNotification(
         title = "Test",
         body = "Test body"
     ),
-    data = FCMData(
-        type = FCMDataType.MESSAGE,
+    data = FcmData(
+        type = FcmDataType.MESSAGE,
         value = "Test value"
     )
 )
+
+val fcmTokenFixture = FcmToken(userFixture.id, "token")

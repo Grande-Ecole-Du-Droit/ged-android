@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class FCMTokenUseCase(
+class FcmTokenUseCase(
     private val userRepository: UserRepository,
     private val authenticationRepository: AuthenticationRepository,
     private val credentialsRepository: CredentialsRepository,

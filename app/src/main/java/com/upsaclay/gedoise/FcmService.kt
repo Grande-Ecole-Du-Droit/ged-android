@@ -2,10 +2,10 @@ package com.upsaclay.gedoise
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.upsaclay.common.domain.entity.FCMDataType
+import com.upsaclay.common.domain.entity.FcmDataType
 import com.upsaclay.common.domain.entity.FcmToken
 import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.gedoise.domain.usecase.FCMTokenUseCase
+import com.upsaclay.gedoise.domain.usecase.FcmTokenUseCase
 import com.upsaclay.gedoise.presentation.NotificationPresenter
 import com.upsaclay.message.domain.JsonConverter
 import kotlinx.coroutines.Dispatchers
@@ -14,10 +14,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
-class FCMService: FirebaseMessagingService() {
+class FcmService: FirebaseMessagingService() {
     private var job: Job? = null
     private val notificationPresenter: NotificationPresenter by inject<NotificationPresenter>()
-    private val fcmTokenUseCase: FCMTokenUseCase by inject<FCMTokenUseCase>()
+    private val fcmTokenUseCase: FcmTokenUseCase by inject<FcmTokenUseCase>()
     private val userRepository: UserRepository by inject<UserRepository>()
     private val scope = GlobalScope
 
@@ -37,7 +37,7 @@ class FCMService: FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         scope.launch(Dispatchers.Main) {
            when(remoteMessage.data["type"]) {
-               FCMDataType.MESSAGE.toString() -> handleNotification(remoteMessage)
+               FcmDataType.MESSAGE.toString() -> handleNotification(remoteMessage)
            }
         }
     }

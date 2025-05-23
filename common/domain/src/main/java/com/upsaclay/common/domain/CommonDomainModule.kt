@@ -9,7 +9,7 @@ import org.koin.dsl.module
 
 val commonDomainModule = module {
     singleOf(::DeleteProfilePictureUseCase)
-    singleOf(::UpdateProfilePictureUseCase)
     singleOf(::NotificationUseCase)
     singleOf(::SharedEventsUseCase)
+    singleOf(::UpdateProfilePictureUseCase)
 }

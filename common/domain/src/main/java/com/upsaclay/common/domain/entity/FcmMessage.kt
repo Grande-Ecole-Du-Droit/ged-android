@@ -2,26 +2,26 @@ package com.upsaclay.common.domain.entity
 
 import com.google.gson.annotations.SerializedName
 
-data class FCMMessage<T>(
+data class FcmMessage<T>(
     val recipientId: String,
-    val notification: FCMNotification,
-    val data: FCMData<T>,
+    val notification: FcmNotification,
+    val data: FcmData<T>,
     val priority: String = "high"
 ) {
     val icon: String = "ic_notification"
 }
 
-data class FCMNotification(
+data class FcmNotification(
     val title: String,
     val body: String
 )
 
-data class FCMData<T>(
-    val type: FCMDataType,
+data class FcmData<T>(
+    val type: FcmDataType,
     val value: T
 )
 
-enum class FCMDataType {
+enum class FcmDataType {
     @SerializedName("message")
     MESSAGE;
 

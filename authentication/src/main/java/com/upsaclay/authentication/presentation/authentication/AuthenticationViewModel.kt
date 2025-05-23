@@ -56,7 +56,7 @@ class AuthenticationViewModel(
                 withTimeout(10000) {
                     authenticationRepository.loginWithEmailAndPassword(email, password)
                     userRepository.getUserWithEmail(email)?.let {
-                        userRepository.setCurrentUser(it)
+                        userRepository.storeUser(it)
                         authenticationRepository.setAuthenticated(true)
                     } ?: throw InvalidCredentialsException()
                 }

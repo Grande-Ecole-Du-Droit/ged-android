@@ -13,13 +13,13 @@ interface UserRepository {
 
     suspend fun getCurrentUser(): User?
 
-    suspend fun getUserFlow(userId: String): Flow<User>
+    fun getUserFlow(userId: String): Flow<User?>
 
     suspend fun getUserWithEmail(userEmail: String): User?
 
     suspend fun createUser(user: User)
 
-    suspend fun setCurrentUser(user: User)
+    suspend fun storeUser(user: User?)
 
     suspend fun deleteCurrentUser()
 

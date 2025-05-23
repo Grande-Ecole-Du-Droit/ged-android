@@ -48,7 +48,7 @@ internal class ConversationRepositoryImpl(
                 interlocutors[interlocutorId]?.let {
                     flowOf(remoteConversation.toConversation(userId, it))
                 } ?: run {
-                    userRepository.getUserFlow(interlocutorId).map {
+                    userRepository.getUserFlow(interlocutorId).filterNotNull().map {
                         remoteConversation.toConversation(userId, it)
                     }
                 }

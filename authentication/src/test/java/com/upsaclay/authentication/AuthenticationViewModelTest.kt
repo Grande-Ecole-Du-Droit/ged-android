@@ -39,7 +39,7 @@ class AuthenticationViewModelTest {
         coEvery { authenticationRepository.loginWithEmailAndPassword(any(), any()) } returns Unit
         coEvery { authenticationRepository.setAuthenticated(any()) } returns Unit
         coEvery { userRepository.getUserWithEmail(any()) } returns userFixture
-        coEvery { userRepository.setCurrentUser(any()) } returns Unit
+        coEvery { userRepository.storeUser(any()) } returns Unit
     }
 
     @Test

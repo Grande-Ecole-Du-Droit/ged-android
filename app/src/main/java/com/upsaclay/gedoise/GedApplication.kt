@@ -6,7 +6,7 @@ import com.upsaclay.authentication.data.authenticationDataModule
 import com.upsaclay.authentication.domain.authenticationDomainModule
 import com.upsaclay.common.data.commonDataModule
 import com.upsaclay.common.domain.commonDomainModule
-import com.upsaclay.gedoise.domain.usecase.FCMTokenUseCase
+import com.upsaclay.gedoise.domain.usecase.FcmTokenUseCase
 import com.upsaclay.message.data.messageDataModule
 import com.upsaclay.message.domain.messageDomainModule
 import com.upsaclay.message.messageModule
@@ -44,7 +44,7 @@ class GedApplication : Application() {
             )
         }
 
-        get<FCMTokenUseCase>().listenEvents()
+        get<FcmTokenUseCase>().listenEvents()
         plant(Timber.DebugTree())
     }
 }

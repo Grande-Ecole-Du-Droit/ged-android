@@ -2,8 +2,8 @@ package com.upsaclay.common.data.local
 
 import com.upsaclay.common.domain.entity.FcmToken
 
-class FCMLocalDataSource(
-    private val fcmDataStore: FCMDataStore
+class FcmLocalDataSource(
+    private val fcmDataStore: FcmDataStore
 ) {
     suspend fun getUnsentFcmToken(): FcmToken? = fcmDataStore.getFcmToken()
 

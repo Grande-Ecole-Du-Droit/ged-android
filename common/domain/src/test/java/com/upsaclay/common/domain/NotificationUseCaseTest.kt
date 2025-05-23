@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 
 class NotificationUseCaseTest {
-    private val fcmNotificationSender: FCMNotificationSender = mockk()
+    private val fcmNotificationSender: FcmNotificationSender = mockk()
     private val sharedEventsUseCase: SharedEventsUseCase = mockk()
 
     private lateinit var notificationUseCase: NotificationUseCase
@@ -30,7 +30,7 @@ class NotificationUseCaseTest {
     @Test
     fun sendNotificationToFCM_should_send_notification() = runTest {
         // When
-        notificationUseCase.sendNotification(fcmFixture)
+        notificationUseCase.sendNotification(fcmMessageFixture)
 
         // Then
         coVerify { fcmNotificationSender.sendNotification(any()) }
