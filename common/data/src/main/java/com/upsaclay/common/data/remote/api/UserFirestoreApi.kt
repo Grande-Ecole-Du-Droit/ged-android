@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 internal interface UserFirestoreApi {
     suspend fun getUser(userId: String): FirestoreUser?
 
-    suspend fun getUserFlow(userId: String): Flow<FirestoreUser?>
+    fun getUserFlow(userId: String): Flow<FirestoreUser?>
 
     suspend fun getUserWithEmail(userEmail: String): FirestoreUser?
 

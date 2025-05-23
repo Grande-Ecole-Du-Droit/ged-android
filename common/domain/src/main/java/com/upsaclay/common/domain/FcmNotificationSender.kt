@@ -1,5 +1,5 @@
 package com.upsaclay.common.domain
 
-interface FCMNotificationSender {
+interface FcmNotificationSender {
     suspend fun sendNotification(fcmMessage: String)
 }

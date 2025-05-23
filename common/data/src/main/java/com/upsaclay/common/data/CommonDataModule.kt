@@ -2,10 +2,10 @@ package com.upsaclay.common.data
 
 import com.upsaclay.common.data.local.UserDataStore
 import com.upsaclay.common.data.local.UserLocalDataSource
-import com.upsaclay.common.data.remote.FCMNotificationSenderImpl
+import com.upsaclay.common.data.remote.FcmNotificationSenderImpl
 import com.upsaclay.common.data.remote.ImageRemoteDataSource
 import com.upsaclay.common.data.remote.UserRemoteDataSource
-import com.upsaclay.common.data.remote.api.FCMApi
+import com.upsaclay.common.data.remote.api.FcmApi
 import com.upsaclay.common.data.remote.api.ImageApi
 import com.upsaclay.common.data.remote.api.ImageApiImpl
 import com.upsaclay.common.data.remote.api.UserFirestoreApi
@@ -16,7 +16,7 @@ import com.upsaclay.common.data.repository.DrawableRepositoryImpl
 import com.upsaclay.common.data.repository.FileRepositoryImpl
 import com.upsaclay.common.data.repository.ImageRepositoryImpl
 import com.upsaclay.common.data.repository.UserRepositoryImpl
-import com.upsaclay.common.domain.FCMNotificationSender
+import com.upsaclay.common.domain.FcmNotificationSender
 import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.repository.CredentialsRepository
 import com.upsaclay.common.domain.repository.DrawableRepository
@@ -61,7 +61,7 @@ val commonDataModule = module {
 
     single {
         get<Retrofit>(GED_SERVER_QUALIFIER)
-            .create(FCMApi::class.java)
+            .create(FcmApi::class.java)
     }
 
     single<CoroutineScope>(BACKGROUND_SCOPE) {
@@ -94,5 +94,5 @@ val commonDataModule = module {
     singleOf(::UserFirestoreApiImpl) { bind<UserFirestoreApi>() }
 
     singleOf(::CredentialsRepositoryImpl) { bind<CredentialsRepository>() }
-    singleOf(::FCMNotificationSenderImpl) { bind<FCMNotificationSender>() }
+    singleOf(::FcmNotificationSenderImpl) { bind<FcmNotificationSender>() }
 }

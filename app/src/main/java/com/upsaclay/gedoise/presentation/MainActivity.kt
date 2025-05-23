@@ -11,7 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.upsaclay.common.domain.entity.FCMDataType
+import com.upsaclay.common.domain.entity.FcmDataType
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.gedoise.presentation.navigation.GedNavHost
 import com.upsaclay.gedoise.presentation.navigation.SplashScreenRoute
@@ -91,7 +91,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleNotificationIntent(type: String, extras: Bundle?) {
         when (type) {
-            FCMDataType.MESSAGE.toString() -> {
+            FcmDataType.MESSAGE.toString() -> {
                 extras?.getString("value")?.let { conversation ->
                     navigationViewModel.intentToNavigate(ChatRoute(conversation))
                 }

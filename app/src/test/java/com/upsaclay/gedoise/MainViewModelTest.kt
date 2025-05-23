@@ -42,7 +42,7 @@ class MainViewModelTest {
         coEvery { userRepository.getCurrentUser() } returns userFixture
         coEvery { userRepository.getUsers() } returns usersFixture
         coEvery { userRepository.getUser(any()) } returns userFixture
-        coEvery { userRepository.setCurrentUser(any()) } returns Unit
+        coEvery { userRepository.storeUser(any()) } returns Unit
         coEvery { userRepository.deleteCurrentUser() } returns Unit
         coEvery { dataListeningUseCase.start() } returns Unit
         coEvery { dataListeningUseCase.stop() } returns Unit
@@ -50,7 +50,6 @@ class MainViewModelTest {
         coEvery { authenticationRepository.logout() } returns Unit
 
         mainViewModel = MainViewModel(
-            userRepository = userRepository,
             authenticationRepository = authenticationRepository,
             dataListeningUseCase = dataListeningUseCase,
             clearDataUseCase = clearDataUseCase
@@ -116,7 +115,7 @@ class MainViewModelTest {
         mainViewModel.startListening()
 
         // Then
-        coVerify { userRepository.setCurrentUser(userFixture2) }
+        coVerify { userRepository.storeUser(userFixture2) }
     }
 
     @Test

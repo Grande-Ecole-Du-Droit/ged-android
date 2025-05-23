@@ -8,14 +8,16 @@ import com.upsaclay.common.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 internal class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val userLocalDataSource: UserLocalDataSource,
     scope: CoroutineScope
 ) : UserRepository {
-    private val _user = userLocalDataSource.getCurrentUserFlow()
+    private val _user = userLocalDataSource.getUserFlow()
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
@@ -39,14 +41,9 @@ internal class UserRepositoryImpl(
         )
     }
 
-    override suspend fun getCurrentUser(): User? = userLocalDataSource.getCurrentUser()
+    override suspend fun getCurrentUser(): User? = userLocalDataSource.getUser()
 
-    override suspend fun getUserFlow(userId: String): Flow<User> {
-        return handleNetworkException(
-            message = "Failed to listen remote user",
-            block = { userRemoteDataSource.getUserFlow(userId) }
-        )
-    }
+    override fun getUserFlow(userId: String): Flow<User?> = userRemoteDataSource.getUserFlow(userId)
 
     override suspend fun getUserWithEmail(userEmail: String): User? {
         return handleNetworkException(
@@ -60,17 +57,17 @@ internal class UserRepositoryImpl(
             message = "Failed to create user",
             block = {
                 userRemoteDataSource.createUser(user)
-                userLocalDataSource.setCurrentUser(user)
+                userLocalDataSource.storeUser(user)
             }
         )
     }
 
-    override suspend fun setCurrentUser(user: User) {
-        userLocalDataSource.setCurrentUser(user)
+    override suspend fun storeUser(user: User?) {
+        userLocalDataSource.storeUser(user)
     }
 
     override suspend fun deleteCurrentUser() {
-        userLocalDataSource.deleteCurrentUser()
+        userLocalDataSource.removeUser()
     }
 
     override suspend fun updateProfilePictureFileName(userId: String, fileName: String) {

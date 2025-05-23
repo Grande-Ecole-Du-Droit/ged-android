@@ -1,8 +1,8 @@
 package com.upsaclay.common.data.repository
 
 import com.upsaclay.common.data.formatHttpError
-import com.upsaclay.common.data.local.FCMLocalDataSource
-import com.upsaclay.common.data.remote.api.FCMApi
+import com.upsaclay.common.data.local.FcmLocalDataSource
+import com.upsaclay.common.data.remote.api.FcmApi
 import com.upsaclay.common.domain.d
 import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.entity.FcmToken
@@ -12,8 +12,8 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class CredentialsRepositoryImpl(
-    private val fcmLocalDataSource: FCMLocalDataSource,
-    private val fcmApi: FCMApi
+    private val fcmLocalDataSource: FcmLocalDataSource,
+    private val fcmApi: FcmApi
 ): CredentialsRepository {
     override suspend fun getUnsentFcmToken(): FcmToken? = fcmLocalDataSource.getUnsentFcmToken()
 

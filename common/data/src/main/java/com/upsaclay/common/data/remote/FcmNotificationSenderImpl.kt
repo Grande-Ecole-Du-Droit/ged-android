@@ -1,10 +1,10 @@
 package com.upsaclay.common.data.remote
 
-import com.upsaclay.common.data.remote.api.FCMApi
-import com.upsaclay.common.domain.FCMNotificationSender
+import com.upsaclay.common.data.remote.api.FcmApi
+import com.upsaclay.common.domain.FcmNotificationSender
 import com.upsaclay.common.domain.e
 
-internal class FCMNotificationSenderImpl(private val fcmApi: FCMApi): FCMNotificationSender {
+internal class FcmNotificationSenderImpl(private val fcmApi: FcmApi): FcmNotificationSender {
     override suspend fun sendNotification(fcmMessage: String) {
         try {
             val response = fcmApi.sendNotification(fcmMessage)

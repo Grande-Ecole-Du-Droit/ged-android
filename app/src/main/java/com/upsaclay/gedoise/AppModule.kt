@@ -3,9 +3,9 @@ package com.upsaclay.gedoise
 import androidx.room.Room
 import com.upsaclay.common.AndroidConnectivityObserver
 import com.upsaclay.common.data.GED_SERVER_QUALIFIER
-import com.upsaclay.common.data.local.FCMDataStore
-import com.upsaclay.common.data.local.FCMLocalDataSource
-import com.upsaclay.common.data.remote.api.FCMApi
+import com.upsaclay.common.data.local.FcmDataStore
+import com.upsaclay.common.data.local.FcmLocalDataSource
+import com.upsaclay.common.data.remote.api.FcmApi
 import com.upsaclay.common.domain.ConnectivityObserver
 import com.upsaclay.common.domain.e
 import com.upsaclay.gedoise.data.GedoiseDatabase
@@ -13,7 +13,8 @@ import com.upsaclay.gedoise.data.repository.ScreenRepositoryImpl
 import com.upsaclay.gedoise.domain.repository.ScreenRepository
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
 import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase
-import com.upsaclay.gedoise.domain.usecase.FCMTokenUseCase
+import com.upsaclay.gedoise.domain.usecase.FcmTokenUseCase
+import com.upsaclay.gedoise.domain.usecase.ListenRemoteUserUseCase
 import com.upsaclay.gedoise.presentation.NotificationPresenter
 import com.upsaclay.gedoise.presentation.profile.ProfileViewModel
 import com.upsaclay.gedoise.presentation.profile.account.AccountViewModel
@@ -55,7 +56,7 @@ val appModule = module {
 
     single {
         get<Retrofit>(GED_SERVER_QUALIFIER)
-            .create(FCMApi::class.java)
+            .create(FcmApi::class.java)
     }
 
     single { get<GedoiseDatabase>().announcementDao() }
@@ -63,7 +64,11 @@ val appModule = module {
     single { get<GedoiseDatabase>().messageDao() }
     single { get<GedoiseDatabase>().conversationMessageDao() }
 
+    singleOf(::AndroidConnectivityObserver) { bind<ConnectivityObserver>() }
+    singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
     singleOf(::NotificationPresenter)
+    singleOf(::FcmLocalDataSource)
+    singleOf(::FcmDataStore)
 
     viewModelOf(::NavigationViewModel)
     viewModelOf(::ProfileViewModel)
@@ -72,12 +77,8 @@ val appModule = module {
 
     singleOf(::ClearDataUseCase)
     singleOf(::DataListeningUseCase)
-
-    singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
-    singleOf(::FCMLocalDataSource)
-    singleOf(::FCMDataStore)
     single {
-        FCMTokenUseCase(
+        FcmTokenUseCase(
             userRepository = get(),
             credentialsRepository = get(),
             authenticationRepository = get(),
@@ -85,6 +86,11 @@ val appModule = module {
             scope = get(BACKGROUND_SCOPE)
         )
     }
-
-    singleOf(::AndroidConnectivityObserver) { bind<ConnectivityObserver>() }
+    single {
+        ListenRemoteUserUseCase(
+            authenticationRepository = get(),
+            userRepository = get(),
+            scope = get(BACKGROUND_SCOPE)
+        )
+    }
 }

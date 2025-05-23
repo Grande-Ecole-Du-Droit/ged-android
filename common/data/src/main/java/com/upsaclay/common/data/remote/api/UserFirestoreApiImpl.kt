@@ -26,7 +26,7 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
             .addOnFailureListener { continuation.resumeWithException(it) }
     }
 
-    override suspend fun getUserFlow(userId: String): Flow<FirestoreUser?> = callbackFlow {
+    override fun getUserFlow(userId: String): Flow<FirestoreUser?> = callbackFlow {
         val listener = usersCollection.document(userId)
             .addSnapshotListener { snapshot, error ->
                 error?.let {

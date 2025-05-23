@@ -12,7 +12,7 @@ import com.upsaclay.common.domain.entity.InternalServerException
 import com.upsaclay.common.domain.entity.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
@@ -25,10 +25,7 @@ internal class UserRemoteDataSource(
         userFirestoreApi.getUser(userId)?.toUser()
     }
 
-    suspend fun getUserFlow(userId: String): Flow<User> = withContext(Dispatchers.IO) {
-        userFirestoreApi.getUserFlow(userId)
-            .mapNotNull { it?.toUser() }
-    }
+    fun getUserFlow(userId: String): Flow<User?> = userFirestoreApi.getUserFlow(userId).map { it?.toUser() }
 
     suspend fun getUserFirestoreWithEmail(userEmail: String): User? = withContext(Dispatchers.IO) {
         userFirestoreApi.getUserWithEmail(userEmail)?.toUser()

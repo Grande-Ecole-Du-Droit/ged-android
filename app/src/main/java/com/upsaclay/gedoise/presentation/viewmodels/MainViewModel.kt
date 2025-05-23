@@ -8,19 +8,18 @@ import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
 import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val userRepository: UserRepository,
     private val authenticationRepository: AuthenticationRepository,
     private val dataListeningUseCase: DataListeningUseCase,
-    private val clearDataUseCase: ClearDataUseCase
+    private val clearDataUseCase:  ClearDataUseCase
 ): ViewModel() {
     fun startListening() {
         updateDataListening()
-        checkCurrentUser()
     }
 
     private fun updateDataListening() {
@@ -34,24 +33,6 @@ class MainViewModel(
                         dataListeningUseCase.stop()
                         delay(2000)
                         clearDataUseCase()
-                    }
-                }
-        }
-    }
-
-    private fun checkCurrentUser() {
-        viewModelScope.launch {
-            userRepository.user
-                .filterNotNull()
-                .take(1)
-                .collect { currentUser ->
-                    userRepository.getUser(currentUser.id)?.let { remoteUser ->
-                        if (remoteUser != currentUser) {
-                            userRepository.setCurrentUser(remoteUser)
-                        }
-                    } ?: run {
-                        authenticationRepository.logout()
-                        userRepository.deleteCurrentUser()
                     }
                 }
         }
