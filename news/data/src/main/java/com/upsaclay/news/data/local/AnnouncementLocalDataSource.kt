@@ -1,6 +1,5 @@
 package com.upsaclay.news.data.local
 
-import com.upsaclay.news.data.AnnouncementMapper
 import com.upsaclay.news.data.toAnnouncement
 import com.upsaclay.news.data.toLocal
 import com.upsaclay.news.domain.entity.Announcement
