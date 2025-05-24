@@ -33,12 +33,12 @@ internal class MessageApiImpl : MessageApi {
 
         val listener = query.addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
             error?.let {
-                e("Error getting last messages", it)
+                close(it)
                 return@addSnapshotListener
             }
 
             val messages = snapshot?.documents
-                ?.filterNot { it.metadata.isFromCache || it.metadata.hasPendingWrites() }
+                ?.filterNot { it.metadata.hasPendingWrites() }
                 ?.mapNotNull { document ->
                     document.toObject(RemoteMessage::class.java)
                 }
@@ -73,20 +73,17 @@ internal class MessageApiImpl : MessageApi {
             }
     }
 
-    override suspend fun deleteMessages(conversationId: String) {
-        suspendCancellableCoroutine { continuation ->
-            conversationsCollection
-                .document(conversationId)
-                .collection(MESSAGES_TABLE_NAME)
-                .get(Source.SERVER)
-                .addOnSuccessListener { messageSnapshot ->
-                    messageSnapshot.documents.forEach { document ->
-                        document.reference.delete()
-                    }
-                    continuation.resume(Unit)
+    override fun deleteMessages(conversationId: String) {
+        conversationsCollection
+            .document(conversationId)
+            .collection(MESSAGES_TABLE_NAME)
+            .get(Source.SERVER)
+            .addOnSuccessListener { messageSnapshot ->
+                messageSnapshot.documents.forEach { document ->
+                    document.reference.delete()
                 }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
+            }
+            .addOnFailureListener { e("Failed to delete remote messages: ${it.message}", it) }
     }
 
     private fun CollectionReference.withOffsetTime(offsetTime: Timestamp?): Query {

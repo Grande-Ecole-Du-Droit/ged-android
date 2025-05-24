@@ -18,6 +18,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.test.assertFalse
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -95,7 +96,7 @@ class ListenRemoteConversationsMessagesUseCaseTest {
     @Test
     fun start_should_listen_remote_conversation_messages_with_delete_time_as_offset() = runTest {
         // Given
-        val date = LocalDateTime.now()
+        val date = LocalDateTime.now(ZoneOffset.UTC)
         val conversation = conversationFixture.copy(
             state = ConversationState.SOFT_DELETED,
             deleteTime = date

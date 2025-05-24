@@ -47,11 +47,8 @@ internal class MessageRepositoryImpl(
         messageLocalDataSource.deleteMessages(conversationId)
     }
 
-    override suspend fun deleteRemoteMessages(conversationId: String) {
-        handleNetworkException(
-            message = "Failed to delete messages",
-            block = { messageRemoteDataSource.deleteMessages(conversationId) }
-        )
+    override fun deleteRemoteMessages(conversationId: String) {
+        messageRemoteDataSource.deleteMessages(conversationId)
     }
 
     override suspend fun deleteLocalMessages() {

@@ -20,10 +20,9 @@ internal class ConversationApiImpl: ConversationApi {
     override fun listenConversations(userId: String): Flow<RemoteConversation> = callbackFlow {
         val listener = conversationsCollection
             .whereArrayContains(ConversationField.Remote.PARTICIPANTS, userId)
-            .whereEqualTo("${ConversationField.Remote.DELETE_BY}.$userId", false)
             .addSnapshotListener { snapshot, error ->
                 error?.let {
-                    e("Error getting conversations", it)
+                    close(it)
                     return@addSnapshotListener
                 }
 
@@ -37,43 +36,24 @@ internal class ConversationApiImpl: ConversationApi {
         awaitClose { listener.remove() }
     }
 
-    override suspend fun getConversation(conversationId: String): RemoteConversation? {
-        return suspendCoroutine { continuation ->
-            conversationsCollection
-                .document(conversationId)
-                .get()
-                .addOnSuccessListener { continuation.resume(it.toObject(RemoteConversation::class.java)) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
+    override fun createConversation(conversationId: String, data: Map<String, Any>) {
+        conversationsCollection
+            .document(conversationId)
+            .set(data, SetOptions.merge())
+            .addOnFailureListener { e("Failed to create remote conversation: ${it.message}", it) }
     }
 
-    override suspend fun createConversation(conversationId: String, data: Map<String, Any>) {
-        suspendCoroutine { continuation ->
-            conversationsCollection
-                .document(conversationId)
-                .set(data, SetOptions.merge())
-                .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
+    override fun updateConversation(conversationId: String, data: Map<String, Any>) {
+        conversationsCollection
+            .document(conversationId)
+            .update(data)
+            .addOnFailureListener { e("Failed to update remote conversation ${it.message}", it) }
     }
 
-    override suspend fun updateConversation(conversationId: String, data: Map<String, Any>) {
-        suspendCoroutine { continuation ->
-            conversationsCollection
-                .document(conversationId)
-                .update(data)
-                .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
-    }
-
-    override suspend fun hardDeleteConversation(conversationId: String) {
-        suspendCoroutine { continuation ->
-            conversationsCollection
-                .document(conversationId)
-                .delete()
-                .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
+    override fun hardDeleteConversation(conversationId: String) {
+        conversationsCollection
+            .document(conversationId)
+            .delete()
+            .addOnFailureListener { e("Failed to hard delete remote conversation: ${it.message}", it) }
     }
 }

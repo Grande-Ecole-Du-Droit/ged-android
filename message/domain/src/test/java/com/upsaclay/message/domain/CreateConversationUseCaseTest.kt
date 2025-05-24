@@ -58,7 +58,7 @@ class CreateConversationUseCaseTest {
         val conversation = conversationFixture.copy(state = ConversationState.DRAFT)
 
         // When
-        useCase.createRemotely(conversation, userFixture.id, userFixture2.id)
+        useCase.createRemoteConversation(conversation, userFixture.id, userFixture2.id)
 
         // Then
         coEvery {
@@ -67,12 +67,12 @@ class CreateConversationUseCaseTest {
     }
 
     @Test
-    fun createRemotely_should_undelete_soft_deleted_conversation() = runTest {
+    fun createRemoteConversation_should_undelete_soft_deleted_conversation() = runTest {
         // Given
         val conversation = conversationFixture.copy(state = ConversationState.SOFT_DELETED)
 
         // When
-        useCase.createRemotely(conversation, userFixture.id, userFixture2.id)
+        useCase.createRemoteConversation(conversation, userFixture.id, userFixture2.id)
 
         // Then
         coEvery {
@@ -84,12 +84,12 @@ class CreateConversationUseCaseTest {
     fun createRemotely_should_create_conversation_when_creating_state_more_than_10_seconds() = runTest {
         // Given
         val conversation = conversationFixture.copy(
-            createdAt = LocalDateTime.now().minusSeconds(11),
+            createdAt = LocalDateTime.now(ZoneOffset.UTC).minusSeconds(11),
             state = ConversationState.CREATING
         )
 
         // When
-        useCase.createRemotely(conversation, userFixture.id, userFixture2.id)
+        useCase.createRemoteConversation(conversation, userFixture.id, userFixture2.id)
 
         // Then
         coEvery {
@@ -98,7 +98,7 @@ class CreateConversationUseCaseTest {
     }
 
     @Test(expected = Exception::class)
-    fun createRemotely_should_upsert_local_conversation_with_error_state() = runTest {
+    fun createRemoteConversation_should_upsert_local_conversation_with_error_state() = runTest {
         // Given
         val conversation = conversationFixture.copy(state = ConversationState.DRAFT)
         coEvery {
@@ -106,7 +106,7 @@ class CreateConversationUseCaseTest {
         }.throws(Exception())
 
         // When
-        useCase.createRemotely(conversation, userFixture.id, userFixture2.id)
+        useCase.createRemoteConversation(conversation, userFixture.id, userFixture2.id)
 
         // Then
         coEvery {

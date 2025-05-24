@@ -6,7 +6,7 @@
         <item name="postSplashScreenTheme">@style/Theme.Gedoise.PostSplash</item>
     </style>
 
-    <style name="Theme.Gedoise.PostSplash" parent="Theme.Design.NoActionBar">
+    <style name="Theme.Gedoise.PostSplash" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 </resources>

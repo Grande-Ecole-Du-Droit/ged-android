@@ -6,24 +6,23 @@ import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import kotlinx.coroutines.withTimeout
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.time.ZoneOffset
 
 class DeleteConversationUseCase(
     private val conversationRepository: ConversationRepository,
     private val messageRepository: MessageRepository
 ) {
     suspend operator fun invoke(conversation: Conversation, userId: String) {
-        withTimeout(15000) {
-            conversationRepository.getRemoteConversationState(conversation.id, conversation.interlocutor.id)?.let { state ->
-                if (state == ConversationState.SOFT_DELETED) {
-                    conversationRepository.hardDeleteConversation(conversation.id)
-                    messageRepository.deleteRemoteMessages(conversation.id)
-                } else {
-                    conversationRepository.softDeleteConversation(
-                        conversation.copy(deleteTime = LocalDateTime.now()),
-                        userId
-                    )
-                }
-            }
+        if (conversation.state == ConversationState.SOFT_DELETED) {
+            conversationRepository.hardDeleteConversation(conversation)
+            messageRepository.deleteRemoteMessages(conversation.id)
+        } else {
+            conversationRepository.softDeleteConversation(
+                conversation.copy(deleteTime = LocalDateTime.now(ZoneOffset.UTC)),
+                userId
+            )
         }
         messageRepository.deleteLocalMessages(conversation.id)
     }

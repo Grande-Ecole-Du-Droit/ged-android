@@ -29,9 +29,7 @@ internal class MessageRemoteDataSource(private val messageApi: MessageApi) {
         }
     }
 
-    suspend fun deleteMessages(conversationId: String) {
-        withContext(Dispatchers.IO) {
-            messageApi.deleteMessages(conversationId)
-        }
+    fun deleteMessages(conversationId: String) {
+        messageApi.deleteMessages(conversationId)
     }
 }
