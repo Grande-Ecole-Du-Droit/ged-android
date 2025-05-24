@@ -6,6 +6,7 @@ import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -19,9 +20,10 @@ class DeleteConversationUseCaseTest {
 
     @Before
     fun setUp() {
-        coEvery { conversationRepository.getRemoteConversationState(any(), any()) } returns ConversationState.CREATED
+        coEvery { conversationRepository.hardDeleteConversation(any()) } returns Unit
         coEvery { conversationRepository.softDeleteConversation(any(), any()) } returns Unit
         coEvery { messageRepository.deleteLocalMessages(any()) } returns Unit
+        coEvery { messageRepository.deleteRemoteMessages(any()) } returns Unit
 
         useCase = DeleteConversationUseCase(
             conversationRepository = conversationRepository,
@@ -31,21 +33,27 @@ class DeleteConversationUseCaseTest {
 
     @Test
     fun deleteConversation_should_hard_delete_remote_conversation_and_message_when_state_is_deleted() = runTest {
+        // Given
+        val conversation = conversationFixture.copy(state = ConversationState.SOFT_DELETED)
+
         // When
-        useCase(conversationFixture.copy(state = ConversationState.SOFT_DELETED), userFixture.id)
+        useCase(conversation, userFixture.id)
 
         // Then
-        coEvery { conversationRepository.hardDeleteConversation(conversationFixture.id) }
-        coEvery { messageRepository.deleteRemoteMessages(conversationFixture.id) }
+        coVerify { conversationRepository.hardDeleteConversation(conversation) }
+        coVerify { messageRepository.deleteRemoteMessages(conversation.id) }
     }
 
     @Test
     fun deleteConversation_should_soft_delete_remote_conversation_when_state_is_not_deleted() = runTest {
+        // Given
+        val conversation = conversationFixture.copy(state = ConversationState.CREATED)
+
         // When
-        useCase(conversationFixture.copy(state = ConversationState.CREATED), userFixture.id)
+        useCase(conversation, userFixture.id)
 
         // Then
-        coEvery { conversationRepository.softDeleteConversation(conversationFixture, userFixture.id) }
+        coVerify { conversationRepository.softDeleteConversation(any(), userFixture.id) }
     }
 
     @Test
@@ -54,6 +62,6 @@ class DeleteConversationUseCaseTest {
         useCase(conversationFixture, userFixture.id)
 
         // Then
-        coEvery { messageRepository.deleteLocalMessages(conversationFixture.id) }
+        coVerify { messageRepository.deleteLocalMessages(conversationFixture.id) }
     }
 }

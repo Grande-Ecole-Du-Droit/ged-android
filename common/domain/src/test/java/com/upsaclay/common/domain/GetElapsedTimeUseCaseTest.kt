@@ -4,6 +4,7 @@ import com.upsaclay.common.domain.entity.ElapsedTime
 import com.upsaclay.common.domain.usecase.GetElapsedTimeUseCase
 import org.junit.Test
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.test.assertEquals
 
 class GetElapsedTimeUseCaseTest {
