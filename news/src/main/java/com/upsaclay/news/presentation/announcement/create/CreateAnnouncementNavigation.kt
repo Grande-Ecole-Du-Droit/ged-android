@@ -15,7 +15,7 @@ fun NavGraphBuilder.createAnnouncementScreen(
     onBackClick: () -> Unit,
 ) {
     composable<CreateAnnouncementRoute> {
-        CreateAnnouncementDestination(
+        CreateAnnouncementScreenRoute(
             onBackClick = onBackClick
         )
     }

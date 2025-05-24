@@ -10,7 +10,7 @@ import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.message.domain.conversationUiFixture
 import com.upsaclay.message.domain.conversationsUIFixture
 import com.upsaclay.message.domain.messageFixture
-import com.upsaclay.message.presentation.conversation.ConversationDestination
+import com.upsaclay.message.presentation.conversation.ConversationScreenRoute
 import com.upsaclay.message.presentation.conversation.ConversationViewModel
 import io.mockk.every
 import io.mockk.mockk
@@ -40,7 +40,7 @@ class ConversationScreenTest {
     fun conversations_should_be_displayed_when_no_empty() {
         // When
         rule.setContent {
-            ConversationDestination(
+            ConversationScreenRoute(
                 onConversationClick = {},
                 onCreateConversation = {},
                 bottomBar = {},
@@ -65,7 +65,7 @@ class ConversationScreenTest {
 
         // When
         rule.setContent {
-            ConversationDestination(
+            ConversationScreenRoute(
                 onConversationClick = {},
                 onCreateConversation = {},
                 bottomBar = {},
@@ -93,7 +93,7 @@ class ConversationScreenTest {
 
         // When
         rule.setContent {
-            ConversationDestination(
+            ConversationScreenRoute(
                 onConversationClick = {},
                 onCreateConversation = {},
                 bottomBar = {},

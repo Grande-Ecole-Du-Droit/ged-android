@@ -1,4 +1,4 @@
-package com.upsaclay.news.presentation.components
+package com.upsaclay.news.presentation.announcement.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add

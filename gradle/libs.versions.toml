@@ -26,8 +26,6 @@ timberVersion = "5.0.1"
 room = "2.6.1"
 ksp = "2.0.10-1.0.24"
 crashlytics= "3.0.2"
-appcompat = "1.7.0"
-material = "1.12.0"
 kotlinx = "1.9.0"
 googleServices = "4.4.2"
 firebaseCrashlyticsKtx = "19.4.1"
@@ -74,8 +72,6 @@ koin-test-junit4 = { group = "io.insert-koin", name= "koin-test-junit4", version
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 kotlin-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinTest" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

@@ -31,7 +31,7 @@ import com.upsaclay.news.R
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CreateAnnouncementDestination(
+fun CreateAnnouncementScreenRoute(
     onBackClick: () -> Unit,
     viewModel: CreateAnnouncementViewModel = koinViewModel()
 ) {

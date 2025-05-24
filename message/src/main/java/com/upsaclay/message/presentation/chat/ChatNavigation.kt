@@ -27,7 +27,7 @@ fun NavGraphBuilder.chatScreen(
         val conversation = entry.toRoute<ChatRoute>().conversationJson
             .let { JsonConverter.toConversation(it) } ?: return@composable onBackClick()
 
-        ChatDestination(
+        ChatScreenRoute(
             conversation = conversation,
             onBackClick = onBackClick
         )

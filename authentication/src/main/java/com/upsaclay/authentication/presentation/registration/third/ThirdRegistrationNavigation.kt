@@ -23,7 +23,7 @@ fun NavGraphBuilder.thirdRegistrationScreen(
         val lastName = entry.toRoute<ThirdRegistrationRoute>().lastName
         val schoolLevel = entry.toRoute<ThirdRegistrationRoute>().schoolLevel
 
-        ThirdRegistrationScreen(
+        ThirdRegistrationScreenRoute(
             firstName = firstName,
             lastName = lastName,
             schoolLevel = schoolLevel,

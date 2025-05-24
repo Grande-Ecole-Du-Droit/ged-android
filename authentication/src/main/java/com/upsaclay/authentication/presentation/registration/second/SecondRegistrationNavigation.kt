@@ -20,7 +20,7 @@ fun NavGraphBuilder.secondRegistrationScreen(
         val firstName = entry.toRoute<SecondRegistrationRoute>().firstName
         val lastName = entry.toRoute<SecondRegistrationRoute>().lastName
 
-        SecondRegistrationScreen(
+        SecondRegistrationScreenRoute(
             onNextClick = { schoolLevel ->
                 onNextClick(firstName, lastName, schoolLevel)
             },

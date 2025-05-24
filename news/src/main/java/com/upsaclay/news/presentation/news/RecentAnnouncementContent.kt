@@ -24,7 +24,7 @@ import com.upsaclay.news.R
 import com.upsaclay.news.domain.announcementsFixture
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.domain.entity.AnnouncementState
-import com.upsaclay.news.presentation.components.AnnouncementItem
+import com.upsaclay.news.presentation.announcement.components.AnnouncementItem
 
 @Composable
 fun RecentAnnouncementContent(

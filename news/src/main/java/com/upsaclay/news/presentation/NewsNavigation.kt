@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.upsaclay.news.presentation.news.NewsDestination
+import com.upsaclay.news.presentation.news.NewsScreenRoute
 import kotlinx.serialization.Serializable
 
 @Serializable data object NewsBaseRoute
@@ -25,7 +25,7 @@ fun NavGraphBuilder.newsSection(
 ) {
     navigation<NewsBaseRoute>(startDestination = NewsRoute) {
         composable<NewsRoute> {
-            NewsDestination(
+            NewsScreenRoute(
                 onAnnouncementClick = onAnnouncementClick,
                 onCreateAnnouncementClick = onCreateAnnouncementClick,
                 onProfilePictureClick = onProfilePictureClick,

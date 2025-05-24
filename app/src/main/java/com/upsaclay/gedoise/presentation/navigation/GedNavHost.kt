@@ -17,6 +17,7 @@ import com.upsaclay.authentication.presentation.registration.second.secondRegist
 import com.upsaclay.authentication.presentation.registration.third.navigateToThirdRegistration
 import com.upsaclay.authentication.presentation.registration.third.thirdRegistrationScreen
 import com.upsaclay.common.presentation.TopLevelDestinationRoute
+import com.upsaclay.common.presentation.components.CircularProgressBar
 import com.upsaclay.gedoise.presentation.components.MainBottomBar
 import com.upsaclay.gedoise.presentation.profile.account.accountScreen
 import com.upsaclay.gedoise.presentation.profile.account.navigateToAccount
@@ -90,10 +91,12 @@ fun GedNavHost(
                 onBackClick = navController::popBackStack,
                 onNextClick = navController::navigateToSecondRegistration
             )
+
             secondRegistrationScreen(
                 onBackClick = navController::popBackStack,
                 onNextClick = navController::navigateToThirdRegistration
             )
+
             thirdRegistrationScreen(
                 onBackClick = navController::popBackStack,
                 onRegistrationClick = navController::navigateToNews

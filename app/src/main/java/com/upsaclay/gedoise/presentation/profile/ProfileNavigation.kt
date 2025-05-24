@@ -23,7 +23,7 @@ fun NavGraphBuilder.profileSection(
 ) {
     navigation<ProfileBaseRoute>(startDestination = ProfileRoute) {
         composable<ProfileRoute> {
-            ProfileDestination(
+            ProfileScreenRoute(
                 onAccountClick = onAccountClick,
                 onBackClick = onBackClick,
                 bottomBar = bottomBar

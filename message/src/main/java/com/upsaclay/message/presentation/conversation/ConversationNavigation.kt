@@ -24,7 +24,7 @@ fun NavGraphBuilder.conversationSection(
 ) {
     navigation<ConversationBaseRoute>(startDestination = ConversationRoute) {
         composable<ConversationRoute> {
-            ConversationDestination(
+            ConversationScreenRoute(
                 onConversationClick = onConversationClick,
                 onCreateConversation = onCreateConversation,
                 bottomBar = bottomBar
