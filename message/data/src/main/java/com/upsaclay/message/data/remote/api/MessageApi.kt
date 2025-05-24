@@ -11,5 +11,5 @@ internal interface MessageApi {
 
     suspend fun updateSeenMessage(remoteMessage: RemoteMessage)
 
-    suspend fun deleteMessages(conversationId: String)
+    fun deleteMessages(conversationId: String)
 }

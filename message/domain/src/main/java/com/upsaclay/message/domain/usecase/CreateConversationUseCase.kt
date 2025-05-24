@@ -6,6 +6,7 @@ import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.repository.ConversationRepository
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class CreateConversationUseCase(
     private val conversationRepository: ConversationRepository
@@ -20,38 +21,31 @@ class CreateConversationUseCase(
         return Conversation(
             id = conversationId,
             interlocutor = interlocutor,
-            createdAt = LocalDateTime.now(),
+            createdAt = LocalDateTime.now(ZoneOffset.UTC),
             state = ConversationState.DRAFT
         )
     }
 
-    suspend fun createLocally(conversation: Conversation) {
+    suspend fun createLocalConversation(conversation: Conversation) {
         conversationRepository.upsertLocalConversation(conversation.copy(state = ConversationState.CREATING))
     }
 
-    suspend fun createRemotely(conversation: Conversation, userId: String, senderId: String) {
-        try {
-            when (conversation.state) {
-                ConversationState.DRAFT, ConversationState.ERROR ->
+    fun createRemoteConversation(conversation: Conversation, userId: String, senderId: String) {
+        when (conversation.state) {
+            ConversationState.DRAFT, ConversationState.ERROR ->
+                conversationRepository.createRemoteConversation(conversation, senderId)
+
+            ConversationState.SOFT_DELETED ->
+                conversationRepository.unDeleteRemoteConversation(conversation, userId)
+
+            ConversationState.CREATING -> {
+                val duration = Duration.between(conversation.createdAt, LocalDateTime.now(ZoneOffset.UTC))
+                if (duration.seconds > 10) {
                     conversationRepository.createRemoteConversation(conversation, senderId)
-
-                ConversationState.SOFT_DELETED ->
-                    conversationRepository.unDeleteRemoteConversation(conversation, userId)
-
-                ConversationState.CREATING -> {
-                    val duration = Duration.between(conversation.createdAt, LocalDateTime.now())
-                    if (duration.seconds > 10) {
-                        conversationRepository.createRemoteConversation(conversation, senderId)
-                    }
                 }
+            }
 
-                else -> Unit
-            }
-        } catch (e: Exception) {
-            if (conversation.state == ConversationState.DRAFT || conversation.state == ConversationState.CREATING) {
-                conversationRepository.upsertLocalConversation(conversation.copy(state = ConversationState.ERROR))
-            }
-            throw e
+            else -> Unit
         }
     }
 }

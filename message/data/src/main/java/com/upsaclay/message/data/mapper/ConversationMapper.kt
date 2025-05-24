@@ -64,7 +64,7 @@ internal fun RemoteConversation.toConversation(userId: String, interlocutor: Use
     Conversation(
         id = conversationId,
         interlocutor = interlocutor,
-        state = if (deleteBy[interlocutor.id] == true) {
+        state = if (deleteBy.containsValue(true)) {
             ConversationState.SOFT_DELETED
         } else {
             ConversationState.CREATED

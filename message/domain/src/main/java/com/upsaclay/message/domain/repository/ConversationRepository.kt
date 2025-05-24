@@ -9,19 +9,17 @@ interface ConversationRepository {
 
     suspend fun getLocalConversation(interlocutorId: String): Conversation?
 
-    suspend fun getRemoteConversationState(conversationId: String, interlocutorId: String): ConversationState?
-
     suspend fun fetchRemoteConversations(userId: String): Flow<Conversation>
 
-    suspend fun createRemoteConversation(conversation: Conversation, userId: String)
+    fun createRemoteConversation(conversation: Conversation, userId: String)
 
     suspend fun upsertLocalConversation(conversation: Conversation)
 
-    suspend fun unDeleteRemoteConversation(conversation: Conversation, userId: String)
+    fun unDeleteRemoteConversation(conversation: Conversation, userId: String)
 
     suspend fun softDeleteConversation(conversation: Conversation, userId: String)
 
-    suspend fun hardDeleteConversation(conversationId: String)
+    suspend fun hardDeleteConversation(conversation: Conversation)
 
     suspend fun deleteLocalConversations()
 }

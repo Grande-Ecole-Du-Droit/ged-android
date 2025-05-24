@@ -10,7 +10,6 @@ import com.upsaclay.message.data.local.ConversationLocalDataSource
 import com.upsaclay.message.data.mapper.toConversation
 import com.upsaclay.message.data.remote.ConversationRemoteDataSource
 import com.upsaclay.message.domain.entity.Conversation
-import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.repository.ConversationRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -35,10 +34,6 @@ internal class ConversationRepositoryImpl(
     override suspend fun getLocalConversation(interlocutorId: String): Conversation? =
         conversationLocalDataSource.getConversation(interlocutorId)
 
-
-    override suspend fun getRemoteConversationState(conversationId: String, interlocutorId: String): ConversationState? =
-        conversationRemoteDataSource.getConversationState(conversationId, interlocutorId)
-
     override suspend fun fetchRemoteConversations(userId: String): Flow<Conversation> {
         return conversationRemoteDataSource.listenConversations(userId)
             .flatMapMerge { remoteConversation ->
@@ -56,22 +51,16 @@ internal class ConversationRepositoryImpl(
             .catch { e("Failed to fetch conversations", it) }
     }
 
-    override suspend fun createRemoteConversation(conversation: Conversation, userId: String) {
-        handleNetworkException(
-            message = "Failed to create conversation",
-            block = { conversationRemoteDataSource.createConversation(conversation, userId) }
-        )
+    override fun createRemoteConversation(conversation: Conversation, userId: String) {
+        conversationRemoteDataSource.createConversation(conversation, userId)
     }
 
     override suspend fun upsertLocalConversation(conversation: Conversation) {
         conversationLocalDataSource.upsertConversation(conversation)
     }
 
-    override suspend fun unDeleteRemoteConversation(conversation: Conversation, userId: String) {
-        handleNetworkException(
-            message = "Failed to undelete conversation",
-            block = { conversationRemoteDataSource.unDeleteConversation(conversation, userId) }
-        )
+    override fun unDeleteRemoteConversation(conversation: Conversation, userId: String) {
+        conversationRemoteDataSource.unDeleteConversation(conversation, userId)
     }
 
     override suspend fun softDeleteConversation(conversation: Conversation, userId: String) {
@@ -85,10 +74,13 @@ internal class ConversationRepositoryImpl(
         )
     }
 
-    override suspend fun hardDeleteConversation(conversationId: String) {
+    override suspend fun hardDeleteConversation(conversation: Conversation) {
         handleNetworkException(
             message = "Failed to hard delete conversation",
-            block = { conversationRemoteDataSource.hardDeleteConversation(conversationId) }
+            block = {
+                conversationRemoteDataSource.hardDeleteConversation(conversation.id)
+                conversationLocalDataSource.deleteConversation(conversation)
+            }
         )
     }
 

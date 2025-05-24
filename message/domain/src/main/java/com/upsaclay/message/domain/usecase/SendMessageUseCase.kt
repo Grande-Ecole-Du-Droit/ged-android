@@ -12,47 +12,37 @@ import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.toFcm
-import kotlinx.coroutines.withTimeout
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class SendMessageUseCase(
     private val messageRepository: MessageRepository,
     private val createConversationUseCase: CreateConversationUseCase,
     private val notificationUseCase: NotificationUseCase
 ) {
-    suspend operator fun invoke(
-        conversation: Conversation,
-        user: User,
-        content: String
-    ) {
+    suspend operator fun invoke(conversation: Conversation, user: User, content: String) {
         val message = newMessage(conversation, content, user.id)
-        try {
-            createDataLocally(conversation, message)
-            withTimeout(15000) {
-                createDataRemotely(conversation, message, user.id)
-            }
-            sendNotification(conversation, message, user)
-        } catch (_: Exception) {
-            messageRepository.upsertLocalMessage(message.copy(state = MessageState.ERROR))
-        }
+        createDataLocally(conversation, message)
+        createDataRemotely(conversation, message, user.id)
+        sendNotification(conversation, message, user)
     }
 
     private suspend fun createDataLocally(conversation: Conversation, message: Message) {
         if (conversation.state != ConversationState.CREATED) {
-            createConversationUseCase.createLocally(conversation)
+            createConversationUseCase.createLocalConversation(conversation)
         }
         messageRepository.createLocalMessage(message)
     }
 
     private suspend fun createDataRemotely(conversation: Conversation, message: Message, userId: String) {
         if (conversation.state != ConversationState.CREATED) {
-            createConversationUseCase.createRemotely(conversation, userId, message.senderId)
+            createConversationUseCase.createRemoteConversation(conversation, userId, message.senderId)
         }
         messageRepository.createRemoteMessage(message)
     }
 
     private fun newMessage(conversation: Conversation, content: String, userId: String): Message {
-        val dateTime = LocalDateTime.now()
+        val dateTime = LocalDateTime.now(ZoneOffset.UTC)
         return Message(
             id = GenerateRandomIdUseCase.intId,
             conversationId = conversation.id,
