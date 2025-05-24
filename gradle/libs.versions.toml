@@ -31,7 +31,6 @@ material = "1.12.0"
 kotlinx = "1.9.0"
 googleServices = "4.4.2"
 firebaseCrashlyticsKtx = "19.4.1"
-paging = "3.3.6"
 firebaseMessagingKtx = "24.1.1"
 
 [libraries]
@@ -85,10 +84,6 @@ firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing" ,version.ref = "navigationTesting" }
 firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "firebaseCrashlyticsKtx" }
-androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "paging" }
-androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
-androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
-androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.8.1" }
 
