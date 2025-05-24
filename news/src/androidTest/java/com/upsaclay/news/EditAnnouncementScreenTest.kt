@@ -6,7 +6,7 @@ import androidx.compose.ui.test.isNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.upsaclay.news.domain.announcementFixture
-import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementDestination
+import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementScreenRoute
 import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementViewModel
 import io.mockk.every
 import io.mockk.mockk
@@ -39,7 +39,7 @@ class EditAnnouncementScreenTest {
 
         // When
         rule.setContent {
-            EditAnnouncementDestination(
+            EditAnnouncementScreenRoute(
                 announcementId = announcementFixture.id,
                 onBackClick = {},
                 viewModel = editAnnouncementViewModel
@@ -58,7 +58,7 @@ class EditAnnouncementScreenTest {
 
         // When
         rule.setContent {
-            EditAnnouncementDestination(
+            EditAnnouncementScreenRoute(
                 announcementId = announcementFixture.id,
                 onBackClick = {},
                 viewModel = editAnnouncementViewModel

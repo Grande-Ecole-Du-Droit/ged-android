@@ -3,7 +3,7 @@ package com.upsaclay.authentication
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.upsaclay.authentication.presentation.authentication.AuthenticationDestination
+import com.upsaclay.authentication.presentation.authentication.AuthenticationScreenRoute
 import kotlinx.serialization.Serializable
 
 @Serializable data object AuthenticationBaseRoute
@@ -16,7 +16,7 @@ fun NavGraphBuilder.authenticationSection(
 ) {
     navigation<AuthenticationBaseRoute>(startDestination = AuthenticationRoute) {
         composable<AuthenticationRoute> {
-            AuthenticationDestination(
+            AuthenticationScreenRoute(
                 onRegistrationClick = onRegistrationClick,
                 onLoginClick = onLoginClick
             )

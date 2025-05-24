@@ -17,7 +17,7 @@ fun NavGraphBuilder.createConversationScreen(
     onCreateConversationClick: (Conversation) -> Unit
 ) {
     composable<CreateConversationRoute> {
-        CreateConversationDestination(
+        CreateConversationScreenRoute(
             onBackClick = onBackClick,
             onCreateConversationClick = onCreateConversationClick
         )

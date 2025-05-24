@@ -31,7 +31,7 @@ import com.upsaclay.common.utils.mediumPadding
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SecondRegistrationScreen(
+fun SecondRegistrationScreenRoute(
     onNextClick: (String) -> Unit,
     onBackClick: () -> Unit,
     viewModel: SecondRegistrationViewModel = koinViewModel()

@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.news.domain.announcementFixture
 import com.upsaclay.news.domain.announcementsFixture
-import com.upsaclay.news.presentation.news.NewsDestination
+import com.upsaclay.news.presentation.news.NewsScreenRoute
 import com.upsaclay.news.presentation.news.NewsViewModel
 import io.mockk.coEvery
 import io.mockk.every
@@ -43,7 +43,7 @@ class NewsScreenTest {
 
         // When
         rule.setContent {
-            NewsDestination(
+            NewsScreenRoute(
                 onAnnouncementClick = {},
                 onCreateAnnouncementClick = {},
                 onProfilePictureClick = {},
@@ -61,7 +61,7 @@ class NewsScreenTest {
     fun no_empty_announcements_show_announcements() {
         // When
         rule.setContent {
-            NewsDestination(
+            NewsScreenRoute(
                 onAnnouncementClick = {},
                 onCreateAnnouncementClick = {},
                 onProfilePictureClick = {},
@@ -83,7 +83,7 @@ class NewsScreenTest {
     fun announcements_with_title_show_announcements_with_title() {
         // When
         rule.setContent {
-            NewsDestination(
+            NewsScreenRoute(
                 onAnnouncementClick = {},
                 onCreateAnnouncementClick = {},
                 onProfilePictureClick = {},
@@ -110,7 +110,7 @@ class NewsScreenTest {
 
         // When
         rule.setContent {
-            NewsDestination(
+            NewsScreenRoute(
                 onAnnouncementClick = {},
                 onCreateAnnouncementClick = {},
                 onProfilePictureClick = {},

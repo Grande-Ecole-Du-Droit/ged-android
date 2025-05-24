@@ -19,7 +19,7 @@ fun NavGraphBuilder.editAnnouncementScreen(
     composable<EditAnnouncementRoute> {
         val announcementId = it.toRoute<EditAnnouncementRoute>().announcementId
 
-        EditAnnouncementDestination(
+        EditAnnouncementScreenRoute(
             announcementId = announcementId,
             onBackClick = onBackClick
         )

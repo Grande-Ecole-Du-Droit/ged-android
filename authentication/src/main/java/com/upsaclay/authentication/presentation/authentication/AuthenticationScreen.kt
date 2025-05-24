@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AuthenticationDestination(
+fun AuthenticationScreenRoute(
     onRegistrationClick: () -> Unit,
     onLoginClick: () -> Unit,
     viewModel: AuthenticationViewModel = koinViewModel()

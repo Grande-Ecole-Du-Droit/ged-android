@@ -41,7 +41,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun ReadAnnouncementDestination(
+fun ReadAnnouncementScreenRoute(
     announcementId: String,
     onBackClick: () -> Unit,
     onEditClick: (String) -> Unit,

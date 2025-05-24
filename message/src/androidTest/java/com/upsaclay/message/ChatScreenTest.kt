@@ -6,7 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messageFixture2
-import com.upsaclay.message.presentation.chat.ChatDestination
+import com.upsaclay.message.presentation.chat.ChatScreenRoute
 import com.upsaclay.message.presentation.chat.ChatViewModel
 import io.mockk.every
 import io.mockk.mockk
@@ -43,7 +43,7 @@ class ChatScreenTest {
 
         // When
         rule.setContent {
-            ChatDestination(
+            ChatScreenRoute(
                 conversation = conversationFixture,
                 onBackClick = {},
                 viewModel = chatViewModel
@@ -65,7 +65,7 @@ class ChatScreenTest {
 
         // When
         rule.setContent {
-            ChatDestination(
+            ChatScreenRoute(
                 conversation = conversationFixture,
                 onBackClick = {},
                 viewModel = chatViewModel

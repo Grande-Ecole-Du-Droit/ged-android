@@ -6,7 +6,7 @@ import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.isNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.upsaclay.news.presentation.announcement.create.CreateAnnouncementDestination
+import com.upsaclay.news.presentation.announcement.create.CreateAnnouncementScreenRoute
 import com.upsaclay.news.presentation.announcement.create.CreateAnnouncementViewModel
 import io.mockk.every
 import io.mockk.mockk
@@ -40,7 +40,7 @@ class CreateAnnouncementScreenTest {
 
         // When
         rule.setContent {
-            CreateAnnouncementDestination(
+            CreateAnnouncementScreenRoute(
                 onBackClick = {},
                 viewModel = createAnnouncementViewModel
             )
@@ -59,7 +59,7 @@ class CreateAnnouncementScreenTest {
 
         // When
         rule.setContent {
-            CreateAnnouncementDestination(
+            CreateAnnouncementScreenRoute(
                 onBackClick = {},
                 viewModel = createAnnouncementViewModel
             )

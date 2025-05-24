@@ -28,7 +28,7 @@ import com.upsaclay.common.utils.Phones
 import com.upsaclay.news.R
 import com.upsaclay.news.domain.announcementFixture
 import com.upsaclay.news.domain.entity.Announcement
-import com.upsaclay.news.presentation.components.AnnouncementHeader
+import com.upsaclay.news.presentation.announcement.components.AnnouncementHeader
 
 @Composable
 fun ReadAnnouncementHeader(
