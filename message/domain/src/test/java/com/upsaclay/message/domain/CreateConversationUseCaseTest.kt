@@ -41,9 +41,9 @@ class CreateConversationUseCaseTest {
     }
 
     @Test
-    fun createLocally_should_upsert_local_conversation() = runTest {
+    fun createLocalConversation_should_upsert_local_conversation() = runTest {
         // When
-        useCase.createLocally(conversationFixture)
+        useCase.createLocalConversation(conversationFixture)
 
         // Then
         coEvery {

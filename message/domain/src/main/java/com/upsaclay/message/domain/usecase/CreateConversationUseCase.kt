@@ -26,7 +26,7 @@ class CreateConversationUseCase(
         )
     }
 
-    suspend fun createLocally(conversation: Conversation) {
+    suspend fun createLocalConversation(conversation: Conversation) {
         conversationRepository.upsertLocalConversation(conversation.copy(state = ConversationState.CREATING))
     }
 

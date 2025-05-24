@@ -12,7 +12,6 @@ import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.toFcm
-import kotlinx.coroutines.withTimeout
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -30,7 +29,7 @@ class SendMessageUseCase(
 
     private suspend fun createDataLocally(conversation: Conversation, message: Message) {
         if (conversation.state != ConversationState.CREATED) {
-            createConversationUseCase.createLocally(conversation)
+            createConversationUseCase.createLocalConversation(conversation)
         }
         messageRepository.createLocalMessage(message)
     }
