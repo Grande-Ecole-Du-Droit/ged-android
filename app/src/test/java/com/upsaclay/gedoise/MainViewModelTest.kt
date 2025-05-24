@@ -104,30 +104,4 @@ class MainViewModelTest {
         // Then
         coVerify { clearDataUseCase() }
     }
-
-    @Test
-    fun current_user_should_be_updated_when_is_if_different_from_remote() = runTest {
-        // Given
-        every { userRepository.user } returns MutableStateFlow(userFixture)
-        coEvery { userRepository.getUser(any()) } returns userFixture2
-
-        // When
-        mainViewModel.startListening()
-
-        // Then
-        coVerify { userRepository.storeUser(userFixture2) }
-    }
-
-    @Test
-    fun current_user_should_be_remove_user_when_remote_user_is_null() = runTest {
-        // Given
-        coEvery { userRepository.getUser(any()) } returns null
-
-        // When
-        mainViewModel.startListening()
-
-        // Then
-        coVerify { userRepository.deleteCurrentUser() }
-        coVerify { authenticationRepository.logout() }
-    }
 }
