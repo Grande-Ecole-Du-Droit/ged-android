@@ -55,20 +55,20 @@ fun ProfileScreenRoute(
 
     ProfileScreen(
         user = uiState.user,
-        bottomBar = bottomBar,
         onLogoutClick = viewModel::logout,
         onAccountClick = onAccountClick,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        bottomBar = bottomBar
     )
 }
 
 @Composable
 fun ProfileScreen(
     user: User?,
-    bottomBar: @Composable () -> Unit,
     onLogoutClick: () -> Unit,
     onAccountClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    bottomBar: @Composable () -> Unit
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
     val dividerColor = if (isSystemInDarkTheme()) {
@@ -202,7 +202,7 @@ fun ProfileScreenPreview() {
             onLogoutClick = {},
             onAccountClick = {},
             onBackClick = {},
-            bottomBar = {},
+            bottomBar = {}
         )
     }
 }

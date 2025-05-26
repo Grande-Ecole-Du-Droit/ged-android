@@ -44,8 +44,14 @@ fun MainBottomBar(
 
     NavigationBar {
         topLevelDestinations.forEachIndexed { index, destination ->
-            val selected = currentRoute.isRouteInHierarchy(destination.route)
-                .also { if (it) previousDestination = destination }
+            val selected = currentRoute
+                .isRouteInHierarchy(destination.route)
+                .also {
+                    if (it) {
+                        previousDestination = destination
+                    }
+                }
+
             val iconRes = if (selected) destination.filledIcon else destination.outlinedIcon
 
             NavigationBarItem(
@@ -78,7 +84,7 @@ fun MainBottomBar(
 }
 
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
-    this?.hierarchy?.any {
+    this?.parent?.any {
         it.hasRoute(route)
     } ?: false
 
