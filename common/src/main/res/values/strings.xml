@@ -55,7 +55,7 @@
     <string name="empty_field_error">Veuillez remplir le champ.</string>
     <string name="unknown_error">Une erreur inconnue est survenue.</string>
     <string name="internal_server_error">Une erreur interne au serveur est survenue.</string>
-    <string name="server_connection_error">La connexion au serveur a échoué.</string>
+    <string name="server_connection_error">Impossible de se connecter au serveur.</string>
     <string name="unknown_network_error">Une erreur réseau est survenue.</string>
     <string name="occurred_error">Une erreur est survenue.</string>
     <string name="too_many_request_error">Vous avez effectué trop de requêtes. Veuillez réessayer dans quelques minutes.</string>
