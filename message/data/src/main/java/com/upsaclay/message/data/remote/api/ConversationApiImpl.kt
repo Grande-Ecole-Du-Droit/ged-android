@@ -23,11 +23,9 @@ internal class ConversationApiImpl: ConversationApi {
                     return@addSnapshotListener
                 }
 
-                snapshot?.documents
-                    ?.filterNot { it.metadata.isFromCache || it.metadata.hasPendingWrites() }
-                    ?.forEach { document ->
-                        document.toObject(RemoteConversation::class.java)?.let {
-                            trySend(it)
+                snapshot?.documents?.forEach { document ->
+                    document.toObject(RemoteConversation::class.java)?.let {
+                        trySend(it)
                     }
                 }
             }

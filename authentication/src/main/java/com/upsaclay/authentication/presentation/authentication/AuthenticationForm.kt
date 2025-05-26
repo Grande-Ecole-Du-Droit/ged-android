@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -39,13 +40,14 @@ fun AuthenticationForm(
     loading: Boolean,
     emailError: Int?,
     passwordError: Int?,
-    passwordFocusRequester: FocusRequester = FocusRequester.Default,
+    errorMessage: Int?,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
     onRegistrationClick: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val passwordFocusRequester = remember { FocusRequester() }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -61,6 +63,16 @@ fun AuthenticationForm(
             onEmailChange = onEmailChange,
             onPasswordChange = onPasswordChange
         )
+
+        errorMessage?.let {
+            passwordFocusRequester.requestFocus()
+            Text(
+                modifier = Modifier.align(Alignment.Start),
+                text = stringResource(it),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
 
         LoginButton(
             modifier = Modifier
@@ -95,17 +107,17 @@ private fun CredentialsInputs(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit
 ) {
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
+    ) {
         OutlineTextField(
             modifier = Modifier.fillMaxWidth(),
             value = email,
+            label = stringResource(com.upsaclay.common.R.string.email),
             onValueChange = onEmailChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            errorMessage = emailError,
-            label = stringResource(com.upsaclay.common.R.string.email)
+            errorMessage = emailError
         )
-
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
 
         OutlinePasswordTextField(
             modifier = Modifier
@@ -162,6 +174,7 @@ private fun AuthenticationFormPreview() {
                 loading = false,
                 emailError = null,
                 passwordError = null,
+                errorMessage = null,
                 onEmailChange = {},
                 onPasswordChange = {},
                 onLoginClick = {},
