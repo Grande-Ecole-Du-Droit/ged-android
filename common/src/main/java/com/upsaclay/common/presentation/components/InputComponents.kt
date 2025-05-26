@@ -38,6 +38,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.upsaclay.common.presentation.theme.GedoiseTheme
+import com.upsaclay.common.presentation.theme.inputForeground
+import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import kotlinx.coroutines.android.awaitFrame
 
@@ -66,7 +68,7 @@ fun OutlineTextField(
     OutlinedTextField(
         modifier = modifier,
         value = value,
-        label = { Text(text = label) },
+        label = { Text(text = label, color = MaterialTheme.colorScheme.inputForeground) },
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
         isError = errorMessage != null,

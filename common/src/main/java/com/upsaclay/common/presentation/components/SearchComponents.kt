@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.upsaclay.common.presentation.theme.GedoiseTheme
-import com.upsaclay.common.presentation.theme.chatInputBackground
+import com.upsaclay.common.presentation.theme.inputBackground
 import com.upsaclay.common.presentation.theme.cursor
 import com.upsaclay.common.presentation.theme.spacing
 
@@ -56,8 +56,8 @@ fun SimpleSearchBar(
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = MaterialTheme.colorScheme.chatInputBackground,
-                unfocusedContainerColor = MaterialTheme.colorScheme.chatInputBackground,
+                focusedContainerColor = MaterialTheme.colorScheme.inputBackground,
+                unfocusedContainerColor = MaterialTheme.colorScheme.inputBackground,
                 cursorColor = MaterialTheme.colorScheme.cursor
             ),
             contentPadding = PaddingValues(),

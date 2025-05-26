@@ -174,7 +174,8 @@ private fun EmptyConversationText(onCreateClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = MaterialTheme.spacing.large),
+            .padding(top = MaterialTheme.spacing.large)
+            .testTag(stringResource(R.string.conversation_screen_empty_conversation_text_tag)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

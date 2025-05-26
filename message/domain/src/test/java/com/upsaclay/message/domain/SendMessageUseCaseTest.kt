@@ -2,55 +2,43 @@ package com.upsaclay.message.domain
 
 import com.upsaclay.common.domain.usecase.NotificationUseCase
 import com.upsaclay.common.domain.userFixture
-import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.message.domain.entity.ConversationState
+import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SendMessageUseCaseTest {
+    private val conversationRepository: ConversationRepository = mockk()
     private val messageRepository: MessageRepository = mockk()
-    private val createConversationUseCase: CreateConversationUseCase = mockk()
     private val notificationUseCase: NotificationUseCase = mockk()
 
     private lateinit var useCase: SendMessageUseCase
+    private val testScope = TestScope(UnconfinedTestDispatcher())
 
     @Before
     fun setUp() {
-        coEvery { createConversationUseCase.createLocalConversation(any()) } returns Unit
-        coEvery { createConversationUseCase.createRemoteConversation(any(), any(), any()) } returns Unit
-        coEvery { messageRepository.createLocalMessage(any()) } returns Unit
-        coEvery { messageRepository.createRemoteMessage(any()) } returns Unit
+        coEvery { conversationRepository.upsertLocalConversation(any()) } returns Unit
+        coEvery { conversationRepository.createConversation(any(), any()) } returns Unit
         coEvery { messageRepository.upsertLocalMessage(any()) } returns Unit
+        coEvery { messageRepository.createMessage(any()) } returns Unit
         coEvery { notificationUseCase.sendNotification<Any>(any(), any()) } returns Unit
 
         useCase = SendMessageUseCase(
             messageRepository = messageRepository,
-            createConversationUseCase = createConversationUseCase,
-            notificationUseCase = notificationUseCase
+            conversationRepository = conversationRepository,
+            notificationUseCase = notificationUseCase,
+            scope = testScope
         )
-    }
-
-    @Test
-    fun sendMessageUseCase_should_create_local_message() = runTest {
-        // When
-        useCase(conversationFixture, userFixture, "content")
-
-        // Then
-        coEvery { messageRepository.createLocalMessage(any()) }
-    }
-
-    @Test
-    fun sendMessageUseCase_should_create_remote_message() = runTest {
-        // When
-        useCase(conversationFixture, userFixture, "content")
-
-        // Then
-        coEvery { messageRepository.createRemoteMessage(any()) }
     }
 
     @Test
@@ -63,14 +51,27 @@ class SendMessageUseCaseTest {
     }
 
     @Test
-    fun sendMessageUseCase_should_create_conversation_when_state_is_not_created() = runTest {
-        // Given
-        val conversation = conversationFixture.copy(state = ConversationState.DRAFT)
-
+    fun sendMessageUseCase_should_create_conversation_if_needed() = runTest {
         // When
-        useCase(conversation, userFixture, "content")
+        useCase(
+            conversationFixture.copy(state = ConversationState.DRAFT),
+            userFixture, "content"
+        )
 
         // Then
-        coEvery { createConversationUseCase.createRemoteConversation(conversation, userFixture.id, userFixture2.id) }
+        coVerify {
+            conversationRepository.createConversation(
+                conversationFixture.copy(state = ConversationState.CREATED), userFixture.id
+            )
+        }
+    }
+
+    @Test
+    fun sendMessageUseCase_should_create_message() = runTest {
+        // When
+        useCase(conversationFixture, userFixture, "content")
+
+        // Then
+        coEvery { messageRepository.upsertLocalMessage(any()) }
     }
 }

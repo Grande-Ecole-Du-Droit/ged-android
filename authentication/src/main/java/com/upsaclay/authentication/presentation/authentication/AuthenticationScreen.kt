@@ -162,7 +162,10 @@ private fun TitleSection() {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
+    ) {
         Image(
             painter = painterResource(id = com.upsaclay.common.R.drawable.ged_logo),
             contentDescription = stringResource(id = com.upsaclay.common.R.string.ged_logo_description),
@@ -173,8 +176,6 @@ private fun TitleSection() {
                 .height(screenHeight * 0.2f)
         )
 
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-
         Text(
             text = stringResource(id = com.upsaclay.common.R.string.app_name),
             style = MaterialTheme.typography.titleLarge,
@@ -182,8 +183,6 @@ private fun TitleSection() {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface
         )
-
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
 
         Text(
             text = stringResource(id = R.string.presentation_text),

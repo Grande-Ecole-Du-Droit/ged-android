@@ -54,8 +54,8 @@ import androidx.compose.ui.unit.dp
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.black
-import com.upsaclay.common.presentation.theme.chatInputBackground
-import com.upsaclay.common.presentation.theme.chatInputForeground
+import com.upsaclay.common.presentation.theme.inputBackground
+import com.upsaclay.common.presentation.theme.inputForeground
 import com.upsaclay.common.presentation.theme.cursor
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.presentation.theme.white
@@ -148,7 +148,7 @@ fun ReceiveMessageItem(
         MessageText(
             text = message.content,
             date = message.date,
-            backgroundColor = MaterialTheme.colorScheme.chatInputBackground,
+            backgroundColor = MaterialTheme.colorScheme.inputBackground,
             textColor = foreground,
             dateTimeTextColor = Color(0xFF8E8E93)
         )
@@ -206,7 +206,7 @@ fun MessageInput(
     Row(
         modifier = modifier
             .clip(ShapeDefaults.ExtraLarge)
-            .background(MaterialTheme.colorScheme.chatInputBackground)
+            .background(MaterialTheme.colorScheme.inputBackground)
             .padding(end = MaterialTheme.spacing.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -227,14 +227,14 @@ fun MessageInput(
                     Text(
                         text = stringResource(id = R.string.message_placeholder),
                         style = TextStyle(platformStyle = PlatformTextStyle(false)),
-                        color = MaterialTheme.colorScheme.chatInputForeground
+                        color = MaterialTheme.colorScheme.inputForeground
                     )
                 },
                 enabled = true,
                 singleLine = false,
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.chatInputBackground,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.chatInputBackground,
+                    focusedContainerColor = MaterialTheme.colorScheme.inputBackground,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.inputBackground,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     cursorColor = MaterialTheme.colorScheme.cursor

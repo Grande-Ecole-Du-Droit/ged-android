@@ -26,8 +26,7 @@ class ConversationScreenTest {
 
     private val conversationViewModel: ConversationViewModel = mockk()
     private val uiState = ConversationViewModel.ConversationUiState(
-        conversations = conversationsUIFixture,
-        loading = false
+        conversations = conversationsUIFixture
     )
 
     @Before
@@ -55,6 +54,30 @@ class ConversationScreenTest {
                     get(i).assert(hasText(conversationsUIFixture[i].interlocutor.fullName))
                 }
             }
+    }
+
+    @Test
+    fun empty_conversations_text_should_be_displayed_when_no_conversations() {
+        // Given
+        every { conversationViewModel.uiState } returns MutableStateFlow(
+            uiState.copy(conversations = emptyList())
+        )
+
+        // When
+        rule.setContent {
+            ConversationScreenRoute(
+                onConversationClick = {},
+                onCreateConversation = {},
+                bottomBar = {},
+                viewModel = conversationViewModel
+            )
+        }
+
+        // Then
+        rule.onNodeWithTag(
+            rule.activity.getString(R.string.conversation_screen_empty_conversation_text_tag),
+            useUnmergedTree = true
+        ).assertExists()
     }
 
     @Test

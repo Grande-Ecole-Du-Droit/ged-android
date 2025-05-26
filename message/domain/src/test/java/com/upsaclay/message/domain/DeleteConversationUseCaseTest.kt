@@ -8,15 +8,20 @@ import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DeleteConversationUseCaseTest {
     private val conversationRepository: ConversationRepository = mockk()
     private val messageRepository: MessageRepository = mockk()
 
     private lateinit var useCase: DeleteConversationUseCase
+    private val testScope = TestScope(UnconfinedTestDispatcher())
 
     @Before
     fun setUp() {
@@ -25,17 +30,20 @@ class DeleteConversationUseCaseTest {
 
         useCase = DeleteConversationUseCase(
             conversationRepository = conversationRepository,
-            messageRepository = messageRepository
+            messageRepository = messageRepository,
+            scope = testScope
         )
     }
 
-
     @Test
-    fun deleteConversation_should_delete_local_messages() = runTest {
+    fun deleteConversation_should_update_conversation_state_to_loading() = runTest {
+        // Given
+        val conversation = conversationFixture.copy(state = ConversationState.LOADING)
+
         // When
-        useCase(conversationFixture, userFixture.id)
+        useCase(conversation, userFixture.id)
 
         // Then
-        coVerify { messageRepository.deleteLocalMessages(conversationFixture.id) }
+        coVerify { conversationRepository.upsertLocalConversation(conversation) }
     }
 }

@@ -23,6 +23,7 @@
 
     <string name="conversation_screen_conversation_item_tag">Conversation Screen Conversation Item Tag</string>
     <string name="conversation_screen_empty_conversation_item_tag">Conversation Screen Empty Conversation Item Tag</string>
+    <string name="conversation_screen_empty_conversation_text_tag">Conversation Screen Empty Conversation Text Tag</string>
     <string name="conversation_screen_read_conversation_item_tag">Conversation Screen Read Conversation Item Tag</string>
     <string name="conversation_screen_unread_conversation_item_tag">Conversation Screen Unread Conversation Item Tag</string>
     <string name="conversation_screen_create_conversation_button_tag">Conversation Screen Create Conversation Button Tag</string>

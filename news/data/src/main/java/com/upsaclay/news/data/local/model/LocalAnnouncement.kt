@@ -11,6 +11,7 @@ import com.upsaclay.news.data.AnnouncementField.ANNOUNCEMENT_TITLE
 import com.upsaclay.news.data.AnnouncementField.USER_EMAIL
 import com.upsaclay.news.data.AnnouncementField.USER_FIRST_NAME
 import com.upsaclay.news.data.AnnouncementField.USER_ID
+import com.upsaclay.news.data.AnnouncementField.USER_IS_MEMBER
 import com.upsaclay.news.data.AnnouncementField.USER_LAST_NAME
 import com.upsaclay.news.data.AnnouncementField.USER_PROFILE_PICTURE_FILE_NAME
 import com.upsaclay.news.data.AnnouncementField.USER_SCHOOL_LEVEL
@@ -41,7 +42,7 @@ data class LocalAnnouncement(
     val userEmail: String,
     @ColumnInfo(name = USER_SCHOOL_LEVEL)
     val userSchoolLevel: String,
-    @ColumnInfo(name = USER_SCHOOL_LEVEL)
+    @ColumnInfo(name = USER_IS_MEMBER)
     val userIsMember: Boolean,
     @ColumnInfo(name = USER_PROFILE_PICTURE_FILE_NAME)
     val userProfilePictureFileName: String?

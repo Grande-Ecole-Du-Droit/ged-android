@@ -69,13 +69,13 @@ val ColorScheme.gold: Color
     @Composable
     get() = Color(0xFFB98129)
 
-val ColorScheme.chatInputBackground: Color
+val ColorScheme.inputBackground: Color
     @Composable
     get() = if(isSystemInDarkTheme()) Color(0xFF323232) else Color(0xFFEEEEEE)
 
-val ColorScheme.chatInputForeground: Color
+val ColorScheme.inputForeground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) Color(0xFF929298) else Color(0xFF646464)
+    get() = if(isSystemInDarkTheme()) Color(0xFFBEBEBE) else Color(0xFF646464)
 
 val ColorScheme.cursor: Color
     @Composable

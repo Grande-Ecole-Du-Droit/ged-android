@@ -14,6 +14,7 @@ import com.upsaclay.news.presentation.news.NewsViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
@@ -32,6 +33,7 @@ class NewsScreenTest {
 
     @Before
     fun setUp() {
+        every { newsViewModel.event } returns MutableSharedFlow()
         every { newsViewModel.uiState } returns MutableStateFlow(uiState)
         coEvery { newsViewModel.refreshAnnouncements() } returns Unit
     }
