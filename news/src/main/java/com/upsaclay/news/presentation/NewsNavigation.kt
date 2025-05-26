@@ -32,6 +32,6 @@ fun NavGraphBuilder.newsSection(
                 bottomBar = bottomBar
             )
         }
+        newsDestination()
     }
-    newsDestination()
 }

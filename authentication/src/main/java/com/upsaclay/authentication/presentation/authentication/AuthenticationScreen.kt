@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -64,17 +65,19 @@ fun AuthenticationScreenRoute(
             snackbarHostState.showSnackbar(message = message)
         }
     }
-    val passwordFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest {
             when (it) {
-                is SingleUiEvent.Error -> {
-                    showSnackBar(context.getString(it.messageId))
-                    passwordFocusRequester.requestFocus()
-                }
+                is SingleUiEvent.Error -> showSnackBar(context.getString(it.messageId))
                 is SingleUiEvent.Success -> onLoginClick()
             }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.resetValues()
         }
     }
 
@@ -84,7 +87,7 @@ fun AuthenticationScreenRoute(
         emailError = uiState.emailError,
         passwordError = uiState.passwordError,
         loading = uiState.loading,
-        passwordFocusRequester = passwordFocusRequester,
+        errorMessage = uiState.errorMessage,
         snackbarHostState = snackbarHostState,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
@@ -100,7 +103,7 @@ private fun AuthenticationScreen(
     @StringRes emailError: Int? = null,
     @StringRes passwordError: Int? = null,
     loading: Boolean = false,
-    passwordFocusRequester: FocusRequester = FocusRequester.Default,
+    errorMessage: Int? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -128,9 +131,9 @@ private fun AuthenticationScreen(
                     .mediumPadding(innerPadding)
                     .verticalScroll(scrollState)
                     .pointerInput(Unit) {
-                        detectTapGestures(onTap = {
-                            focusManager.clearFocus()
-                        })
+                        detectTapGestures(
+                            onTap = { focusManager.clearFocus() }
+                        )
                     }
             ) {
                 TitleSection()
@@ -143,7 +146,7 @@ private fun AuthenticationScreen(
                     loading = loading,
                     emailError = emailError,
                     passwordError = passwordError,
-                    passwordFocusRequester = passwordFocusRequester,
+                    errorMessage = errorMessage,
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange,
                     onLoginClick = {

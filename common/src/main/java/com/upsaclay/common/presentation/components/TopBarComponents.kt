@@ -27,7 +27,7 @@ import com.upsaclay.common.utils.Phones
 @Composable
 fun TitleTopBar(title: String) {
     TopAppBar(
-        title = { Text(text = title, fontWeight = FontWeight.Medium) },
+        title = { Text(text = title) },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background
         )
@@ -47,7 +47,7 @@ fun BackTopBar(
     }
 ) {
     TopAppBar(
-        title = { Text(text = title, fontWeight = FontWeight.Medium) },
+        title = { Text(text = title) },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 icon()
@@ -71,7 +71,7 @@ fun EditTopBar(
 ) {
     TopAppBar(
         modifier = modifier,
-        title = { Text(text = title, fontWeight = FontWeight.Medium) },
+        title = { Text(text = title) },
         navigationIcon = {
             IconButton(onClick = onCancelClick) {
                 Icon(

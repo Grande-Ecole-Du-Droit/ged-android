@@ -11,6 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -29,6 +31,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.upsaclay.common.presentation.TopLevelDestinationRoute
 import com.upsaclay.common.presentation.theme.GedoiseTheme
+import com.upsaclay.common.presentation.theme.black
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.gedoise.R
 import com.upsaclay.gedoise.presentation.navigation.TopLevelDestination
@@ -42,10 +45,18 @@ fun MainBottomBar(
 ) {
     var previousDestination: TopLevelDestination? = null
 
-    NavigationBar {
+    NavigationBar(
+        tonalElevation = 2.dp
+    ) {
         topLevelDestinations.forEachIndexed { index, destination ->
-            val selected = currentRoute.isRouteInHierarchy(destination.route)
-                .also { if (it) previousDestination = destination }
+            val selected = currentRoute
+                .isRouteInHierarchy(destination.route)
+                .also {
+                    if (it) {
+                        previousDestination = destination
+                    }
+                }
+
             val iconRes = if (selected) destination.filledIcon else destination.outlinedIcon
 
             NavigationBarItem(
@@ -78,7 +89,7 @@ fun MainBottomBar(
 }
 
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
-    this?.hierarchy?.any {
+    this?.parent?.any {
         it.hasRoute(route)
     } ?: false
 
@@ -142,10 +153,12 @@ private fun MainBottomBarPreview() {
     )
 
     GedoiseTheme {
-        MainBottomBar(
-            onTopLevelDestinationClick = { },
-            currentRoute = navController.currentBackStackEntryAsState().value?.destination,
-            topLevelDestinations = itemList
-        )
+        Surface {
+            MainBottomBar(
+                onTopLevelDestinationClick = { },
+                currentRoute = navController.currentBackStackEntryAsState().value?.destination,
+                topLevelDestinations = itemList
+            )
+        }
     }
 }

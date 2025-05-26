@@ -21,6 +21,6 @@ fun NavGraphBuilder.authenticationSection(
                 onLoginClick = onLoginClick
             )
         }
+        registrationDestination()
     }
-    registrationDestination()
 }

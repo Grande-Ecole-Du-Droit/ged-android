@@ -17,7 +17,12 @@ class EditAnnouncementViewModel(
     private val announcement: Announcement,
     private val updateAnnouncementUseCase: UpdateAnnouncementUseCase
 ): ViewModel() {
-    private val _uiState = MutableStateFlow(EditAnnouncementUiState())
+    private val _uiState = MutableStateFlow(
+        EditAnnouncementUiState(
+            title = announcement.title ?: "",
+            content = announcement.content,
+        )
+    )
     internal val uiState: StateFlow<EditAnnouncementUiState> = _uiState
     private val _event = MutableSharedFlow<SingleUiEvent>()
     val event: SharedFlow<SingleUiEvent> = _event

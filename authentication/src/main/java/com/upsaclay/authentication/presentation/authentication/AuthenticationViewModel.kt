@@ -41,18 +41,39 @@ class AuthenticationViewModel(
     fun login() {
         val (email, password) = _uiState.value
         if (!validateInputs(email, password)) return
-        _uiState.update { it.copy(loading = true) }
+        _uiState.update {
+            it.copy(loading = true)
+        }
 
         viewModelScope.launch {
             try {
                 loginUseCase(email, password)
             } catch (e: Exception) {
-                _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
-                if (e !is NoInternetConnectionException) {
+                if (e is NoInternetConnectionException) {
+                    _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
+                    _uiState.update { it.copy(loading = false) }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            errorMessage = mapErrorMessage(e),
+                            loading = false
+                        )
+                    }
                     resetPassword()
                 }
-                _uiState.update { it.copy(loading = false) }
             }
+        }
+    }
+
+    fun resetValues() {
+        _uiState.update {
+            it.copy(
+                email = "",
+                password = "",
+                emailError = null,
+                passwordError = null,
+                errorMessage = null
+            )
         }
     }
 
@@ -66,7 +87,8 @@ class AuthenticationViewModel(
         _uiState.update {
             it.copy(
                 emailError = validateEmail(email),
-                passwordError = validatePassword(password)
+                passwordError = validatePassword(password),
+                errorMessage = null
             )
         }
 
@@ -105,5 +127,6 @@ class AuthenticationViewModel(
         val loading: Boolean = false,
         @StringRes val emailError: Int? = null,
         @StringRes val passwordError: Int? = null,
+        @StringRes val errorMessage: Int? = null
     )
 }

@@ -13,9 +13,7 @@ import com.upsaclay.message.data.remote.model.RemoteMessage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.tasks.await
 
 internal class MessageApiImpl : MessageApi {
     private val conversationsCollection = Firebase.firestore.collection(CONVERSATIONS_TABLE_NAME)
@@ -32,40 +30,32 @@ internal class MessageApiImpl : MessageApi {
                 return@addSnapshotListener
             }
 
-            snapshot?.documents
-                ?.filterNot { it.metadata.isFromCache || it.metadata.hasPendingWrites() }
-                ?.forEach { document ->
-                    document.toObject(RemoteMessage::class.java)?.let {
-                        trySend(it)
-                    }
+            snapshot?.documents?.forEach { document ->
+                document.toObject(RemoteMessage::class.java)?.let {
+                    trySend(it)
                 }
+            }
         }
 
         awaitClose { listener.remove() }
     }
 
     override suspend fun createMessage(remoteMessage: RemoteMessage) {
-        suspendCancellableCoroutine { continuation ->
-            conversationsCollection
-                .document(remoteMessage.conversationId)
-                .collection(MESSAGES_TABLE_NAME)
-                .document(remoteMessage.messageId.toString())
-                .set(remoteMessage)
-                .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
+        conversationsCollection
+            .document(remoteMessage.conversationId)
+            .collection(MESSAGES_TABLE_NAME)
+            .document(remoteMessage.messageId.toString())
+            .set(remoteMessage)
+            .await()
     }
 
     override suspend fun updateSeenMessage(remoteMessage: RemoteMessage) {
-        suspendCancellableCoroutine { continuation ->
-            conversationsCollection
-                .document(remoteMessage.conversationId)
-                .collection(MESSAGES_TABLE_NAME)
-                .document(remoteMessage.messageId.toString())
-                .update(MessageField.SEEN, remoteMessage.seen)
-                .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-            }
+        conversationsCollection
+            .document(remoteMessage.conversationId)
+            .collection(MESSAGES_TABLE_NAME)
+            .document(remoteMessage.messageId.toString())
+            .update(MessageField.SEEN, remoteMessage.seen)
+            .await()
     }
 
     private fun CollectionReference.withOffsetTime(offsetTime: Timestamp?): Query {
