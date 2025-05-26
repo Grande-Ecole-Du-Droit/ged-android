@@ -1,5 +1,6 @@
 package com.upsaclay.news.presentation.announcement.edit
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.presentation.components.EditTopBar
 import com.upsaclay.common.presentation.components.LoadingDialog
@@ -111,7 +113,6 @@ private fun EditAnnouncementScreen(
                     focusManager.clearFocus()
                     onUpdateAnnouncementClick()
                 },
-                title = stringResource(R.string.edit_announcement),
                 isButtonEnable = updateEnabled && !loading,
                 buttonText = stringResource(id = com.upsaclay.common.R.string.save)
             )
@@ -135,26 +136,28 @@ private fun EditAnnouncementScreen(
                 )
                 .fillMaxSize()
         ) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
+            ) {
                 TransparentFocusedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = title,
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.title_field_entry),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.2f,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.3f,
                             color = MaterialTheme.colorScheme.hintText
                         )
                     },
                     onValueChange = onTitleChange,
                     textStyle = MaterialTheme.typography.titleMedium.copy(
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.2f
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.3f
                     ),
                     enabled = !loading
                 )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.smallMedium))
 
                 TransparentTextField(
                     modifier = Modifier.fillMaxWidth(),

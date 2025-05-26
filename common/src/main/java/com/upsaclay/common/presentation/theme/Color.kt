@@ -85,10 +85,6 @@ val ColorScheme.previewText: Color
     @Composable
     get() = if(isSystemInDarkTheme()) Color(0xFFA1A4B0) else Color(0xFF6F7181)
 
-val ColorScheme.overlay: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color(0x66141414) else Color(0x66FFFFFF)
-
 val ColorScheme.profilePictureError: Color
     @Composable
     get() = if (isSystemInDarkTheme()) Color(0xFF323232) else Color(0xFFE6E6E6)

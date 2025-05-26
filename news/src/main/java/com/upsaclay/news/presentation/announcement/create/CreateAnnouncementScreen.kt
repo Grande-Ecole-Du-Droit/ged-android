@@ -1,11 +1,10 @@
 package com.upsaclay.news.presentation.announcement.create
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -20,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import com.upsaclay.common.presentation.components.EditTopBar
 import com.upsaclay.common.presentation.components.TransparentFocusedTextField
 import com.upsaclay.common.presentation.components.TransparentTextField
@@ -66,7 +66,6 @@ private fun CreateAnnouncementScreen(
         topBar = {
             EditTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = stringResource(R.string.new_announcement),
                 buttonText = stringResource(id = com.upsaclay.common.R.string.publish),
                 onCancelClick = {
                     focusManager.clearFocus()
@@ -92,25 +91,27 @@ private fun CreateAnnouncementScreen(
                 )
                 .fillMaxSize()
         ) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
+            ) {
                 TransparentFocusedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = title,
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.title_field_entry),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.2f,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.3f,
                             color = MaterialTheme.colorScheme.hintText
                         )
                     },
                     onValueChange = onTitleChange,
-                    textStyle = MaterialTheme.typography.titleMedium.copy(
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.2f
+                    textStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.3f
                     )
                 )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.smallMedium))
 
                 TransparentTextField(
                     modifier = Modifier.fillMaxWidth(),

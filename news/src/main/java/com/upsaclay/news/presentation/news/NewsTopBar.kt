@@ -16,7 +16,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.utils.Phones
@@ -31,8 +30,8 @@ fun NewsTopBar(
         title = {
             Text(
                 text = stringResource(com.upsaclay.common.R.string.app_name),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.titleLarge
             )
         },
         navigationIcon = {
