@@ -1,6 +1,7 @@
 package com.upsaclay.gedoise
 
 import android.net.Uri
+import com.upsaclay.common.domain.ConnectivityObserver
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.DeleteProfilePictureUseCase
 import com.upsaclay.common.domain.usecase.UpdateProfilePictureUseCase
@@ -26,6 +27,7 @@ class AccountViewModelTest {
     private val updateProfilePictureUseCase: UpdateProfilePictureUseCase = mockk()
     private val deleteProfilePictureUseCase: DeleteProfilePictureUseCase = mockk()
     private val userRepository: UserRepository = mockk()
+    private val connectivityObserver: ConnectivityObserver = mockk()
 
     private lateinit var accountViewModel: AccountViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -35,6 +37,7 @@ class AccountViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
+        every { connectivityObserver.isConnected } returns true
         every { userRepository.user } returns MutableStateFlow(userFixture)
         coEvery { updateProfilePictureUseCase(any(), any()) } returns Unit
         coEvery { deleteProfilePictureUseCase(any(), any()) } returns Unit
@@ -42,6 +45,7 @@ class AccountViewModelTest {
         accountViewModel = AccountViewModel(
             updateProfilePictureUseCase = updateProfilePictureUseCase,
             deleteProfilePictureUseCase = deleteProfilePictureUseCase,
+            connectivityObserver = connectivityObserver,
             userRepository = userRepository
         )
     }
@@ -68,18 +72,6 @@ class AccountViewModelTest {
     }
 
     @Test
-    fun resetProfilePictureUri_should_reset_profilePictureUri() {
-        // Given
-        accountViewModel.onProfilePictureUriChange(uri)
-
-        // When
-        accountViewModel.resetProfilePictureUri()
-
-        // Then
-        assert(accountViewModel.uiState.value.profilePictureUri == null)
-    }
-
-    @Test
     fun updateUserProfilePicture_should_update_profile_picture_when_uri_is_not_null() = runTest {
         // Given
         accountViewModel.onProfilePictureUriChange(uri)
@@ -92,6 +84,19 @@ class AccountViewModelTest {
     }
 
     @Test
+    fun updateProfilePicture_should_not_be_executed_when_no_connection() = runTest {
+        // Given
+        every { connectivityObserver.isConnected } returns false
+        accountViewModel.onProfilePictureUriChange(uri)
+
+        // When
+        accountViewModel.updateProfilePicture()
+
+        // Then
+        coVerify(exactly = 0) { updateProfilePictureUseCase(any(), any()) }
+    }
+
+    @Test
     fun deleteProfilePicture_should_reset_profile_picture_uri() = runTest {
         // Given
         accountViewModel.onProfilePictureUriChange(uri)
@@ -101,5 +106,18 @@ class AccountViewModelTest {
 
         // Then
         assertEquals(null, accountViewModel.uiState.value.profilePictureUri)
+    }
+
+    @Test
+    fun deleteProfilePicture_should_not_be_executed_when_no_connection() = runTest {
+        // Given
+        every { connectivityObserver.isConnected } returns false
+        accountViewModel.onProfilePictureUriChange(uri)
+
+        // When
+        accountViewModel.deleteProfilePicture()
+
+        // Then
+        coVerify(exactly = 0) { deleteProfilePictureUseCase(any(), any()) }
     }
 }

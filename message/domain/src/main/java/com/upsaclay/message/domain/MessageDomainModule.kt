@@ -1,8 +1,9 @@
 package com.upsaclay.message.domain
 
 import com.upsaclay.common.domain.e
-import com.upsaclay.message.domain.usecase.CreateConversationUseCase
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
+import com.upsaclay.message.domain.usecase.GetConversationsUiUseCase
+import com.upsaclay.message.domain.usecase.GetLocalConversationUseCase
 import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
 import com.upsaclay.message.domain.usecase.ListenRemoteConversationsMessagesUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
@@ -27,16 +28,29 @@ val messageDomainModule = module {
         )
     }
 
-    singleOf(::CreateConversationUseCase)
-    singleOf(::DeleteConversationUseCase)
+    single {
+        DeleteConversationUseCase(
+            conversationRepository = get(),
+            messageRepository = get(),
+            scope = get(BACKGROUND_SCOPE)
+        )
+    }
+    singleOf(::GetConversationsUiUseCase)
+    singleOf(::GetLocalConversationUseCase)
     singleOf(::GetUnreadMessagesUseCase)
-    singleOf(::SendMessageUseCase)
-
     single {
         ListenRemoteConversationsMessagesUseCase(
             userRepository = get(),
             conversationRepository = get(),
             messageRepository = get(),
+            scope = get(BACKGROUND_SCOPE)
+        )
+    }
+    single {
+        SendMessageUseCase(
+            messageRepository = get(),
+            conversationRepository = get(),
+            notificationUseCase = get(),
             scope = get(BACKGROUND_SCOPE)
         )
     }

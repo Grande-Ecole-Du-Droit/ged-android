@@ -6,7 +6,6 @@ internal object ConversationField {
 
     object Remote {
         const val PARTICIPANTS = "participants"
-        const val DELETE_BY = "deleteBy"
         const val DELETE_TIME = "deleteTime"
     }
 

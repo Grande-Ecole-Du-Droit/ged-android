@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.upsaclay.authentication.R
 import com.upsaclay.common.presentation.theme.GedoiseTheme
-import com.upsaclay.common.presentation.theme.chatInputForeground
+import com.upsaclay.common.presentation.theme.inputForeground
 import com.upsaclay.common.presentation.theme.spacing
 
 @Composable
@@ -49,7 +49,7 @@ fun OutlinePasswordTextField(
         contentDescription = stringResource(R.string.hide_password_icon_description)
     }
 
-    val errorText: (@Composable () -> Unit)? = if (errorMessage != null) {
+    val errorText: (@Composable () -> Unit)? = errorMessage?.let {
         {
             Text(
                 text = stringResource(errorMessage),
@@ -57,8 +57,6 @@ fun OutlinePasswordTextField(
                 style = MaterialTheme.typography.bodySmall
             )
         }
-    } else {
-        null
     }
 
     OutlinedTextField(
@@ -66,7 +64,8 @@ fun OutlinePasswordTextField(
         value = text,
         label = {
             Text(
-                text = stringResource(id = R.string.password)
+                text = stringResource(id = R.string.password),
+                color = MaterialTheme.colorScheme.inputForeground
             )
         },
         onValueChange = onValueChange,
@@ -77,7 +76,7 @@ fun OutlinePasswordTextField(
                 painter = icon,
                 contentDescription = contentDescription,
                 modifier = Modifier.clickable { passwordVisible = !passwordVisible },
-                tint = MaterialTheme.colorScheme.chatInputForeground
+                tint = MaterialTheme.colorScheme.inputForeground
             )
         },
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),

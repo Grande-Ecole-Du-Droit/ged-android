@@ -72,7 +72,6 @@ fun ConversationScreenRoute(
 
     ConversationScreen(
         conversations = uiState.conversations,
-        loading = uiState.loading,
         onConversationClick = onConversationClick,
         onDeleteConversation = viewModel::deleteConversation,
         onCreateConversation = onCreateConversation,
@@ -84,7 +83,6 @@ fun ConversationScreenRoute(
 @Composable
 private fun ConversationScreen(
     conversations: List<ConversationUi>?,
-    loading: Boolean,
     onConversationClick: (Conversation) -> Unit,
     onDeleteConversation: (Conversation) -> Unit,
     onCreateConversation: () -> Unit,
@@ -94,10 +92,6 @@ private fun ConversationScreen(
     var conversationClicked by remember { mutableStateOf<ConversationUi?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var showDeleteConversationDialog by remember { mutableStateOf(false) }
-
-    if (loading) {
-        LoadingDialog()
-    }
 
     if (showDeleteConversationDialog) {
         SensibleActionDialog(
@@ -180,7 +174,8 @@ private fun EmptyConversationText(onCreateClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = MaterialTheme.spacing.large),
+            .padding(top = MaterialTheme.spacing.large)
+            .testTag(stringResource(R.string.conversation_screen_empty_conversation_text_tag)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -217,7 +212,6 @@ private fun ConversationsScreenPreview() {
     GedoiseTheme {
         ConversationScreen(
             conversations = conversations,
-            loading = false,
             onConversationClick = {},
             onDeleteConversation = {},
             onCreateConversation = {},

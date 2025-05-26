@@ -9,6 +9,4 @@ internal interface ConversationApi {
     fun createConversation(conversationId: String, data: Map<String, Any>)
 
     fun updateConversation(conversationId: String, data: Map<String, Any>)
-
-    fun hardDeleteConversation(conversationId: String)
 }

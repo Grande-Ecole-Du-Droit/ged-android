@@ -5,6 +5,7 @@ import com.upsaclay.news.domain.usecase.CreateAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.DeleteAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.RecreateAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.RefreshAnnouncementUseCase
+import com.upsaclay.news.domain.usecase.UpdateAnnouncementUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,20 +27,20 @@ val newsDomainModule = module {
         )
     }
 
-
     single {
         CreateAnnouncementUseCase(
             announcementRepository = get(),
             scope = get(BACKGROUND_SCOPE)
         )
     }
-
     singleOf(::DeleteAnnouncementUseCase)
-    singleOf(::RefreshAnnouncementUseCase)
     single {
         RecreateAnnouncementUseCase(
             announcementRepository = get(),
+            connectivityObserver = get(),
             scope = get(BACKGROUND_SCOPE)
         )
     }
+    singleOf(::RefreshAnnouncementUseCase)
+    singleOf(::UpdateAnnouncementUseCase)
 }

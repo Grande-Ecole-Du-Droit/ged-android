@@ -1,7 +1,7 @@
 package com.upsaclay.gedoise
 
 import androidx.room.Room
-import com.upsaclay.common.AndroidConnectivityObserver
+import com.upsaclay.common.ConnectivityObserverImpl
 import com.upsaclay.common.data.GED_SERVER_QUALIFIER
 import com.upsaclay.common.data.local.FcmDataStore
 import com.upsaclay.common.data.local.FcmLocalDataSource
@@ -64,7 +64,12 @@ val appModule = module {
     single { get<GedoiseDatabase>().messageDao() }
     single { get<GedoiseDatabase>().conversationMessageDao() }
 
-    singleOf(::AndroidConnectivityObserver) { bind<ConnectivityObserver>() }
+    single<ConnectivityObserver> {
+        ConnectivityObserverImpl(
+            context = androidContext(),
+            scope = get(BACKGROUND_SCOPE)
+        )
+    }
     singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
     singleOf(::NotificationPresenter)
     singleOf(::FcmLocalDataSource)

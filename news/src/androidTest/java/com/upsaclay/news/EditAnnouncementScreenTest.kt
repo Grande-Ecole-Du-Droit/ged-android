@@ -33,14 +33,14 @@ class EditAnnouncementScreenTest {
     }
 
     @Test
-    fun save_button_should_be_disabled_when_no_changes() {
+    fun save_button_should_be_disabled_when_updateEnabled_is_false() {
         // Given
-        every { editAnnouncementViewModel.uiState } returns MutableStateFlow(uiState.copy(enableUpdate = false))
+        every { editAnnouncementViewModel.uiState } returns MutableStateFlow(uiState.copy(updateEnabled = false))
 
         // When
         rule.setContent {
             EditAnnouncementScreenRoute(
-                announcementId = announcementFixture.id,
+                announcement = announcementFixture,
                 onBackClick = {},
                 viewModel = editAnnouncementViewModel
             )
@@ -52,14 +52,14 @@ class EditAnnouncementScreenTest {
     }
 
     @Test
-    fun save_button_should_be_disabled_when_content_is_empty() {
+    fun save_button_should_be_enabled_when_updateEnabled_is_true() {
         // Given
         every { editAnnouncementViewModel.uiState } returns MutableStateFlow(uiState.copy(content = ""))
 
         // When
         rule.setContent {
             EditAnnouncementScreenRoute(
-                announcementId = announcementFixture.id,
+                announcement = announcementFixture,
                 onBackClick = {},
                 viewModel = editAnnouncementViewModel
             )

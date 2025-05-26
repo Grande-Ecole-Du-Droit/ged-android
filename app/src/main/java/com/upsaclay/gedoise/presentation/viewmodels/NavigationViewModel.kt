@@ -67,20 +67,13 @@ class NavigationViewModel(
 
     private fun updateStartDestinationScreenRoute() {
         viewModelScope.launch {
-            authenticationRepository.isAuthenticated
-                .filterNotNull()
-                .map {
-                    if (it) {
-                        NewsBaseRoute
-                    } else {
-                        AuthenticationBaseRoute
-                    }
+            authenticationRepository.isAuthenticated.map {
+                if (it) NewsBaseRoute else AuthenticationBaseRoute
+            }.collect { route ->
+                _uiState.update {
+                    it.copy(startDestination = route)
                 }
-                .collect { route ->
-                    _uiState.update {
-                        it.copy(startDestination = route)
-                    }
-                }
+            }
         }
     }
 
@@ -104,7 +97,7 @@ class NavigationViewModel(
 
     private fun navigate(route: Any) {
         val routes = when(route) {
-            ChatRoute -> arrayOf(ConversationRoute, route)
+            is ChatRoute -> arrayOf(ConversationRoute, route)
             AuthenticationRoute -> arrayOf(route)
             else -> return
         }

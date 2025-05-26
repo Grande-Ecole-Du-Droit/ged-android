@@ -25,8 +25,8 @@ class FcmTokenUseCase(
     fun listenEvents() {
         scope.launch {
            combine(
-               authenticationRepository.isAuthenticated.filterNotNull(),
-               connectivityObserver.isConnected.filter { it }
+               authenticationRepository.isAuthenticated,
+               connectivityObserver.connected.filter { it }
            ) { isAuthenticated, _ ->
                 isAuthenticated
            }

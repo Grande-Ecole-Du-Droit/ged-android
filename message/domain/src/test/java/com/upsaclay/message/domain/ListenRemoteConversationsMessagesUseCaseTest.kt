@@ -17,8 +17,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlin.test.assertFalse
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -35,7 +33,7 @@ class ListenRemoteConversationsMessagesUseCaseTest {
     fun setUp() {
         every { userRepository.user } returns flowOf(userFixture)
         coEvery { conversationRepository.upsertLocalConversation(any()) } returns Unit
-        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(conversationFixture)
+        coEvery { conversationRepository.getRemoteConversations(any()) } returns flowOf(conversationFixture)
 
         useCase = ListenRemoteConversationsMessagesUseCase(
             userRepository = userRepository,
@@ -52,13 +50,13 @@ class ListenRemoteConversationsMessagesUseCaseTest {
 
         // Then
         assert(useCase.job != null)
-        coVerify { conversationRepository.fetchRemoteConversations(userFixture.id) }
+        coVerify { conversationRepository.getRemoteConversations(userFixture.id) }
     }
 
     @Test
     fun start_should_upsert_new_conversations() = runTest {
         // Given
-        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(
+        coEvery { conversationRepository.getRemoteConversations(any()) } returns flowOf(
             conversationFixture, conversationFixture.copy(id = "newId")
         )
 
@@ -75,7 +73,7 @@ class ListenRemoteConversationsMessagesUseCaseTest {
     @Test
     fun start_should_not_upsert_known_conversations() = runTest {
         // Given
-        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(conversationFixture, conversationFixture)
+        coEvery { conversationRepository.getRemoteConversations(any()) } returns flowOf(conversationFixture, conversationFixture)
 
         // When
         useCase.start()
@@ -91,23 +89,6 @@ class ListenRemoteConversationsMessagesUseCaseTest {
 
         // Then
         coVerify { messageRepository.getRemoteMessages(conversationFixture.id, null) }
-    }
-
-    @Test
-    fun start_should_listen_remote_conversation_messages_with_delete_time_as_offset() = runTest {
-        // Given
-        val date = LocalDateTime.now(ZoneOffset.UTC)
-        val conversation = conversationFixture.copy(
-            state = ConversationState.SOFT_DELETED,
-            deleteTime = date
-        )
-        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(conversation)
-
-        // When
-        useCase.start()
-
-        // Then
-        coVerify { messageRepository.getRemoteMessages(conversation.id, date) }
     }
 
     @Test

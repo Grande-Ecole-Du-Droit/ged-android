@@ -3,7 +3,6 @@ package com.upsaclay.common.presentation.components
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -38,6 +38,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.upsaclay.common.presentation.theme.GedoiseTheme
+import com.upsaclay.common.presentation.theme.inputForeground
+import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import kotlinx.coroutines.android.awaitFrame
 
@@ -53,7 +55,7 @@ fun OutlineTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false
 ) {
-    val errorText: (@Composable () -> Unit)? = if (errorMessage != null) {
+    val errorText: (@Composable () -> Unit)? = errorMessage?.let {
         {
             Text(
                 text = stringResource(errorMessage),
@@ -61,14 +63,12 @@ fun OutlineTextField(
                 style = MaterialTheme.typography.bodySmall
             )
         }
-    } else {
-        null
     }
 
     OutlinedTextField(
         modifier = modifier,
         value = value,
-        label = { Text(text = label) },
+        label = { Text(text = label, color = MaterialTheme.colorScheme.inputForeground) },
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
         isError = errorMessage != null,
@@ -215,7 +215,7 @@ private fun OutlinedTextFieldPreview() {
     var text by remember { mutableStateOf("") }
 
     GedoiseTheme {
-        Box(modifier = Modifier.padding(MaterialTheme.spacing.small)) {
+        Surface(modifier = Modifier.padding(MaterialTheme.spacing.small)) {
             OutlineTextField(
                 value = text,
                 label = "Label",
@@ -229,6 +229,7 @@ private fun OutlinedTextFieldPreview() {
 @Composable
 private fun TransparentTextFieldPreview() {
     var text by remember { mutableStateOf("") }
+
     GedoiseTheme {
         TransparentTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -237,19 +238,6 @@ private fun TransparentTextFieldPreview() {
             placeholder = { Text("Placeholder") },
             backgroundColor = MaterialTheme.colorScheme.background,
             padding = MaterialTheme.spacing.medium,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun TransparentFocusedTextFiedl() {
-    var text by remember { mutableStateOf("") }
-    GedoiseTheme {
-        TransparentFocusedTextField(
-            value = "",
-            onValueChange = { text = it },
-            placeholder = { Text(text = "Placeholder") }
         )
     }
 }

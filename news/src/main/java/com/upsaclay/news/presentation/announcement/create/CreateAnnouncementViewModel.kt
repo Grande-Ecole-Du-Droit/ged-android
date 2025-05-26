@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class CreateAnnouncementViewModel(
     userRepository: UserRepository,
@@ -36,16 +35,14 @@ class CreateAnnouncementViewModel(
     fun createAnnouncement() {
         if (user == null) return
         val (title, content) = _uiState.value
-
         val announcement = Announcement(
             id = GenerateRandomIdUseCase.stringId,
             title = if (title.isBlank()) null else title.trim(),
             content = content.trim(),
-            date = LocalDateTime.now(ZoneOffset.UTC),
+            date = LocalDateTime.now(),
             author = user,
-            state = AnnouncementState.SENDING
+            state = AnnouncementState.PUBLISHING
         )
-
         createAnnouncementUseCase(announcement)
     }
 

@@ -48,7 +48,7 @@ fun ReadAnnouncementBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(stringResource(id = R.string.read_screen_sheet_edit_field_tag)),
-            text = { Text(text = stringResource(id = R.string.edit_announcement)) },
+            text = { Text(text = stringResource(id = com.upsaclay.common.R.string.edit)) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Edit,

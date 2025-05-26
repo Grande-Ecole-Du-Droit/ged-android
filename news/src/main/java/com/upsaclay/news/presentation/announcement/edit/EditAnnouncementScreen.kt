@@ -37,17 +37,17 @@ import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.news.R
 import com.upsaclay.news.domain.announcementFixture
-import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementViewModel.EditAnnouncementUiState
+import com.upsaclay.news.domain.entity.Announcement
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun EditAnnouncementScreenRoute(
-    announcementId: String,
+    announcement: Announcement,
     onBackClick: () -> Unit,
     viewModel: EditAnnouncementViewModel = koinViewModel(
-        parameters = { parametersOf(announcementId) }
+        parameters = { parametersOf(announcement) }
     )
 ) {
     val context = LocalContext.current
@@ -67,7 +67,10 @@ fun EditAnnouncementScreenRoute(
     }
 
     EditAnnouncementScreen(
-        uiState = uiState,
+        title = uiState.title,
+        content = uiState.content,
+        loading = uiState.loading,
+        updateEnabled = uiState.updateEnabled,
         snackbarHostState = snackbarHostState,
         onTitleChange = viewModel::onTitleChange,
         onContentChange = viewModel::onContentChange,
@@ -78,7 +81,10 @@ fun EditAnnouncementScreenRoute(
 
 @Composable
 private fun EditAnnouncementScreen(
-    uiState: EditAnnouncementUiState,
+    title: String,
+    content: String,
+    loading: Boolean,
+    updateEnabled: Boolean,
     snackbarHostState: SnackbarHostState,
     onTitleChange: (String) -> Unit = {},
     onContentChange: (String) -> Unit = {},
@@ -88,7 +94,7 @@ private fun EditAnnouncementScreen(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    if (uiState.loading) {
+    if (loading) {
         LoadingDialog()
     }
 
@@ -106,7 +112,7 @@ private fun EditAnnouncementScreen(
                     onUpdateAnnouncementClick()
                 },
                 title = stringResource(R.string.edit_announcement),
-                isButtonEnable = uiState.enableUpdate && !uiState.loading,
+                isButtonEnable = updateEnabled && !loading,
                 buttonText = stringResource(id = com.upsaclay.common.R.string.save)
             )
         },
@@ -132,7 +138,7 @@ private fun EditAnnouncementScreen(
             Column {
                 TransparentFocusedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = uiState.title,
+                    value = title,
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.title_field_entry),
@@ -145,14 +151,14 @@ private fun EditAnnouncementScreen(
                     textStyle = MaterialTheme.typography.titleMedium.copy(
                         fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.2f
                     ),
-                    enabled = !uiState.loading
+                    enabled = !loading
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.smallMedium))
 
                 TransparentTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = uiState.content,
+                    value = content,
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.content_field_entry),
@@ -162,7 +168,7 @@ private fun EditAnnouncementScreen(
                     },
                     onValueChange = onContentChange,
                     textStyle = MaterialTheme.typography.bodyLarge,
-                    enabled = !uiState.loading
+                    enabled = !loading
                 )
             }
         }
@@ -178,17 +184,13 @@ private fun EditAnnouncementScreen(
 @Phones
 @Composable
 private fun EditAnnouncementScreenPreview() {
-    val uiState = EditAnnouncementUiState(
-        title = announcementFixture.title ?: "",
-        content = announcementFixture.content,
-        loading = false,
-        enableUpdate = true
-    )
-
     GedoiseTheme {
         Surface {
             EditAnnouncementScreen(
-                uiState = uiState,
+                title = announcementFixture.title ?: "",
+                content = announcementFixture.content,
+                loading = false,
+                updateEnabled = false,
                 snackbarHostState = SnackbarHostState(),
                 onTitleChange = {},
                 onContentChange = {},

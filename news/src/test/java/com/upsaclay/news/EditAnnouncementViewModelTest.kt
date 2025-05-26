@@ -1,10 +1,10 @@
 package com.upsaclay.news
 
 import com.upsaclay.news.domain.announcementFixture
-import com.upsaclay.news.domain.repository.AnnouncementRepository
+import com.upsaclay.news.domain.usecase.UpdateAnnouncementUseCase
 import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementViewModel
 import io.mockk.coEvery
-import io.mockk.every
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EditAnnouncementViewModelTest {
-    private val announcementRepository: AnnouncementRepository = mockk()
+    private val updateAnnouncementUseCase: UpdateAnnouncementUseCase = mockk()
 
     private lateinit var editAnnouncementViewModel: EditAnnouncementViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -27,12 +27,11 @@ class EditAnnouncementViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
-        every { announcementRepository.getAnnouncement(announcementFixture.id) } returns announcementFixture
-        coEvery { announcementRepository.updateAnnouncement(announcementFixture) } returns Unit
+        coEvery { updateAnnouncementUseCase(any()) } returns Unit
 
         editAnnouncementViewModel = EditAnnouncementViewModel(
-            announcementId = announcementFixture.id,
-            announcementRepository = announcementRepository
+            announcement = announcementFixture,
+            updateAnnouncementUseCase = updateAnnouncementUseCase
         )
     }
 
@@ -52,5 +51,20 @@ class EditAnnouncementViewModelTest {
 
         // Then
         assertEquals(content, editAnnouncementViewModel.uiState.value.content)
+    }
+
+    @Test
+    fun updateAnnouncement_should_call_updateAnnouncementUseCase() {
+        // Given
+        editAnnouncementViewModel.onTitleChange(title)
+        editAnnouncementViewModel.onContentChange(content)
+
+        // When
+        editAnnouncementViewModel.updateAnnouncement()
+
+        // Then
+        coVerify { updateAnnouncementUseCase(any()) }
+        assertEquals(title.trim(), editAnnouncementViewModel.uiState.value.title)
+        assertEquals(content.trim(), editAnnouncementViewModel.uiState.value.content)
     }
 }

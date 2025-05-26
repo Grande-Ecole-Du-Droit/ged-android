@@ -42,13 +42,12 @@ class ChatViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
+        every { conversationRepository.getLocalConversationFlow(any()) } returns flowOf(conversationFixture)
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
-        every { getUnreadMessagesUseCase() } returns flowOf(emptyList())
         every { messageRepository.getLocalMessages(any()) } returns flowOf(messagesFixture)
-        coEvery { conversationRepository.unDeleteRemoteConversation(any(), any()) }
-        coEvery { conversationRepository.createRemoteConversation(any(), any()) }
-        coEvery { messageRepository.createRemoteMessage(any()) } returns Unit
+        every { getUnreadMessagesUseCase() } returns flowOf(emptyList())
+        every { sendMessageUseCase(any(), any(), any()) } returns Unit
         coEvery { messageRepository.updateSeenMessage(any()) } returns Unit
         coEvery { notificationUseCase.clearNotifications(any()) } returns Unit
         coEvery { notificationUseCase.sendNotification<Message>(any(), any()) } returns Unit
@@ -98,55 +97,6 @@ class ChatViewModelTest {
 
         // Then
         assertEquals("", chatViewModel.uiState.value.text)
-    }
-
-    @Test
-    fun send_message_should_create_conversation_when_it_is_not_created() {
-        // Given
-        val conversation = conversationFixture.copy(
-            state = ConversationState.DRAFT
-        )
-        chatViewModel = ChatViewModel(
-            conversation = conversation,
-            userRepository = userRepository,
-            conversationRepository = conversationRepository,
-            messageRepository = messageRepository,
-            sendMessageUseCase = sendMessageUseCase,
-            notificationUseCase = notificationUseCase,
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase
-        )
-        chatViewModel.onTextChange("Hello")
-
-        // When
-        chatViewModel.sendMessage()
-
-        // Then
-        coVerify { sendMessageUseCase(any(), any(), any()) }
-    }
-
-    @Test
-    fun send_message_should_not_create_conversation_when_it_is_created() {
-        // Given
-        val conversation = conversationFixture.copy(
-            state = ConversationState.CREATED
-        )
-        chatViewModel = ChatViewModel(
-            conversation = conversation,
-            userRepository = userRepository,
-            conversationRepository = conversationRepository,
-            messageRepository = messageRepository,
-            sendMessageUseCase = sendMessageUseCase,
-            notificationUseCase = notificationUseCase,
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase
-        )
-        chatViewModel.onTextChange("Hello")
-
-        // When
-        chatViewModel.sendMessage()
-
-        // Then
-        coVerify(exactly = 0) { conversationRepository.createRemoteConversation(conversation, userFixture.id) }
-        coVerify { sendMessageUseCase(any(), any(), any()) }
     }
 
     @Test

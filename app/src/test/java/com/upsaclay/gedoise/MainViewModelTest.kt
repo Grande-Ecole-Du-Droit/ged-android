@@ -3,7 +3,6 @@ package com.upsaclay.gedoise
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.userFixture
-import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.common.domain.usersFixture
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
 import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase

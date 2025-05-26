@@ -3,14 +3,10 @@ package com.upsaclay.gedoise.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
-import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
 import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -24,17 +20,15 @@ class MainViewModel(
 
     private fun updateDataListening() {
         viewModelScope.launch {
-            authenticationRepository.isAuthenticated
-                .filterNotNull()
-                .collectLatest {
-                    if (it) {
-                        dataListeningUseCase.start()
-                    } else {
-                        dataListeningUseCase.stop()
-                        delay(2000)
-                        clearDataUseCase()
-                    }
+            authenticationRepository.isAuthenticated.collectLatest {
+                if (it) {
+                    dataListeningUseCase.start()
+                } else {
+                    dataListeningUseCase.stop()
+                    delay(2000)
+                    clearDataUseCase()
                 }
+            }
         }
     }
 }

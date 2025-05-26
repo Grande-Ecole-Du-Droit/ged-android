@@ -14,18 +14,6 @@ internal class AnnouncementLocalDataSource(private val announcementDao: Announce
             localAnnouncements.map { it.toAnnouncement() }
         }
 
-    suspend fun insertAnnouncement(announcement: Announcement) {
-        withContext(Dispatchers.IO) {
-            announcementDao.insertAnnouncement(announcement.toLocal())
-        }
-    }
-
-    suspend fun updateAnnouncement(announcement: Announcement) {
-        withContext(Dispatchers.IO) {
-            announcementDao.updateAnnouncement(announcement.toLocal())
-        }
-    }
-
     suspend fun upsertAnnouncement(announcement: Announcement) {
         withContext(Dispatchers.IO) {
             announcementDao.upsertAnnouncement(announcement.toLocal())

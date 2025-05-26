@@ -9,7 +9,6 @@ import com.upsaclay.message.domain.entity.ConversationUi
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 val messageFixture = Message(
     id = 1,
@@ -28,21 +27,21 @@ val messageFixture2 = Message(
     recipientId = userFixture2.id,
     conversationId = "1",
     content = "Salut ça va ? Cela fait longtemps que j'attend de te parler. Pourrait-on se voir ?",
-    date = LocalDateTime.now(ZoneOffset.UTC),
+    date = LocalDateTime.now(),
     seen = false,
     state = MessageState.SENT
 )
 
 val messagesFixture = listOf(
     messageFixture.copy(id = 1),
-    messageFixture2.copy(id = 2, date = LocalDateTime.now(ZoneOffset.UTC).minusDays(2)),
-    messageFixture.copy(id = 3, date = LocalDateTime.now(ZoneOffset.UTC).minusDays(1)),
-    messageFixture2.copy(id = 4, date = LocalDateTime.now(ZoneOffset.UTC)),
-    messageFixture2.copy(id = 5, date = LocalDateTime.now(ZoneOffset.UTC)),
-    messageFixture2.copy(id = 6, date = LocalDateTime.now(ZoneOffset.UTC)),
-    messageFixture2.copy(id = 7, date = LocalDateTime.now(ZoneOffset.UTC)),
-    messageFixture2.copy(id = 8, date = LocalDateTime.now(ZoneOffset.UTC)),
-    messageFixture2.copy(id = 9, date = LocalDateTime.now(ZoneOffset.UTC)),
+    messageFixture2.copy(id = 2, date = LocalDateTime.now().minusDays(2)),
+    messageFixture.copy(id = 3, date = LocalDateTime.now().minusDays(1)),
+    messageFixture2.copy(id = 4, date = LocalDateTime.now()),
+    messageFixture2.copy(id = 5, date = LocalDateTime.now()),
+    messageFixture2.copy(id = 6, date = LocalDateTime.now()),
+    messageFixture2.copy(id = 7, date = LocalDateTime.now()),
+    messageFixture2.copy(id = 8, date = LocalDateTime.now()),
+    messageFixture2.copy(id = 9, date = LocalDateTime.now()),
 )
 
 val conversationUiFixture = ConversationUi(
@@ -80,28 +79,28 @@ val conversationsUIFixture = listOf(
 val conversationsFixture = listOf(
     conversationFixture,
     conversationFixture.copy(
-        createdAt = LocalDateTime.now(ZoneOffset.UTC).minusMinutes(1),
+        createdAt = LocalDateTime.now().minusMinutes(1),
     ),
     conversationFixture.copy(
-        createdAt = LocalDateTime.now(ZoneOffset.UTC).minusMinutes(20),
+        createdAt = LocalDateTime.now().minusMinutes(20),
     ),
     conversationFixture.copy(
-        createdAt = LocalDateTime.now(ZoneOffset.UTC).minusHours(1),
+        createdAt = LocalDateTime.now().minusHours(1),
     ),
     conversationFixture.copy(
-        createdAt = LocalDateTime.now(ZoneOffset.UTC).minusHours(2),
+        createdAt = LocalDateTime.now().minusHours(2),
     ),
     conversationFixture.copy(
-        createdAt = LocalDateTime.now(ZoneOffset.UTC).minusDays(1)
+        createdAt = LocalDateTime.now().minusDays(1)
     ),
     conversationFixture.copy(
-        createdAt = LocalDateTime.now(ZoneOffset.UTC).minusDays(2)
+        createdAt = LocalDateTime.now().minusDays(2)
     ),
     conversationFixture.copy(
-        createdAt = LocalDateTime.now(ZoneOffset.UTC).minusWeeks(3)
+        createdAt = LocalDateTime.now().minusWeeks(3)
     ),
     conversationFixture.copy(
-       createdAt = LocalDateTime.now(ZoneOffset.UTC).minusMonths(1)
+       createdAt = LocalDateTime.now().minusMonths(1)
     )
 )
 

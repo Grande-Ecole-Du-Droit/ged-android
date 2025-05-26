@@ -33,11 +33,7 @@ fun Conversation.toLocal() = LocalConversation(
 internal fun Conversation.toRemote(userId: String) = RemoteConversation(
     conversationId = id,
     participants = listOf(userId, interlocutor.id),
-    createdAt = createdAt.toTimestamp(),
-    deleteBy = mapOf(
-        userId to false,
-        interlocutor.id to false
-    )
+    createdAt = createdAt.toTimestamp()
 )
 
 fun LocalConversation.toConversation(): Conversation {
@@ -64,11 +60,7 @@ internal fun RemoteConversation.toConversation(userId: String, interlocutor: Use
     Conversation(
         id = conversationId,
         interlocutor = interlocutor,
-        state = if (deleteBy.containsValue(true)) {
-            ConversationState.SOFT_DELETED
-        } else {
-            ConversationState.CREATED
-        },
+        state = ConversationState.CREATED,
         createdAt = createdAt.toLocalDateTime(),
         deleteTime = deleteTime?.get(userId)?.toLocalDateTime()
     )
@@ -78,7 +70,6 @@ internal fun RemoteConversation.toMap(): Map<String, Any> {
     data[ConversationField.CONVERSATION_ID] = conversationId
     data[ConversationField.Remote.PARTICIPANTS] = participants
     data[ConversationField.CREATED_AT] = createdAt
-    data[ConversationField.Remote.DELETE_BY] = deleteBy
     deleteTime?.let {
         data[ConversationField.Remote.DELETE_TIME] = it
     }

@@ -3,5 +3,6 @@ package com.upsaclay.common.domain
 import kotlinx.coroutines.flow.Flow
 
 interface ConnectivityObserver {
-    val isConnected: Flow<Boolean>
+    val connected: Flow<Boolean>
+    val isConnected: Boolean
 }

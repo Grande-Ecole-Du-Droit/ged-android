@@ -5,15 +5,15 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-internal val white = Color(0xFFDCDCDC)
-internal val black = Color(0xFF1D1D1D)
+internal val white = Color(0xDEFFFFFF)
+internal val black = Color(0xFF121212)
 internal val lightGray = Color(0xFFCCCCCC)
 internal val darkGray = Color(0xFF3C3C3C)
 
 internal val primaryLight = Color(0xFF67708A)
 internal val primaryContainerLight = Color(0xFFDDE0E7)
 internal val onPrimaryContainerLight = Color(0xFF45474D)
-internal val onPrimaryLight = Color(0xFFFFFFFF)
+internal val onPrimaryLight = white
 internal val secondaryLight = Color(0xFF0B86FF)
 internal val secondaryContainerLight = Color(0xFFD7DCE5)
 internal val tertiaryLight = Color(0xFF009688)
@@ -24,7 +24,7 @@ internal val surfaceLight = Color(0xFFFFFFFF)
 internal val onSurfaceVariantLight = Color(0xFF4F4F4F)
 internal val inverseSurfaceLight = Color(0xFF303133)
 internal val inverseOnSurfaceLight = Color(0xFFEFF1F4)
-internal val onSurfaceLight = Color(0xFF1B1D1F)
+internal val onSurfaceLight = black
 internal val surfaceContainerHighLight = Color(0xFFE7E9EC)
 internal val surfaceVariantLight = Color(0xFFE0E4EC)
 internal val outlineLight = Color(0xFF74777E)
@@ -33,7 +33,7 @@ internal val outlineVariantLight = Color(0xFFC4C8D0)
 internal val primaryDark = Color(0xFF67708A)
 internal val primaryContainerDark = Color(0xFF444958)
 internal val onPrimaryContainerDark = Color(0xFFE3E3E3)
-internal val onPrimaryDark = Color(0xFFFFFFFF)
+internal val onPrimaryDark = white
 internal val errorDark = Color(0xFFD64A4C)
 internal val surfaceDark = Color(0xFF191919)
 internal val surfaceContainerHighDark = Color(0xFF444958)
@@ -69,13 +69,13 @@ val ColorScheme.gold: Color
     @Composable
     get() = Color(0xFFB98129)
 
-val ColorScheme.chatInputBackground: Color
+val ColorScheme.inputBackground: Color
     @Composable
     get() = if(isSystemInDarkTheme()) Color(0xFF323232) else Color(0xFFEEEEEE)
 
-val ColorScheme.chatInputForeground: Color
+val ColorScheme.inputForeground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) Color(0xFF929298) else Color(0xFF646464)
+    get() = if(isSystemInDarkTheme()) Color(0xFFBEBEBE) else Color(0xFF646464)
 
 val ColorScheme.cursor: Color
     @Composable

@@ -1,8 +1,7 @@
 package com.upsaclay.authentication
 
-import com.upsaclay.authentication.domain.repository.AuthenticationRepository
+import com.upsaclay.authentication.domain.usecase.RegisterUseCase
 import com.upsaclay.authentication.presentation.registration.third.ThirdRegistrationViewModel
-import com.upsaclay.common.domain.repository.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -18,8 +17,7 @@ import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ThirdRegistrationViewModelTest {
-    private val authenticationRepository: AuthenticationRepository = mockk()
-    private val userRepository: UserRepository = mockk()
+    private val registerUseCase: RegisterUseCase = mockk()
 
     private lateinit var thirdRegistrationViewModel: ThirdRegistrationViewModel
     
@@ -35,13 +33,10 @@ class ThirdRegistrationViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         thirdRegistrationViewModel = ThirdRegistrationViewModel(
-            authenticationRepository = authenticationRepository,
-            userRepository = userRepository
+            registerUseCase = registerUseCase
         )
 
-        coEvery { authenticationRepository.registerWithEmailAndPassword(any(), any()) } returns Unit
-        coEvery { userRepository.createUser(any()) } returns Unit
-        coEvery { userRepository.isUserExist(any()) } returns false
+        coEvery { registerUseCase(any(), any(), any(), any(), any()) } returns Unit
     }
 
     @Test
@@ -72,7 +67,7 @@ class ThirdRegistrationViewModelTest {
         thirdRegistrationViewModel.register(firstName, lastName, schoolLevel)
 
         // Then
-        coVerify { authenticationRepository.registerWithEmailAndPassword(email, password) }
+        coVerify { registerUseCase(email, password, firstName, lastName, schoolLevel) }
     }
 
     @Test

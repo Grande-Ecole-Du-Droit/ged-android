@@ -10,7 +10,7 @@ import kotlin.coroutines.suspendCoroutine
 class FirebaseAuthenticationApiImpl: FirebaseAuthenticationApi {
     private val firebaseAuth = Firebase.auth
 
-    override suspend fun signInWithEmailAndPassword(email: String, password: String) {
+    override suspend fun signIn(email: String, password: String) {
         suspendCancellableCoroutine { continuation ->
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener { if (continuation.isActive) continuation.resume(Unit) }
@@ -18,19 +18,14 @@ class FirebaseAuthenticationApiImpl: FirebaseAuthenticationApi {
         }
     }
 
-    override suspend fun signUpWithEmailAndPassword(email: String, password: String) {
-        suspendCancellableCoroutine { continuation ->
-            firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener { if (continuation.isActive) continuation.resume(Unit) }
-                .addOnFailureListener { if (continuation.isActive) continuation.resumeWithException(it) }
-        }
+    override suspend fun signUp(email: String, password: String): String = suspendCancellableCoroutine { continuation ->
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener { continuation.resume(it.user!!.uid) }
+            .addOnFailureListener { continuation.resumeWithException(it) }
     }
 
-    override suspend fun signOut() {
-        suspendCoroutine { continuation ->
-            firebaseAuth.signOut()
-            continuation.resume(Unit)
-        }
+    override fun signOut() {
+        firebaseAuth.signOut()
     }
 
     override fun isAuthenticated(): Boolean = firebaseAuth.currentUser != null

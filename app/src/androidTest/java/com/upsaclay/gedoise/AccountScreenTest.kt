@@ -36,7 +36,6 @@ class AccountScreenTest {
         every { viewModel.event } returns MutableSharedFlow()
         every { viewModel.onProfilePictureUriChange(any()) } returns Unit
         every { viewModel.onScreenStateChange(any()) } returns Unit
-        every { viewModel.resetProfilePictureUri() } returns Unit
         every { viewModel.deleteProfilePicture() } returns Unit
         every { viewModel.resetValues() } returns Unit
     }

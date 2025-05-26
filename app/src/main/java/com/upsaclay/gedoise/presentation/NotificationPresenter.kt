@@ -26,7 +26,7 @@ import com.upsaclay.common.domain.repository.ImageRepository
 import com.upsaclay.common.domain.usecase.GenerateRandomIdUseCase
 import com.upsaclay.common.domain.usecase.SharedEventsUseCase
 import com.upsaclay.gedoise.domain.repository.ScreenRepository
-import com.upsaclay.message.domain.JsonConverter
+import com.upsaclay.message.domain.MessageJsonConverter
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.ConversationMessage
 import com.upsaclay.message.domain.entity.Message
@@ -97,7 +97,7 @@ class NotificationPresenter(
         val messageScreen = screenRepository.currentRoute as? ChatRoute
         return messageScreen
             ?.conversationJson
-            ?.let(JsonConverter::toConversation)
+            ?.let(MessageJsonConverter::toConversation)
             ?.id == conversationId
     }
 
@@ -135,7 +135,7 @@ class NotificationPresenter(
 
     private fun makeConversationIntent(conversation: Conversation): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra(MainActivity.CONVERSATION_ID_EXTRA, JsonConverter.fromConversation(conversation))
+            putExtra(MainActivity.CONVERSATION_ID_EXTRA, MessageJsonConverter.fromConversation(conversation))
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
 

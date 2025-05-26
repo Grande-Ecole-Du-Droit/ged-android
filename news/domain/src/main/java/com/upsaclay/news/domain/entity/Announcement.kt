@@ -18,6 +18,6 @@ data class Announcement(
 
 enum class AnnouncementState {
     PUBLISHED,
-    SENDING,
+    PUBLISHING,
     ERROR
 }

@@ -38,20 +38,18 @@ internal class UserRemoteDataSource(
     suspend fun createUser(user: User) {
         withContext(Dispatchers.IO) {
             createUserWithOracle(user)
-            createUserWithFirestore(user)
+            userFirestoreApi.createUser(user.toFirestoreUser())
         }
     }
 
     suspend fun updateProfilePictureFileName(userId: String, fileName: String) {
         withContext(Dispatchers.IO) {
-            launch { userFirestoreApi.updateProfilePictureFileName(userId, fileName) }
-            launch {
-                val response = userRetrofitApi.updateProfilePictureFileName(userId, fileName)
-                if (!response.isSuccessful) {
-                    val errorMessage = formatHttpError("Error updating profile picture file name", response)
-                    throw InternalServerException(errorMessage)
-                }
-            }.join()
+            val response = userRetrofitApi.updateProfilePictureFileName(userId, fileName)
+            if (!response.isSuccessful) {
+                val errorMessage = formatHttpError(response)
+                throw InternalServerException(errorMessage)
+            }
+            userFirestoreApi.updateProfilePictureFileName(userId, fileName)
         }
     }
 
@@ -59,7 +57,7 @@ internal class UserRemoteDataSource(
         withContext(Dispatchers.IO) {
             val response = userRetrofitApi.deleteProfilePictureFileName(userId)
             if (!response.isSuccessful) {
-                val errorMessage = formatHttpError("Error deleting profile picture file name", response)
+                val errorMessage = formatHttpError(response)
                 throw InternalServerException(errorMessage)
             }
             launch { userFirestoreApi.updateProfilePictureFileName(userId, null) }
@@ -73,15 +71,11 @@ internal class UserRemoteDataSource(
     private suspend fun createUserWithOracle(user: User) {
         val response = userRetrofitApi.createUser(user.toDTO())
         if (!response.isSuccessful) {
-            val errorMessage = formatHttpError("Error creating user with Oracle", response)
+            val errorMessage = formatHttpError(response)
             if (response.code() == HttpURLConnection.HTTP_FORBIDDEN) {
                 throw ForbiddenException(errorMessage)
             }
             throw parseOracleException(response.body()?.code, errorMessage)
         }
-    }
-
-    private suspend fun createUserWithFirestore(user: User) {
-        userFirestoreApi.createUser(user.toFirestoreUser())
     }
 }

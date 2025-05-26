@@ -16,7 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -37,12 +39,13 @@ fun AuthenticationForm(
     loading: Boolean,
     emailError: Int?,
     passwordError: Int?,
+    passwordFocusRequester: FocusRequester = FocusRequester.Default,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
     onRegistrationClick: () -> Unit
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -53,7 +56,8 @@ fun AuthenticationForm(
             password = password,
             emailError = emailError,
             passwordError = passwordError,
-            keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+            passwordFocusRequester = passwordFocusRequester,
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             onEmailChange = onEmailChange,
             onPasswordChange = onPasswordChange
         )
@@ -65,14 +69,14 @@ fun AuthenticationForm(
             text = stringResource(id = R.string.login),
             isLoading = loading,
             onClick = {
-                keyboardController?.hide()
+                focusManager.clearFocus()
                 onLoginClick()
             }
         )
 
         RegistrationText(
             onRegistrationClick = {
-                keyboardController?.hide()
+                focusManager.clearFocus()
                 onRegistrationClick()
             }
         )
@@ -86,6 +90,7 @@ private fun CredentialsInputs(
     password: String,
     emailError: Int?,
     passwordError: Int?,
+    passwordFocusRequester: FocusRequester,
     keyboardActions: KeyboardActions,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit
@@ -103,7 +108,9 @@ private fun CredentialsInputs(
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
 
         OutlinePasswordTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(passwordFocusRequester),
             text = password,
             onValueChange = onPasswordChange,
             keyboardActions = keyboardActions,

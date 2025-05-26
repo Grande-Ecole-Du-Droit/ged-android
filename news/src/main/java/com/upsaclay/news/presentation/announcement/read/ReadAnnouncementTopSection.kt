@@ -1,9 +1,8 @@
 package com.upsaclay.news.presentation.announcement.read
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -20,8 +19,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.userFixture
-import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
@@ -31,13 +28,13 @@ import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.presentation.announcement.components.AnnouncementHeader
 
 @Composable
-fun ReadAnnouncementHeader(
-    currentUser: User,
+fun ReadAnnouncementTopSection(
+    user: User,
     announcement: Announcement,
     onEditIconClick: () -> Unit
 ) {
-    if (currentUser.isMember && announcement.author.id == currentUser.id) {
-        EditableTopSection(
+    if (user.isMember && announcement.author.id == user.id) {
+        EditableAnnouncementHeader(
             announcement = announcement,
             onEditIconClick = onEditIconClick
         )
@@ -47,17 +44,18 @@ fun ReadAnnouncementHeader(
 }
 
 @Composable
-private fun EditableTopSection(
+private fun EditableAnnouncementHeader(
     announcement: Announcement,
     onEditIconClick: () -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.smallMedium)
+    ) {
         AnnouncementHeader(
             announcement = announcement,
             modifier = Modifier.weight(1f)
         )
-
-        Spacer(modifier = Modifier.width(MaterialTheme.spacing.smallMedium))
 
         IconButton(
             onClick = onEditIconClick,
@@ -84,25 +82,10 @@ private fun EditableTopSection(
 
 @Phones
 @Composable
-private fun ReadAnnouncementHeaderPreview() {
-    GedoiseTheme {
-        Surface {
-            ReadAnnouncementHeader(
-                currentUser = userFixture2,
-                announcement = announcementFixture,
-                onEditIconClick = {}
-            )
-        }
-    }
-}
-
-@Phones
-@Composable
-private fun ReadAnnouncementHeaderEditablePreview() {
+private fun EditableAnnouncementHeaderPreview() {
     GedoiseTheme(darkTheme = true) {
         Surface {
-            ReadAnnouncementHeader(
-                currentUser = userFixture,
+            EditableAnnouncementHeader(
                 announcement = announcementFixture,
                 onEditIconClick = {}
             )

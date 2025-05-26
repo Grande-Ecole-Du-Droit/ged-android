@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.data.remote.api.ImageApi
-import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.entity.InternalServerException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,8 +21,8 @@ internal class ImageRemoteDataSource(
         if (response.isSuccessful) {
             response.body?.byteStream()?.let(BitmapFactory::decodeStream)
         } else {
-            e(formatHttpError("Error getting image:", response))
-            throw InternalServerException()
+            val errorMesage = formatHttpError(response)
+            throw InternalServerException(errorMesage)
         }
     }
 
@@ -33,7 +32,7 @@ internal class ImageRemoteDataSource(
             val multipartBody = MultipartBody.Part.createFormData("image", file.name, requestBody)
             val response = imageApi.uploadImage(multipartBody)
             if (!response.isSuccessful) {
-                val errorMessage = formatHttpError("Error uploading image", response)
+                val errorMessage = formatHttpError(response)
                 throw InternalServerException(errorMessage)
             }
         }
@@ -43,7 +42,7 @@ internal class ImageRemoteDataSource(
         withContext(Dispatchers.IO) {
             val response = imageApi.deleteImage(imageName)
             if (!response.isSuccessful) {
-                val errorMessage = formatHttpError("Error deleting image", response)
+                val errorMessage = formatHttpError(response)
                 throw IOException(errorMessage)
             }
         }

@@ -74,22 +74,16 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
         }
     }
 
-    override suspend fun updateProfilePictureFileName(userId: String, fileName: String?) {
-        suspendCoroutine { continuation ->
-            usersCollection.document(userId)
-                .update(UserField.PROFILE_PICTURE_FILE_NAME, fileName)
-                .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
+    override fun updateProfilePictureFileName(userId: String, fileName: String?) {
+        usersCollection.document(userId)
+            .update(UserField.PROFILE_PICTURE_FILE_NAME, fileName)
+            .addOnFailureListener { e("Failed to update profile picture file name with firestore: ${it.message}", it) }
     }
 
-    override suspend fun deleteProfilePictureFileName(userId: String) {
-        suspendCoroutine { continuation ->
-            usersCollection.document(userId)
-                .update(UserField.PROFILE_PICTURE_FILE_NAME, FieldValue.delete())
-                .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
+    override fun deleteProfilePictureFileName(userId: String) {
+        usersCollection.document(userId)
+            .update(UserField.PROFILE_PICTURE_FILE_NAME, FieldValue.delete())
+            .addOnFailureListener { e("Failed to delete profile picture file name with firestore: ${it.message}", it) }
     }
 
     override suspend fun isUserExist(email: String): Boolean = suspendCoroutine { continuation ->

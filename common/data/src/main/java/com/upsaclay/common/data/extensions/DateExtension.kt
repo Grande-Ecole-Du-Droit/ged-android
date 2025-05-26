@@ -8,5 +8,4 @@ import java.time.ZoneOffset
 fun LocalDateTime.toTimestamp(): Timestamp =
     Timestamp(this.atZone(ZoneOffset.UTC).toInstant())
 
-fun Timestamp.toLocalDateTime(): LocalDateTime =
-    Instant.ofEpochMilli(this.toInstant().toEpochMilli()).atZone(ZoneOffset.UTC).toLocalDateTime()
+fun Timestamp.toLocalDateTime(): LocalDateTime = this.toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime()

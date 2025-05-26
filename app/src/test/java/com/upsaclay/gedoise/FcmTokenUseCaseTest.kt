@@ -30,7 +30,7 @@ class FcmTokenUseCaseTest {
     @Before
     fun setUp() {
         every { authenticationRepository.isAuthenticated } returns flowOf(true)
-        every { connectivityObserver.isConnected } returns flowOf(true)
+        every { connectivityObserver.connected } returns flowOf(true)
         coEvery { credentialsRepository.getUnsentFcmToken() } returns fcmTokenFixture
         coEvery { credentialsRepository.removeUnsentFcmToken() } returns Unit
         coEvery { credentialsRepository.storeUnsentFcmToken(any()) } returns Unit

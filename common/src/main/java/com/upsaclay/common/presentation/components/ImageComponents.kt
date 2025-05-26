@@ -1,6 +1,5 @@
 package com.upsaclay.common.presentation.components
 
-import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,7 +35,7 @@ fun ProfilePicture(
     url: String?,
     onClick: (() -> Unit)? = null
 ) {
-    Image(
+    ProfileImage(
         modifier = modifier,
         scale = scale,
         model = url ?: R.drawable.default_profile_picture,
@@ -51,7 +50,7 @@ fun ProfilePicture(
     uri: Uri?,
     onClick: (() -> Unit)? = null
 ) {
-    Image(
+    ProfileImage(
         modifier = modifier,
         scale = scale,
         model = uri ?: R.drawable.default_profile_picture,
@@ -70,7 +69,7 @@ fun ProfilePictureWithIcon(
     contentDescription: String = "",
     onClick: (() -> Unit)? = null
 ) {
-    ImageWithIcon(
+    ProfileImageWithIcon(
         modifier = modifier,
         model = url ?: R.drawable.default_profile_picture,
         scale = scale,
@@ -83,13 +82,14 @@ fun ProfilePictureWithIcon(
 }
 
 @Composable
-private fun Image(
+private fun ProfileImage(
     modifier: Modifier = Modifier,
     scale: Float = 1f,
     model: Any,
     onClick: (() -> Unit)? = null
 ) {
     val color = MaterialTheme.colorScheme.profilePictureError
+
     AsyncImage(
         model = model,
         contentDescription = "",
@@ -110,7 +110,7 @@ private fun Image(
 }
 
 @Composable
-private fun ImageWithIcon(
+private fun ProfileImageWithIcon(
     modifier: Modifier = Modifier,
     scale: Float,
     model: Any,
@@ -121,6 +121,7 @@ private fun ImageWithIcon(
     onClick: (() -> Unit)?
 ) {
     val color = MaterialTheme.colorScheme.profilePictureError
+
     Box(modifier = modifier.size(100.dp * scale)) {
         AsyncImage(
             model = model,
@@ -178,13 +179,11 @@ private fun ImageWithIcon(
  */
 
 @Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun ProfilePicturePreview() {
     GedoiseTheme {
         ProfilePicture(
-            url = "",
-            onClick = {}
+            url = ""
         )
     }
 }
@@ -194,8 +193,7 @@ private fun ProfilePicturePreview() {
 private fun ProfilePictureWithIconPreview() {
     GedoiseTheme {
         ProfilePictureWithIcon(
-            url = null,
-            onClick = {}
+            url = null
         )
     }
 }
