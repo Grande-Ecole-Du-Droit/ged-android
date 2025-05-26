@@ -61,6 +61,8 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(libs.koin.test)
     testImplementation(libs.koin.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(project(":common:domain"))
 }

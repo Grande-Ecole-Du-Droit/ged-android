@@ -15,17 +15,16 @@ internal class MessageRepositoryImpl(
     override fun getLocalMessages(conversationId: String): Flow<List<Message>> =
         messageLocalDataSource.getMessages(conversationId)
 
-    override fun getRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<List<Message>> =
+    override fun getRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message> =
         messageRemoteDataSource.listenMessages(conversationId, offsetTime)
 
-    override suspend fun createLocalMessage(message: Message) {
-        messageLocalDataSource.createMessage(message)
-    }
-
-    override suspend fun createRemoteMessage(message: Message) {
+    override suspend fun createMessage(message: Message) {
         handleNetworkException(
             message = "Failed to create message",
-            block = { messageRemoteDataSource.createMessage(message) }
+            block = {
+                messageLocalDataSource.upsertMessage(message)
+                messageRemoteDataSource.createMessage(message)
+            }
         )
     }
 
@@ -45,10 +44,6 @@ internal class MessageRepositoryImpl(
 
     override suspend fun deleteLocalMessages(conversationId: String) {
         messageLocalDataSource.deleteMessages(conversationId)
-    }
-
-    override fun deleteRemoteMessages(conversationId: String) {
-        messageRemoteDataSource.deleteMessages(conversationId)
     }
 
     override suspend fun deleteLocalMessages() {

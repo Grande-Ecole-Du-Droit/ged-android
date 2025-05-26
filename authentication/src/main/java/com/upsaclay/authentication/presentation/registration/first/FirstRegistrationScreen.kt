@@ -66,7 +66,10 @@ private fun FirstRegistrationScreen(
     val focusManager = LocalFocusManager.current
 
     RegistrationScaffold(
-        onBackClick = onBackClick
+        onBackClick = {
+            focusManager.clearFocus()
+            onBackClick()
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier

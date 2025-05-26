@@ -1,29 +1,24 @@
 package com.upsaclay.authentication.presentation.authentication
 
-import android.accounts.NetworkErrorException
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.upsaclay.authentication.R
 import com.upsaclay.authentication.domain.entity.exception.InvalidCredentialsException
-import com.upsaclay.authentication.domain.repository.AuthenticationRepository
-import com.upsaclay.common.domain.entity.InternalServerException
+import com.upsaclay.authentication.domain.usecase.LoginUseCase
+import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.common.domain.entity.SingleUiEvent
-import com.upsaclay.common.domain.entity.TooManyRequestException
-import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.VerifyEmailFormatUseCase
-import kotlinx.coroutines.TimeoutCancellationException
+import com.upsaclay.common.utils.mapNetworkErrorMessage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 
 class AuthenticationViewModel(
-    private val authenticationRepository: AuthenticationRepository,
-    private val userRepository: UserRepository
+    private val loginUseCase: LoginUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(AuthenticationUiState())
     internal val uiState: StateFlow<AuthenticationUiState> = _uiState
@@ -46,26 +41,17 @@ class AuthenticationViewModel(
     fun login() {
         val (email, password) = _uiState.value
         if (!validateInputs(email, password)) return
-
-        _uiState.update {
-            it.copy(loading = true)
-        }
+        _uiState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
             try {
-                withTimeout(10000) {
-                    authenticationRepository.loginWithEmailAndPassword(email, password)
-                    userRepository.getUserWithEmail(email)?.let {
-                        userRepository.storeUser(it)
-                        authenticationRepository.setAuthenticated(true)
-                    } ?: throw InvalidCredentialsException()
-                }
+                loginUseCase(email, password)
             } catch (e: Exception) {
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
-                resetPassword()
-                _uiState.update {
-                    it.copy(loading = false)
+                if (e !is NoInternetConnectionException) {
+                    resetPassword()
                 }
+                _uiState.update { it.copy(loading = false) }
             }
         }
     }
@@ -105,26 +91,19 @@ class AuthenticationViewModel(
     }
 
     private fun mapErrorMessage(e: Throwable): Int {
-        return when (e) {
-            is TooManyRequestException -> com.upsaclay.common.R.string.too_many_request_error
-
-            is InvalidCredentialsException -> R.string.invalid_credentials_error
-
-            is InternalServerException -> com.upsaclay.common.R.string.internal_server_error
-
-            is NetworkErrorException -> com.upsaclay.common.R.string.unknown_network_error
-
-            is TimeoutCancellationException -> com.upsaclay.common.R.string.timeout_error
-
-            else -> com.upsaclay.common.R.string.unknown_error
+        return mapNetworkErrorMessage(e) {
+            when (it) {
+                is InvalidCredentialsException -> R.string.invalid_credentials_error
+                else -> com.upsaclay.common.R.string.unknown_error
+            }
         }
     }
 
     internal data class AuthenticationUiState(
         val email: String = "",
         val password: String = "",
+        val loading: Boolean = false,
         @StringRes val emailError: Int? = null,
         @StringRes val passwordError: Int? = null,
-        val loading: Boolean = false,
     )
 }

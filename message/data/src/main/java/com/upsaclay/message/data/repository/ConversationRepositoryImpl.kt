@@ -1,9 +1,6 @@
 package com.upsaclay.message.data.repository
 
-import com.google.firebase.Timestamp
 import com.upsaclay.common.data.exceptions.handleNetworkException
-import com.upsaclay.common.data.extensions.toTimestamp
-import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.message.data.local.ConversationLocalDataSource
@@ -13,12 +10,12 @@ import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.repository.ConversationRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ConversationRepositoryImpl(
@@ -34,7 +31,7 @@ internal class ConversationRepositoryImpl(
     override suspend fun getLocalConversation(interlocutorId: String): Conversation? =
         conversationLocalDataSource.getConversation(interlocutorId)
 
-    override suspend fun fetchRemoteConversations(userId: String): Flow<Conversation> {
+    override suspend fun getRemoteConversations(userId: String): Flow<Conversation> {
         return conversationRemoteDataSource.listenConversations(userId)
             .flatMapMerge { remoteConversation ->
                 val interlocutorId = remoteConversation.participants.firstOrNull { it != userId }
@@ -48,37 +45,28 @@ internal class ConversationRepositoryImpl(
                     }
                 }
             }
-            .catch { e("Failed to fetch conversations", it) }
     }
 
-    override fun createRemoteConversation(conversation: Conversation, userId: String) {
-        conversationRemoteDataSource.createConversation(conversation, userId)
+    override suspend fun createConversation(conversation: Conversation, userId: String) {
+        handleNetworkException(
+            message = "Failed to create conversation",
+            block = {
+                conversationRemoteDataSource.createConversation(conversation, userId)
+                conversationLocalDataSource.upsertConversation(conversation)
+            }
+        )
     }
 
     override suspend fun upsertLocalConversation(conversation: Conversation) {
         conversationLocalDataSource.upsertConversation(conversation)
     }
 
-    override fun unDeleteRemoteConversation(conversation: Conversation, userId: String) {
-        conversationRemoteDataSource.unDeleteConversation(conversation, userId)
-    }
-
-    override suspend fun softDeleteConversation(conversation: Conversation, userId: String) {
-        val deleteTime = conversation.deleteTime?.toTimestamp() ?: Timestamp.now()
+    override suspend fun deleteConversation(conversation: Conversation, userId: String) {
+        val deleteTime = LocalDateTime.now()
         handleNetworkException(
-            message = "Failed to soft delete conversation",
+            message = "Failed to delete conversation",
             block = {
-                conversationRemoteDataSource.softDeleteConversation(conversation.id, userId, deleteTime)
-                conversationLocalDataSource.deleteConversation(conversation)
-            }
-        )
-    }
-
-    override suspend fun hardDeleteConversation(conversation: Conversation) {
-        handleNetworkException(
-            message = "Failed to hard delete conversation",
-            block = {
-                conversationRemoteDataSource.hardDeleteConversation(conversation.id)
+                conversationRemoteDataSource.updateConversationDeleteTime(conversation.id, userId, deleteTime)
                 conversationLocalDataSource.deleteConversation(conversation)
             }
         )

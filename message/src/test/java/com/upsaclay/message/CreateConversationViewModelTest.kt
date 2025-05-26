@@ -6,7 +6,6 @@ import com.upsaclay.common.domain.usersFixture
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.repository.ConversationRepository
-import com.upsaclay.message.domain.usecase.CreateConversationUseCase
 import com.upsaclay.message.presentation.conversation.create.CreateConversationViewModel
 import io.mockk.coEvery
 import io.mockk.every

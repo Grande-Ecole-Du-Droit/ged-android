@@ -3,6 +3,7 @@ package com.upsaclay.message.domain.entity
 import com.upsaclay.common.domain.LocalDateTimeSerializer
 import com.upsaclay.common.domain.entity.User
 import kotlinx.serialization.Serializable
+import java.time.Duration
 import java.time.LocalDateTime
 
 @Serializable
@@ -15,28 +16,13 @@ data class Conversation(
     @Serializable(with = LocalDateTimeSerializer::class)
     val deleteTime: LocalDateTime? = null
 ) {
-    override fun equals(other: Any?): Boolean {
-        if (other !is Conversation) return false
-
-        return id == other.id
-                && interlocutor == other.interlocutor
-                && state == other.state
-                && deleteTime?.withNano(0) == other.deleteTime?.withNano(0)
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + interlocutor.hashCode()
-        result = 31 * result + state.hashCode()
-        result = 31 * result + (deleteTime?.hashCode() ?: 0)
-        return result
-    }
+    val shouldBeCreated: Boolean
+        get() = state == ConversationState.DRAFT || state == ConversationState.ERROR
 }
 
 enum class ConversationState {
     DRAFT,
-    CREATING,
+    LOADING,
     CREATED,
-    SOFT_DELETED,
     ERROR
 }

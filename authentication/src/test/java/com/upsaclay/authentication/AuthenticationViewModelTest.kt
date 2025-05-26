@@ -1,9 +1,7 @@
 package com.upsaclay.authentication
 
-import com.upsaclay.authentication.domain.repository.AuthenticationRepository
+import com.upsaclay.authentication.domain.usecase.LoginUseCase
 import com.upsaclay.authentication.presentation.authentication.AuthenticationViewModel
-import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.common.domain.userFixture
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertNull
@@ -19,8 +17,7 @@ import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthenticationViewModelTest {
-    private val authenticationRepository: AuthenticationRepository = mockk()
-    private val userRepository: UserRepository = mockk()
+    private val loginUseCase: LoginUseCase = mockk()
 
     private lateinit var authenticationViewModel: AuthenticationViewModel
     private val email = "email@example.com"
@@ -32,14 +29,10 @@ class AuthenticationViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         authenticationViewModel = AuthenticationViewModel(
-            authenticationRepository = authenticationRepository,
-            userRepository = userRepository
+            loginUseCase = loginUseCase
         )
 
-        coEvery { authenticationRepository.loginWithEmailAndPassword(any(), any()) } returns Unit
-        coEvery { authenticationRepository.setAuthenticated(any()) } returns Unit
-        coEvery { userRepository.getUserWithEmail(any()) } returns userFixture
-        coEvery { userRepository.storeUser(any()) } returns Unit
+        coEvery { loginUseCase(any(), any()) } returns Unit
     }
 
     @Test
@@ -63,7 +56,7 @@ class AuthenticationViewModelTest {
     @Test
     fun login_should_reset_password_when_exception_is_thrown() = runTest {
         // Given
-        coEvery { authenticationRepository.loginWithEmailAndPassword(any(), any()) } throws Exception()
+        coEvery { loginUseCase(any(), any()) } throws Exception()
         authenticationViewModel.onPasswordChange(password)
         authenticationViewModel.onEmailChange(email)
 

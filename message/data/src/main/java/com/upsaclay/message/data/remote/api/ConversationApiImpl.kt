@@ -10,9 +10,6 @@ import com.upsaclay.message.data.remote.model.RemoteConversation
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 internal class ConversationApiImpl: ConversationApi {
     private val conversationsCollection = Firebase.firestore.collection(CONVERSATIONS_TABLE_NAME)
@@ -26,9 +23,11 @@ internal class ConversationApiImpl: ConversationApi {
                     return@addSnapshotListener
                 }
 
-                snapshot?.documents?.forEach { document ->
-                    document.toObject(RemoteConversation::class.java)?.let {
-                        trySend(it)
+                snapshot?.documents
+                    ?.filterNot { it.metadata.isFromCache || it.metadata.hasPendingWrites() }
+                    ?.forEach { document ->
+                        document.toObject(RemoteConversation::class.java)?.let {
+                            trySend(it)
                     }
                 }
             }
@@ -47,13 +46,6 @@ internal class ConversationApiImpl: ConversationApi {
         conversationsCollection
             .document(conversationId)
             .update(data)
-            .addOnFailureListener { e("Failed to update remote conversation ${it.message}", it) }
-    }
-
-    override fun hardDeleteConversation(conversationId: String) {
-        conversationsCollection
-            .document(conversationId)
-            .delete()
-            .addOnFailureListener { e("Failed to hard delete remote conversation: ${it.message}", it) }
+            .addOnFailureListener { e("Failed to update delete time of remote conversation ${it.message}", it) }
     }
 }

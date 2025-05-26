@@ -6,7 +6,7 @@ import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.ConversationMessage
 import java.time.LocalDateTime
 
-object JsonConverter {
+object MessageJsonConverter {
     fun toConversation(conversationJson: String): Conversation? {
         return runCatching {
             GsonBuilder()

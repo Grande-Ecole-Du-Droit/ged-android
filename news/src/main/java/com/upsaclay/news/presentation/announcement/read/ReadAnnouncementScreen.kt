@@ -1,9 +1,8 @@
 package com.upsaclay.news.presentation.announcement.read
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.userFixture2
@@ -44,7 +44,7 @@ import org.koin.core.parameter.parametersOf
 fun ReadAnnouncementScreenRoute(
     announcementId: String,
     onBackClick: () -> Unit,
-    onEditClick: (String) -> Unit,
+    onEditClick: (Announcement) -> Unit,
     viewModel: ReadAnnouncementViewModel = koinViewModel(
         parameters = { parametersOf(announcementId) }
     )
@@ -88,7 +88,7 @@ fun ReadAnnouncementScreen(
     snackbarHostState: SnackbarHostState,
     onDeleteAnnouncement: () -> Unit,
     onBackClick: () -> Unit,
-    onEditClick: (String) -> Unit
+    onEditClick: (Announcement) -> Unit
 ) {
     var showDeleteAnnouncementDialog by remember { mutableStateOf(false) }
 
@@ -140,25 +140,23 @@ fun ReadAnnouncementScreen(
                     end = MaterialTheme.spacing.medium,
                     bottom = MaterialTheme.spacing.medium
                 )
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
         ) {
-            ReadAnnouncementHeader(
-                currentUser = user,
+            ReadAnnouncementTopSection(
+                user = user,
                 announcement = announcement,
                 onEditIconClick = { showBottomSheet = true }
             )
-
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
 
             announcement.title?.let {
                 Text(
                     modifier = Modifier.testTag(stringResource(id = R.string.read_screen_announcement_title_tag)),
                     text = it,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.2f
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize * 1.3f
                 )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.smallMedium))
             }
 
             Text(
@@ -166,20 +164,20 @@ fun ReadAnnouncementScreen(
                 text = announcement.content,
                 style = MaterialTheme.typography.bodyLarge
             )
+        }
 
-            if (showBottomSheet) {
-                ReadAnnouncementBottomSheet(
-                    onEditClick = {
-                        showBottomSheet = false
-                        onEditClick(announcement.id)
-                    },
-                    onDeleteClick = {
-                        showBottomSheet = false
-                        showDeleteAnnouncementDialog = true
-                    },
-                    onDismiss = { showBottomSheet = false }
-                )
-            }
+        if (showBottomSheet) {
+            ReadAnnouncementBottomSheet(
+                onEditClick = {
+                    showBottomSheet = false
+                    onEditClick(announcement)
+                },
+                onDeleteClick = {
+                    showBottomSheet = false
+                    showDeleteAnnouncementDialog = true
+                },
+                onDismiss = { showBottomSheet = false }
+            )
         }
     }
 }
@@ -192,7 +190,7 @@ fun ReadAnnouncementScreen(
 
 @Phones
 @Composable
-private fun ReadOnlyAnnouncementScreenPreview() {
+private fun NonEditableAnnouncementScreenPreview() {
     GedoiseTheme {
         Surface {
             ReadAnnouncementScreen(

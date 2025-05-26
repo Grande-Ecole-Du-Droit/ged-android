@@ -1,41 +1,52 @@
 package com.upsaclay.news.data.remote.model
 
 import com.google.gson.annotations.SerializedName
+import com.upsaclay.news.data.AnnouncementField.ANNOUNCEMENT_CONTENT
+import com.upsaclay.news.data.AnnouncementField.ANNOUNCEMENT_DATE
+import com.upsaclay.news.data.AnnouncementField.ANNOUNCEMENT_ID
+import com.upsaclay.news.data.AnnouncementField.ANNOUNCEMENT_TITLE
+import com.upsaclay.news.data.AnnouncementField.USER_EMAIL
+import com.upsaclay.news.data.AnnouncementField.USER_FIRST_NAME
+import com.upsaclay.news.data.AnnouncementField.USER_ID
+import com.upsaclay.news.data.AnnouncementField.USER_IS_MEMBER
+import com.upsaclay.news.data.AnnouncementField.USER_LAST_NAME
+import com.upsaclay.news.data.AnnouncementField.USER_PROFILE_PICTURE_FILE_NAME
+import com.upsaclay.news.data.AnnouncementField.USER_SCHOOL_LEVEL
 
 internal data class RemoteAnnouncement(
-    @SerializedName("announcementId")
+    @SerializedName(ANNOUNCEMENT_ID)
     val announcementId: String,
-    @SerializedName("announcementTitle")
+    @SerializedName(ANNOUNCEMENT_TITLE)
     val announcementTitle: String?,
-    @SerializedName("announcementContent")
+    @SerializedName(ANNOUNCEMENT_CONTENT)
     val announcementContent: String,
-    @SerializedName("announcementDate")
+    @SerializedName(ANNOUNCEMENT_DATE)
     val announcementDate: Long,
-    @SerializedName("userId")
+    @SerializedName(USER_ID)
     val userId: String
 )
 
 internal data class RemoteAnnouncementWithUser(
-    @SerializedName("announcementId")
+    @SerializedName(ANNOUNCEMENT_ID)
     val announcementId: String,
-    @SerializedName("announcementTitle")
+    @SerializedName(ANNOUNCEMENT_TITLE)
     val announcementTitle: String?,
-    @SerializedName("announcementContent")
+    @SerializedName(ANNOUNCEMENT_CONTENT)
     val announcementContent: String,
-    @SerializedName("announcementDate")
+    @SerializedName(ANNOUNCEMENT_DATE)
     val announcementDate: Long,
-    @SerializedName("userId")
+    @SerializedName(USER_ID)
     val userId: String,
-    @SerializedName("userFirstName")
+    @SerializedName(USER_FIRST_NAME)
     val userFirstName: String,
-    @SerializedName("userLastName")
+    @SerializedName(USER_LAST_NAME)
     val userLastName: String,
-    @SerializedName("userEmail")
+    @SerializedName(USER_EMAIL)
     val userEmail: String,
-    @SerializedName("userSchoolLevel")
+    @SerializedName(USER_SCHOOL_LEVEL)
     val userSchoolLevel: String,
-    @SerializedName("userIsMember")
+    @SerializedName(USER_IS_MEMBER)
     val userIsMember: Int,
-    @SerializedName("userProfilePictureFileName")
+    @SerializedName(USER_PROFILE_PICTURE_FILE_NAME)
     val profilePictureFileName: String?
 )

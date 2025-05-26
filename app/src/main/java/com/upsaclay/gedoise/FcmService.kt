@@ -7,7 +7,7 @@ import com.upsaclay.common.domain.entity.FcmToken
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.gedoise.domain.usecase.FcmTokenUseCase
 import com.upsaclay.gedoise.presentation.NotificationPresenter
-import com.upsaclay.message.domain.JsonConverter
+import com.upsaclay.message.domain.MessageJsonConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -44,7 +44,7 @@ class FcmService: FirebaseMessagingService() {
 
     private suspend fun handleNotification(remoteMessage: RemoteMessage) {
         remoteMessage.data["value"]?.let { value ->
-            JsonConverter.fromConversationMessage(value)?.let {
+            MessageJsonConverter.fromConversationMessage(value)?.let {
                 notificationPresenter.showMessageNotification(it)
             }
         }

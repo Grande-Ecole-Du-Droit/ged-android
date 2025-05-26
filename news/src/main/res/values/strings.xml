@@ -19,9 +19,7 @@
     <string name="announcement_updated">Annonce mise à jour</string>
     <string name="announcement_deleted">Annonce supprimé</string>
 
-    <string name="announcement_creation_error">Une erreur est survenue lors de la création de l\'annonce</string>
-    <string name="announcement_update_error">Une erreur est survenue lors de la mise à jour de l\'annonce</string>
-    <string name="announcement_delete_error">Une erreur est survenue lors de la suppression de l\'annonce</string>
+    <string name="announcement_refresh_error">Impossible de rafraîchir les annonces</string>
 
     <string name="news_screen_empty_announcement_text_tag">News Screen Empty Announcement Text Tag</string>
     <string name="news_screen_recent_announcements_tag">News Screen Recent Announcement Tag</string>

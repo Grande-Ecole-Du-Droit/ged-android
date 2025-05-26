@@ -1,5 +1,6 @@
 package com.upsaclay.news.data.repository
 
+import com.upsaclay.common.data.exceptions.handleNetworkException
 import com.upsaclay.news.data.local.AnnouncementLocalDataSource
 import com.upsaclay.news.data.remote.AnnouncementRemoteDataSource
 import com.upsaclay.news.domain.entity.Announcement
@@ -40,38 +41,53 @@ internal class AnnouncementRepositoryImpl(
         _announcements.value.firstOrNull { it.id == announcementId }
 
     override suspend fun refreshAnnouncements() {
-        val remoteAnnouncements = runCatching { announcementRemoteDataSource.getAnnouncement() }.getOrElse { return }
+        val remoteAnnouncements = runCatching {
+            announcementRemoteDataSource.getAnnouncement()
+        }.getOrElse { return }
 
         val announcementsToDelete = _announcements.value
             .filter { it.state == AnnouncementState.PUBLISHED }
             .filterNot { remoteAnnouncements.contains(it) }
         announcementsToDelete.forEach { announcementLocalDataSource.deleteAnnouncement(it) }
 
-        val announcementsToUpsert = remoteAnnouncements.filterNot { _announcements.value.contains(it) }
+        val announcementsToUpsert = remoteAnnouncements
+            .filterNot { _announcements.value.contains(it) }
         announcementsToUpsert.forEach { announcementLocalDataSource.upsertAnnouncement(it) }
     }
 
-    override suspend fun createAnnouncement(announcement: Announcement) {
-        announcementLocalDataSource.insertAnnouncement(announcement)
-        announcementRemoteDataSource.createAnnouncement(announcement)
+    override suspend fun createRemoteAnnouncement(announcement: Announcement) {
+        handleNetworkException(
+            message = "Failed to create remote announcement",
+            block = { announcementRemoteDataSource.createAnnouncement(announcement) }
+        )
     }
 
-    override suspend fun createRemoteAnnouncement(announcement: Announcement) {
-        announcementRemoteDataSource.createAnnouncement(announcement)
+    override suspend fun createLocalAnnouncement(announcement: Announcement) {
+        announcementLocalDataSource.upsertAnnouncement(announcement)
     }
 
     override suspend fun updateAnnouncement(announcement: Announcement) {
-        announcementRemoteDataSource.updateAnnouncement(announcement)
-        announcementLocalDataSource.updateAnnouncement(announcement)
+        handleNetworkException(
+            message = "Failed to update announcement",
+            block = {
+                announcementRemoteDataSource.updateAnnouncement(announcement)
+                announcementLocalDataSource.upsertAnnouncement(announcement)
+            }
+        )
     }
 
-    override suspend fun updateAnnouncementState(announcement: Announcement) {
-        announcementLocalDataSource.updateAnnouncement(announcement)
+    override suspend fun updateLocalAnnouncement(announcement: Announcement) {
+        announcementLocalDataSource.upsertAnnouncement(announcement)
     }
 
     override suspend fun deleteAnnouncement(announcement: Announcement) {
-        announcementRemoteDataSource.deleteAnnouncement(announcement.id)
-        announcementLocalDataSource.deleteAnnouncement(announcement)
+        handleNetworkException(
+            message = "Failed to delete announcement",
+            block = {
+                announcementRemoteDataSource.deleteAnnouncement(announcement.id)
+                announcementLocalDataSource.deleteAnnouncement(announcement)
+            }
+        )
     }
 
     override suspend fun deleteLocalAnnouncement(announcement: Announcement) {

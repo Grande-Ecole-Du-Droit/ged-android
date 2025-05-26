@@ -4,12 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.entity.UserNotFoundException
 import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.message.R
+import com.upsaclay.common.utils.mapNetworkErrorMessage
 import com.upsaclay.message.domain.entity.Conversation
-import com.upsaclay.message.domain.repository.ConversationRepository
-import com.upsaclay.message.domain.usecase.CreateConversationUseCase
+import com.upsaclay.message.domain.usecase.GetLocalConversationUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,9 +16,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CreateConversationViewModel(
-    private val conversationRepository: ConversationRepository,
-    private val createConversationUseCase: CreateConversationUseCase,
     private val userRepository: UserRepository,
+    private val getLocalConversationUseCase: GetLocalConversationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CreateConversationUiState())
     val uiState: StateFlow<CreateConversationUiState> = _uiState
@@ -33,14 +30,12 @@ class CreateConversationViewModel(
     }
 
     suspend fun getConversation(interlocutor: User): Conversation? {
-        return runCatching {
-            conversationRepository.getLocalConversation(interlocutor.id) ?: run {
-                val user = requireNotNull(userRepository.currentUser)
-                createConversationUseCase.generateNewConversation(user.id, interlocutor)
-            }
+        return try {
+            getLocalConversationUseCase(interlocutor)
+        } catch (e: Exception) {
+            _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
+            null
         }
-            .onFailure { _event.emit(SingleUiEvent.Error(mapErrorMessage(it))) }
-            .getOrNull()
     }
 
     fun onQueryChange(userName: String) {
@@ -61,14 +56,21 @@ class CreateConversationViewModel(
         }
 
         viewModelScope.launch {
-            userRepository.getUsers()
-                .filter { it.id != userRepository.currentUser?.id }
-                .also { users ->
-                    _uiState.update {
-                        it.copy(users = users, loading = false)
+            try {
+                userRepository.getUsers()
+                    .filter { it.id != userRepository.currentUser?.id }
+                    .also { users ->
+                        _uiState.update {
+                            it.copy(users = users, loading = false)
+                        }
+                        defaultUsers = users
                     }
-                    defaultUsers = users
+            } catch (e: Exception) {
+                _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
+                _uiState.update {
+                    it.copy(loading = false)
                 }
+            }
         }
     }
 
@@ -84,9 +86,11 @@ class CreateConversationViewModel(
     }
 
     private fun mapErrorMessage(e: Throwable): Int {
-        return when (e) {
-            is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
-            else -> com.upsaclay.common.R.string.unknown_error
+        return mapNetworkErrorMessage(e) {
+            when (e) {
+                is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
+                else -> com.upsaclay.common.R.string.unknown_error
+            }
         }
     }
 

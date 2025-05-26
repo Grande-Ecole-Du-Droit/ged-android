@@ -6,15 +6,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.presentation.components.PullToRefreshComponent
@@ -26,6 +33,7 @@ import com.upsaclay.news.R
 import com.upsaclay.news.domain.announcementsFixture
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.presentation.announcement.components.CreateAnnouncementFAB
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -37,12 +45,30 @@ fun NewsScreenRoute(
     viewModel: NewsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val showSnackBar = { message: String ->
+        scope.launch {
+            snackbarHostState.showSnackbar(message = message)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is SingleUiEvent.Error -> showSnackBar(context.getString(event.messageId))
+                is SingleUiEvent.Success -> showSnackBar(context.getString(event.messageId))
+            }
+        }
+    }
 
     NewsScreen(
         user = uiState.user,
         refreshing = uiState.refreshing,
         announcements = uiState.announcements,
         bottomBar = bottomBar,
+        snackbarHostState = snackbarHostState,
         onRefresh = viewModel::refreshAnnouncements,
         onAnnouncementClick = onAnnouncementClick,
         onCreateAnnouncementClick = onCreateAnnouncementClick,
@@ -58,6 +84,7 @@ private fun NewsScreen(
     refreshing: Boolean,
     announcements: List<Announcement>?,
     bottomBar: @Composable () -> Unit,
+    snackbarHostState: SnackbarHostState = SnackbarHostState(),
     onRefresh: () -> Unit,
     onAnnouncementClick: (String) -> Unit,
     onCreateAnnouncementClick: () -> Unit,
@@ -91,6 +118,11 @@ private fun NewsScreen(
             )
         },
         bottomBar = bottomBar,
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) {
+                Snackbar(it)
+            }
+        },
         floatingActionButton = {
             if (user?.isMember == true) {
                 CreateAnnouncementFAB(
@@ -111,7 +143,7 @@ private fun NewsScreen(
                         return@Column
                     }
 
-                    RecentAnnouncementContent(
+                    RecentAnnouncementSection(
                         modifier = Modifier.weight(1f),
                         announcements = announcements,
                         onAnnouncementClick = onAnnouncementClick,

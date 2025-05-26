@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -113,12 +114,6 @@ private fun ClickableMenuItemPreview() {
                 },
                 onClick = {}
             )
-
-            ClickableItem(
-                modifier = Modifier.width(300.dp),
-                text = { Text(text = "Item") },
-                onClick = {}
-            )
         }
     }
 }
@@ -126,14 +121,7 @@ private fun ClickableMenuItemPreview() {
 @Preview(showBackground = true, widthDp = 200, heightDp = 200)
 @Composable
 private fun PullRefreshComponentPreview() {
-    val itemList = listOf(
-        "Item 1",
-        "Item 2",
-        "Item 3",
-        "Item 4",
-        "Item 5"
-    )
-
+    val itemList = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     var isRefreshing by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
@@ -148,8 +136,12 @@ private fun PullRefreshComponentPreview() {
         ) {
             LazyColumn(modifier = Modifier.padding(MaterialTheme.spacing.medium)) {
                 items(itemList) {
-                    Text(text = it, modifier = Modifier.fillMaxWidth())
-                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
+                    Text(
+                        text = it.toString(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    HorizontalDivider(modifier = Modifier.padding(vertical = MaterialTheme.spacing.extraSmall))
                 }
             }
         }

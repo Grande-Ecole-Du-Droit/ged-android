@@ -6,10 +6,10 @@ import com.upsaclay.common.data.remote.api.FcmApi
 import com.upsaclay.common.domain.d
 import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.entity.FcmToken
+import com.upsaclay.common.domain.entity.InternalServerException
 import com.upsaclay.common.domain.repository.CredentialsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 class CredentialsRepositoryImpl(
     private val fcmLocalDataSource: FcmLocalDataSource,
@@ -27,9 +27,8 @@ class CredentialsRepositoryImpl(
             }
 
             if (!response.isSuccessful) {
-                val errorMessage = formatHttpError("Error send fcm token", response)
-                e(errorMessage)
-                throw IOException(errorMessage)
+                val errorMessage = formatHttpError(response)
+                throw InternalServerException(errorMessage)
             } else {
                 d(response.body()?.message ?: "Token sent successfully")
             }

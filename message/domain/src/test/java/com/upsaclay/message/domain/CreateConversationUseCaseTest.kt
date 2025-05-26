@@ -4,14 +4,12 @@ import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.repository.ConversationRepository
-import com.upsaclay.message.domain.usecase.CreateConversationUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class CreateConversationUseCaseTest {
     private val conversationRepository: ConversationRepository = mockk()
@@ -48,7 +46,7 @@ class CreateConversationUseCaseTest {
         // Then
         coEvery {
             conversationRepository.upsertLocalConversation(
-                conversationFixture.copy(state = ConversationState.CREATING)
+                conversationFixture.copy(state = ConversationState.LOADING)
             )
         }
     }
@@ -85,8 +83,8 @@ class CreateConversationUseCaseTest {
     fun createRemotely_should_create_conversation_when_creating_state_more_than_10_seconds() = runTest {
         // Given
         val conversation = conversationFixture.copy(
-            createdAt = LocalDateTime.now(ZoneOffset.UTC).minusSeconds(11),
-            state = ConversationState.CREATING
+            createdAt = LocalDateTime.now().minusSeconds(11),
+            state = ConversationState.LOADING
         )
 
         // When

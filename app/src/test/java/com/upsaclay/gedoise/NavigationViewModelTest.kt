@@ -6,7 +6,7 @@ import com.upsaclay.authentication.presentation.registration.first.FirstRegistra
 import com.upsaclay.gedoise.domain.repository.ScreenRepository
 import com.upsaclay.gedoise.presentation.navigation.TopLevelDestination
 import com.upsaclay.gedoise.presentation.viewmodels.NavigationViewModel
-import com.upsaclay.message.domain.JsonConverter
+import com.upsaclay.message.domain.MessageJsonConverter
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messagesFixture
@@ -86,7 +86,7 @@ class NavigationViewModelTest {
     @Test
     fun intentToNavigate_should_update_intentScreen() = runTest {
         // Given
-        val screen = ChatRoute(JsonConverter.fromConversation(conversationFixture))
+        val screen = ChatRoute(MessageJsonConverter.fromConversation(conversationFixture))
 
         // When
         navigationViewModel = NavigationViewModel(
@@ -106,7 +106,7 @@ class NavigationViewModelTest {
     fun should_navigate_to_screen_when_authenticated() = runTest {
         // Given
         every { authenticationRepository.isAuthenticated } returns flowOf(true)
-        val screen = ChatRoute(JsonConverter.fromConversation(conversationFixture))
+        val screen = ChatRoute(MessageJsonConverter.fromConversation(conversationFixture))
 
         // When
         navigationViewModel = NavigationViewModel(
@@ -126,7 +126,7 @@ class NavigationViewModelTest {
     fun should_navigate_to_authentication_screen_when_unauthenticated() = runTest {
         // Given
         every { authenticationRepository.isAuthenticated } returns flowOf(false)
-        val screen = ChatRoute(JsonConverter.fromConversation(conversationFixture))
+        val screen = ChatRoute(MessageJsonConverter.fromConversation(conversationFixture))
 
         // When
         navigationViewModel = NavigationViewModel(

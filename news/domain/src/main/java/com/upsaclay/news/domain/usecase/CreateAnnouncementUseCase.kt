@@ -13,10 +13,11 @@ class CreateAnnouncementUseCase(
     operator fun invoke(announcement: Announcement) {
         scope.launch {
             try {
-                announcementRepository.createAnnouncement(announcement)
-                announcementRepository.updateAnnouncementState(announcement.copy(state = AnnouncementState.PUBLISHED))
-            } catch (e: Exception) {
-                 announcementRepository.updateAnnouncementState(announcement.copy(state = AnnouncementState.ERROR))
+                announcementRepository.createLocalAnnouncement(announcement)
+                announcementRepository.createRemoteAnnouncement(announcement)
+                announcementRepository.updateAnnouncement(announcement.copy(state = AnnouncementState.PUBLISHED))
+            } catch (_: Exception) {
+                 announcementRepository.updateLocalAnnouncement(announcement.copy(state = AnnouncementState.ERROR))
             }
         }
     }

@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -63,11 +64,15 @@ fun AuthenticationScreenRoute(
             snackbarHostState.showSnackbar(message = message)
         }
     }
+    val passwordFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest {
             when (it) {
-                is SingleUiEvent.Error -> showSnackBar(context.getString(it.messageId))
+                is SingleUiEvent.Error -> {
+                    showSnackBar(context.getString(it.messageId))
+                    passwordFocusRequester.requestFocus()
+                }
                 is SingleUiEvent.Success -> onLoginClick()
             }
         }
@@ -79,6 +84,7 @@ fun AuthenticationScreenRoute(
         emailError = uiState.emailError,
         passwordError = uiState.passwordError,
         loading = uiState.loading,
+        passwordFocusRequester = passwordFocusRequester,
         snackbarHostState = snackbarHostState,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
@@ -94,6 +100,7 @@ private fun AuthenticationScreen(
     @StringRes emailError: Int? = null,
     @StringRes passwordError: Int? = null,
     loading: Boolean = false,
+    passwordFocusRequester: FocusRequester = FocusRequester.Default,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -136,6 +143,7 @@ private fun AuthenticationScreen(
                     loading = loading,
                     emailError = emailError,
                     passwordError = passwordError,
+                    passwordFocusRequester = passwordFocusRequester,
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange,
                     onLoginClick = {

@@ -4,10 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.entity.UserNotFoundException
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.NotificationUseCase
-import com.upsaclay.message.R
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.repository.ConversationRepository
@@ -54,7 +52,7 @@ class ChatViewModel(
         seeMessages()
         listenMessages()
         listenConversation()
-        newMessageReceived()
+        onNewMessageReceived()
     }
 
     fun onTextChange(text: String) {
@@ -68,9 +66,7 @@ class ChatViewModel(
             val text = _uiState.value.text.takeUnless { it.isEmpty() } ?: return
             val conversation = _uiState.value.conversation
             val user = requireNotNull(user)
-            viewModelScope.launch {
-                sendMessageUseCase(conversation, user, text)
-            }
+            sendMessageUseCase(conversation, user, text)
             _uiState.update { it.copy(text = "") }
         } catch (_: IllegalArgumentException) {
             viewModelScope.launch {
@@ -92,12 +88,6 @@ class ChatViewModel(
         }
     }
 
-    private fun clearMessageNotifications() {
-        viewModelScope.launch {
-            notificationUseCase.clearNotifications(_uiState.value.conversation.id)
-        }
-    }
-
     private fun listenMessages() {
         viewModelScope.launch {
             messageRepository.getLocalMessages(_uiState.value.conversation.id)
@@ -109,9 +99,9 @@ class ChatViewModel(
         }
     }
 
-    private fun newMessageReceived() {
+    private fun onNewMessageReceived() {
         viewModelScope.launch {
-            uiState
+            _uiState
                 .map { it.messages }
                 .distinctUntilChanged()
                 .mapNotNull { it.firstOrNull() }
@@ -128,6 +118,12 @@ class ChatViewModel(
                 .collect { conversation ->
                     _uiState.update { it.copy(conversation = conversation) }
                 }
+        }
+    }
+
+    private fun clearMessageNotifications() {
+        viewModelScope.launch {
+            notificationUseCase.clearNotifications(_uiState.value.conversation.id)
         }
     }
 

@@ -64,7 +64,7 @@ class NewsViewModelTest {
     }
 
     @Test
-    fun recreateAnnouncement_should_resend_announcement() = runTest {
+    fun retryAnnouncement_should_resend_announcementSending() = runTest {
         // Given
         val announcement = announcementsFixture.first()
 

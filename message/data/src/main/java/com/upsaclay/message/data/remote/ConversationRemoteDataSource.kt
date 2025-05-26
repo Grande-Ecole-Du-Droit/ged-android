@@ -1,16 +1,14 @@
 package com.upsaclay.message.data.remote
 
-import com.google.firebase.Timestamp
+import com.upsaclay.common.data.extensions.toTimestamp
 import com.upsaclay.message.data.mapper.toMap
 import com.upsaclay.message.data.mapper.toRemote
 import com.upsaclay.message.data.model.ConversationField
 import com.upsaclay.message.data.remote.api.ConversationApi
 import com.upsaclay.message.data.remote.model.RemoteConversation
 import com.upsaclay.message.domain.entity.Conversation
-import com.upsaclay.message.domain.entity.ConversationState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 
 internal class ConversationRemoteDataSource(private val conversationApi: ConversationApi) {
     fun listenConversations(userId: String): Flow<RemoteConversation> = conversationApi.listenConversations(userId)
@@ -20,25 +18,10 @@ internal class ConversationRemoteDataSource(private val conversationApi: Convers
         conversationApi.createConversation(conversation.id, data)
     }
 
-    fun unDeleteConversation(conversation: Conversation, userId: String) {
+    fun updateConversationDeleteTime(conversationId: String, userId: String, deleteTIme: LocalDateTime) {
         val data = mapOf(
-            "${ConversationField.Remote.DELETE_BY}.$userId" to false,
-            "${ConversationField.Remote.DELETE_BY}.${conversation.interlocutor.id}" to false,
+            "${ConversationField.Remote.DELETE_TIME}.$userId" to deleteTIme.toTimestamp()
         )
-        conversationApi.updateConversation(conversation.id, data)
-    }
-
-    suspend fun softDeleteConversation(conversationId: String, userId: String, timestamp: Timestamp) {
-        val data = mapOf(
-            "${ConversationField.Remote.DELETE_BY}.$userId" to true,
-            "${ConversationField.Remote.DELETE_TIME}.$userId" to timestamp
-        )
-        withContext(Dispatchers.IO) {
-            conversationApi.updateConversation(conversationId, data)
-        }
-    }
-
-    fun hardDeleteConversation(conversationId: String) {
-        conversationApi.hardDeleteConversation(conversationId)
+        conversationApi.updateConversation(conversationId, data)
     }
 }

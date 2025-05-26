@@ -11,11 +11,13 @@ import com.upsaclay.common.data.remote.api.ImageApiImpl
 import com.upsaclay.common.data.remote.api.UserFirestoreApi
 import com.upsaclay.common.data.remote.api.UserFirestoreApiImpl
 import com.upsaclay.common.data.remote.api.UserRetrofitApi
+import com.upsaclay.common.data.remote.api.WhiteListApi
 import com.upsaclay.common.data.repository.CredentialsRepositoryImpl
 import com.upsaclay.common.data.repository.DrawableRepositoryImpl
 import com.upsaclay.common.data.repository.FileRepositoryImpl
 import com.upsaclay.common.data.repository.ImageRepositoryImpl
 import com.upsaclay.common.data.repository.UserRepositoryImpl
+import com.upsaclay.common.data.repository.WhiteListRepositoryImpl
 import com.upsaclay.common.domain.FcmNotificationSender
 import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.repository.CredentialsRepository
@@ -23,6 +25,7 @@ import com.upsaclay.common.domain.repository.DrawableRepository
 import com.upsaclay.common.domain.repository.FileRepository
 import com.upsaclay.common.domain.repository.ImageRepository
 import com.upsaclay.common.domain.repository.UserRepository
+import com.upsaclay.common.domain.repository.WhiteListRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +44,16 @@ private val okHttpClient = OkHttpClient.Builder().build()
 private val BACKGROUND_SCOPE = named("BackgroundScope")
 
 val commonDataModule = module {
+    single<CoroutineScope>(BACKGROUND_SCOPE) {
+        CoroutineScope(
+            SupervisorJob() +
+                Dispatchers.IO +
+                CoroutineExceptionHandler { coroutineContext, throwable ->
+                    e("Uncaught error in backgroundScope", throwable)
+                }
+        )
+    }
+
     single<Retrofit>(GED_SERVER_QUALIFIER) {
         Retrofit.Builder()
             .baseUrl(BuildConfig.SERVER_URL)
@@ -64,23 +77,25 @@ val commonDataModule = module {
             .create(FcmApi::class.java)
     }
 
-    single<CoroutineScope>(BACKGROUND_SCOPE) {
-        CoroutineScope(
-    SupervisorJob() +
-            Dispatchers.IO +
-            CoroutineExceptionHandler { coroutineContext, throwable ->
-                e("Uncaught error in backgroundScope", throwable)
-            }
-        )
+    single {
+        get<Retrofit>(GED_SERVER_QUALIFIER)
+            .create(WhiteListApi::class.java)
     }
 
+    singleOf(::ImageApiImpl) { bind<ImageApi>() }
+    singleOf(::UserFirestoreApiImpl) { bind<UserFirestoreApi>() }
+
+    singleOf(::FcmNotificationSenderImpl) { bind<FcmNotificationSender>() }
+    singleOf(::ImageRemoteDataSource)
+    singleOf(::UserRemoteDataSource)
+
+    singleOf(::UserLocalDataSource)
+    singleOf(::UserDataStore)
+
+    singleOf(::CredentialsRepositoryImpl) { bind<CredentialsRepository>() }
     singleOf(::DrawableRepositoryImpl) { bind<DrawableRepository>() }
     singleOf(::FileRepositoryImpl) { bind<FileRepository>() }
-
-    singleOf(::ImageApiImpl) { bind<ImageApi>() }
     singleOf(::ImageRepositoryImpl) { bind<ImageRepository>() }
-    singleOf(::ImageRemoteDataSource)
-
     single<UserRepository> {
         UserRepositoryImpl(
             userRemoteDataSource = get(),
@@ -88,11 +103,5 @@ val commonDataModule = module {
             scope = get(BACKGROUND_SCOPE)
         )
     }
-    singleOf(::UserRemoteDataSource)
-    singleOf(::UserLocalDataSource)
-    singleOf(::UserDataStore)
-    singleOf(::UserFirestoreApiImpl) { bind<UserFirestoreApi>() }
-
-    singleOf(::CredentialsRepositoryImpl) { bind<CredentialsRepository>() }
-    singleOf(::FcmNotificationSenderImpl) { bind<FcmNotificationSender>() }
+    singleOf(::WhiteListRepositoryImpl) { bind<WhiteListRepository>() }
 }

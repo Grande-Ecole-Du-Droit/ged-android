@@ -1,17 +1,17 @@
 package com.upsaclay.gedoise.presentation.profile.account
 
-import android.accounts.NetworkErrorException
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.upsaclay.common.domain.ConnectivityObserver
+import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.entity.UserNotFoundException
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.usecase.DeleteProfilePictureUseCase
 import com.upsaclay.common.domain.usecase.UpdateProfilePictureUseCase
+import com.upsaclay.common.utils.mapNetworkErrorMessage
 import com.upsaclay.gedoise.R
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -21,13 +21,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
-import java.net.ConnectException
-import java.net.SocketTimeoutException
 
 class AccountViewModel(
     private val updateProfilePictureUseCase: UpdateProfilePictureUseCase,
     private val deleteProfilePictureUseCase: DeleteProfilePictureUseCase,
+    private val connectivityObserver: ConnectivityObserver,
     userRepository: UserRepository
 ): ViewModel() {
     private val _uiState = MutableStateFlow(AccountUiState())
@@ -46,6 +44,10 @@ class AccountViewModel(
     fun updateProfilePicture() {
         viewModelScope.launch {
             try {
+                if (!connectivityObserver.isConnected) {
+                    throw NoInternetConnectionException()
+                }
+
                 val user = requireNotNull(_uiState.value.user)
                 _uiState.value.profilePictureUri?.let { uri ->
                     updateState(loading = true)
@@ -63,16 +65,16 @@ class AccountViewModel(
     fun deleteProfilePicture() {
         viewModelScope.launch {
             try {
-                val user = _uiState.value.user ?: throw UserNotFoundException()
+                if (!connectivityObserver.isConnected) {
+                    throw NoInternetConnectionException()
+                }
+
+                val user = requireNotNull(_uiState.value.user)
                 updateState(loading = true)
                 user.profilePictureFileName?.let {
                     deleteProfilePictureUseCase(user.id, it)
                 }
-                resetProfilePictureUri()
-                updateState(
-                    loading = false,
-                    screenState = AccountScreenState.READ
-                )
+                resetValues()
                 _event.emit(SingleUiEvent.Success(R.string.profile_picture_deleted))
             } catch (e: Exception) {
                 updateState(loading = false)
@@ -88,29 +90,14 @@ class AccountViewModel(
     fun resetValues() {
         updateState(
             screenState = AccountScreenState.READ,
-            profilePictureUri = null
+            profilePictureUri = null,
+            loading = false
         )
     }
 
     fun onProfilePictureUriChange(uri: Uri?) {
         updateState(profilePictureUri = uri)
 
-    }
-
-    fun resetProfilePictureUri() {
-        updateState(profilePictureUri = null)
-    }
-
-    private fun mapErrorMessage(error: Exception): Int {
-        return when (error) {
-            is ConnectException -> com.upsaclay.common.R.string.server_connection_error
-            is SocketTimeoutException -> com.upsaclay.common.R.string.timeout_error
-            is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
-            is NetworkErrorException -> com.upsaclay.common.R.string.unknown_network_error
-            is TimeoutCancellationException -> com.upsaclay.common.R.string.timeout_error
-            is IOException -> com.upsaclay.common.R.string.unknown_network_error
-            else -> com.upsaclay.common.R.string.unknown_error
-        }
     }
 
     private fun updateState(
@@ -126,6 +113,15 @@ class AccountViewModel(
                 loading = loading,
                 screenState = screenState,
             )
+        }
+    }
+
+    private fun mapErrorMessage(e: Exception): Int {
+        return mapNetworkErrorMessage(e) {
+            when (e) {
+                is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
+                else -> com.upsaclay.common.R.string.unknown_error
+            }
         }
     }
 

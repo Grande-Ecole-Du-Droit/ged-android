@@ -95,7 +95,7 @@ fun SentMessageItem(
             val iconColor = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray
 
             AnimatedVisibility(
-                visible = message.state == MessageState.SENDING
+                visible = message.state == MessageState.LOADING
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
@@ -326,7 +326,7 @@ private fun SentMessageItemPreview() {
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
 
-            SentMessageItem(message = messageFixture.copy(state = MessageState.SENDING))
+            SentMessageItem(message = messageFixture.copy(state = MessageState.LOADING))
         }
     }
 }

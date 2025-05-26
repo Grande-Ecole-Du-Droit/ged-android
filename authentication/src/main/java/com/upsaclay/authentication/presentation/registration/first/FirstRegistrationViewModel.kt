@@ -13,7 +13,7 @@ class FirstRegistrationViewModel: ViewModel() {
     internal val uiState: StateFlow<FirstRegistrationUiState> = _uiState
 
     fun onFirstNameChange(firstName: String) {
-        if (!validateName(firstName)) {
+        if (validateName(firstName)) {
             _uiState.update {
                 it.copy(firstName = firstName)
             }
@@ -21,7 +21,7 @@ class FirstRegistrationViewModel: ViewModel() {
     }
 
     fun onLastNameChange(lastName: String) {
-        if (!validateName(lastName)) {
+        if (validateName(lastName)) {
             _uiState.update {
                 it.copy(lastName = lastName)
             }
@@ -45,7 +45,7 @@ class FirstRegistrationViewModel: ViewModel() {
         }
     }
 
-    private fun validateName(name: String): Boolean = name.none { !it.isDigit() }
+    private fun validateName(name: String): Boolean = name.all { it.isLetter() }
 
     internal data class FirstRegistrationUiState(
         val firstName: String = "",

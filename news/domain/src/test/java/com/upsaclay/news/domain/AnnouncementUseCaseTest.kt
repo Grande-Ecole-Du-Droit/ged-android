@@ -32,7 +32,7 @@ class AnnouncementUseCaseTest {
             announcementRepository = announcementRepository
         )
 
-        coEvery { announcementRepository.createAnnouncement(any()) } returns Unit
+        coEvery { announcementRepository.createLocalAnnouncement(any()) } returns Unit
         coEvery { announcementRepository.deleteAnnouncement(any()) } returns Unit
     }
 
@@ -42,7 +42,7 @@ class AnnouncementUseCaseTest {
         createAnnouncementUseCase(announcementFixture)
 
         // Then
-        coVerify { announcementRepository.createAnnouncement(announcementFixture) }
+        coVerify { announcementRepository.createLocalAnnouncement(announcementFixture) }
     }
 
     @Test

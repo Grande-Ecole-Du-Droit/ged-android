@@ -3,11 +3,10 @@ package com.upsaclay.common.domain.usecase
 import com.upsaclay.common.domain.entity.ElapsedTime
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 object GetElapsedTimeUseCase {
     fun fromLocalDateTime(localDateTime: LocalDateTime): ElapsedTime {
-        val duration = Duration.between(localDateTime, LocalDateTime.now(ZoneOffset.UTC))
+        val duration = Duration.between(localDateTime, LocalDateTime.now())
         return when {
             duration.toMinutes() < 1 -> ElapsedTime.Now(duration.seconds)
             duration.toMinutes() < 60 -> ElapsedTime.Minute(duration.toMinutes())
