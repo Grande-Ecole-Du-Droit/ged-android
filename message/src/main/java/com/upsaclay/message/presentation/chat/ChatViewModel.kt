@@ -5,12 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.common.domain.usecase.NotificationUseCase
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
+import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +32,7 @@ class ChatViewModel(
     private val conversationRepository: ConversationRepository,
     private val messageRepository: MessageRepository,
     private val sendMessageUseCase: SendMessageUseCase,
-    private val notificationUseCase: NotificationUseCase,
+    private val messageNotificationUseCase: MessageNotificationUseCase,
     private val getUnreadMessagesUseCase: GetUnreadMessagesUseCase
 ): ViewModel() {
     private val user: User? = userRepository.currentUser
@@ -48,11 +48,9 @@ class ChatViewModel(
     internal val event: Flow<SingleUiEvent> = _event
 
     init {
-        clearMessageNotifications()
-        seeMessages()
         listenMessages()
         listenConversation()
-        onNewMessageReceived()
+        emitNewReceivedMessage()
     }
 
     fun onTextChange(text: String) {
@@ -75,17 +73,15 @@ class ChatViewModel(
         }
     }
 
-    private fun seeMessages() {
-        viewModelScope.launch {
-            getUnreadMessagesUseCase()
-                .distinctUntilChanged()
-                .onEach { delay(50) }
-                .collectLatest { messages ->
-                    messages
-                        .filter { it.senderId != user?.id }
-                        .map { messageRepository.updateSeenMessage(it.copy(seen = true)) }
+    suspend fun markUnreadMessagesAsSeen() {
+        getUnreadMessagesUseCase()
+            .distinctUntilChanged()
+            .onEach { delay(50) }
+            .collectLatest { messages ->
+                messages.forEach {
+                    messageRepository.updateSeenMessage(it.copy(seen = true))
                 }
-        }
+            }
     }
 
     private fun listenMessages() {
@@ -99,7 +95,7 @@ class ChatViewModel(
         }
     }
 
-    private fun onNewMessageReceived() {
+    private fun emitNewReceivedMessage() {
         viewModelScope.launch {
             _uiState
                 .map { it.messages }
@@ -121,10 +117,8 @@ class ChatViewModel(
         }
     }
 
-    private fun clearMessageNotifications() {
-        viewModelScope.launch {
-            notificationUseCase.clearNotifications(_uiState.value.conversation.id)
-        }
+    suspend fun clearChatNotifications() {
+        messageNotificationUseCase.clearNotifications(_uiState.value.conversation.id)
     }
 
     internal data class ChatUiState(

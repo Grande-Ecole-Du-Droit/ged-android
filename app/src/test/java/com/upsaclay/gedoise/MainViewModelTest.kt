@@ -37,7 +37,7 @@ class MainViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         every { userRepository.user } returns MutableStateFlow(userFixture)
-        every { authenticationRepository.isAuthenticated } returns flowOf(true)
+        every { authenticationRepository.authenticated } returns flowOf(true)
         coEvery { userRepository.getCurrentUser() } returns userFixture
         coEvery { userRepository.getUsers() } returns usersFixture
         coEvery { userRepository.getUser(any()) } returns userFixture
@@ -67,7 +67,7 @@ class MainViewModelTest {
     @Test
     fun data_should_be_not_listening_when_user_is_not_authenticated() {
         // Given
-        every { authenticationRepository.isAuthenticated } returns flowOf(false)
+        every { authenticationRepository.authenticated } returns flowOf(false)
 
         // When
         mainViewModel.startListening()
@@ -79,7 +79,7 @@ class MainViewModelTest {
     @Test
     fun data_should_be_cleared_when_user_is_not_authenticated() = runTest {
         // Given
-        every { authenticationRepository.isAuthenticated } returns flowOf(false)
+        every { authenticationRepository.authenticated } returns flowOf(false)
 
         // When
         mainViewModel.startListening()
@@ -93,7 +93,7 @@ class MainViewModelTest {
     @Test
     fun data_should_be_deleted_when_user_is_not_authenticated() = runTest {
         // Given
-        every { authenticationRepository.isAuthenticated } returns flowOf(false)
+        every { authenticationRepository.authenticated } returns flowOf(false)
 
         // When
         mainViewModel.startListening()

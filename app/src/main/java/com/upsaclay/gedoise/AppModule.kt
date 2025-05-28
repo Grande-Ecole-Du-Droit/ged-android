@@ -7,15 +7,15 @@ import com.upsaclay.common.data.local.FcmDataStore
 import com.upsaclay.common.data.local.FcmLocalDataSource
 import com.upsaclay.common.data.remote.api.FcmApi
 import com.upsaclay.common.domain.ConnectivityObserver
+import com.upsaclay.common.domain.IntentHelper
 import com.upsaclay.common.domain.e
 import com.upsaclay.gedoise.data.GedoiseDatabase
 import com.upsaclay.gedoise.data.repository.ScreenRepositoryImpl
-import com.upsaclay.gedoise.domain.repository.ScreenRepository
+import com.upsaclay.common.domain.repository.ScreenRepository
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
 import com.upsaclay.gedoise.domain.usecase.DataListeningUseCase
 import com.upsaclay.gedoise.domain.usecase.FcmTokenUseCase
 import com.upsaclay.gedoise.domain.usecase.ListenRemoteUserUseCase
-import com.upsaclay.gedoise.presentation.NotificationPresenter
 import com.upsaclay.gedoise.presentation.profile.ProfileViewModel
 import com.upsaclay.gedoise.presentation.profile.account.AccountViewModel
 import com.upsaclay.gedoise.presentation.viewmodels.MainViewModel
@@ -71,7 +71,6 @@ val appModule = module {
         )
     }
     singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
-    singleOf(::NotificationPresenter)
     singleOf(::FcmLocalDataSource)
     singleOf(::FcmDataStore)
 
@@ -98,4 +97,6 @@ val appModule = module {
             scope = get(BACKGROUND_SCOPE)
         )
     }
+
+    singleOf(::IntentHelperImpl) { bind<IntentHelper>() }
 }

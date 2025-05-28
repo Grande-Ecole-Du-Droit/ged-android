@@ -3,17 +3,8 @@ package com.upsaclay.common.domain.entity
 import com.google.gson.annotations.SerializedName
 
 data class FcmMessage<T>(
-    val recipientId: String,
-    val notification: FcmNotification,
     val data: FcmData<T>,
-    val priority: String = "high"
-) {
-    val icon: String = "ic_notification"
-}
-
-data class FcmNotification(
-    val title: String,
-    val body: String
+    val android: FcmAndroid
 )
 
 data class FcmData<T>(
@@ -28,6 +19,29 @@ enum class FcmDataType {
     override fun toString(): String {
         return when (this) {
             MESSAGE -> "message"
+        }
+    }
+}
+
+data class FcmAndroid(
+    val notification: FcmAndroidNotification,
+    val priority: AndroidMessagePriority = AndroidMessagePriority.HIGH
+)
+
+data class FcmAndroidNotification(
+    @SerializedName("channel_id")
+    val channelId: String,
+) {
+    val icon: String = "ic_notification"
+}
+
+enum class AndroidMessagePriority {
+    @SerializedName("high")
+    HIGH;
+
+    override fun toString(): String {
+        return when (this) {
+            HIGH -> "high"
         }
     }
 }

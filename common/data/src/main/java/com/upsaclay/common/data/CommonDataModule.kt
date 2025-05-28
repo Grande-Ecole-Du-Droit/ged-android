@@ -2,7 +2,7 @@ package com.upsaclay.common.data
 
 import com.upsaclay.common.data.local.UserDataStore
 import com.upsaclay.common.data.local.UserLocalDataSource
-import com.upsaclay.common.data.remote.FcmNotificationSenderImpl
+import com.upsaclay.common.data.remote.NotificationApiImpl
 import com.upsaclay.common.data.remote.ImageRemoteDataSource
 import com.upsaclay.common.data.remote.UserRemoteDataSource
 import com.upsaclay.common.data.remote.api.FcmApi
@@ -18,7 +18,7 @@ import com.upsaclay.common.data.repository.FileRepositoryImpl
 import com.upsaclay.common.data.repository.ImageRepositoryImpl
 import com.upsaclay.common.data.repository.UserRepositoryImpl
 import com.upsaclay.common.data.repository.WhiteListRepositoryImpl
-import com.upsaclay.common.domain.FcmNotificationSender
+import com.upsaclay.common.domain.NotificationApi
 import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.repository.CredentialsRepository
 import com.upsaclay.common.domain.repository.DrawableRepository
@@ -85,7 +85,7 @@ val commonDataModule = module {
     singleOf(::ImageApiImpl) { bind<ImageApi>() }
     singleOf(::UserFirestoreApiImpl) { bind<UserFirestoreApi>() }
 
-    singleOf(::FcmNotificationSenderImpl) { bind<FcmNotificationSender>() }
+    singleOf(::NotificationApiImpl) { bind<NotificationApi>() }
     singleOf(::ImageRemoteDataSource)
     singleOf(::UserRemoteDataSource)
 

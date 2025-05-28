@@ -6,11 +6,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.upsaclay.common.domain.entity.Route
 import com.upsaclay.news.presentation.news.NewsScreenRoute
 import kotlinx.serialization.Serializable
 
-@Serializable data object NewsBaseRoute
-@Serializable data object NewsRoute
+@Serializable data object NewsBaseRoute: Route
+@Serializable data object NewsRoute: Route
 
 fun NavController.navigateToNews(navOptions: NavOptions? = null) {
     navigate(route = NewsRoute, navOptions = navOptions)

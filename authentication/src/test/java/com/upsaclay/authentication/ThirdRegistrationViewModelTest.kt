@@ -1,7 +1,7 @@
 package com.upsaclay.authentication
 
 import com.upsaclay.authentication.domain.usecase.RegisterUseCase
-import com.upsaclay.authentication.presentation.registration.third.ThirdRegistrationViewModel
+import com.upsaclay.authentication.presentation.registration.thirdregistration.ThirdRegistrationViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

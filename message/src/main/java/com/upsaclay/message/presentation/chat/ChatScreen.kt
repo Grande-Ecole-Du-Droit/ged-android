@@ -66,6 +66,11 @@ fun ChatScreenRoute(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.clearChatNotifications()
+        viewModel.markUnreadMessagesAsSeen()
+    }
+
     ChatScreen(
         conversation = conversation,
         messages = uiState.messages,

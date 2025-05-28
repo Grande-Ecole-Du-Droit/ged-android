@@ -48,7 +48,6 @@ import org.koin.androidx.compose.koinViewModel
 fun ProfileScreenRoute(
     onAccountClick: () -> Unit,
     onBackClick: () -> Unit,
-    bottomBar: @Composable () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -57,8 +56,7 @@ fun ProfileScreenRoute(
         user = uiState.user,
         onLogoutClick = viewModel::logout,
         onAccountClick = onAccountClick,
-        onBackClick = onBackClick,
-        bottomBar = bottomBar
+        onBackClick = onBackClick
     )
 }
 
@@ -68,7 +66,6 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit,
     onAccountClick: () -> Unit,
     onBackClick: () -> Unit,
-    bottomBar: @Composable () -> Unit
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
     val dividerColor = if (isSystemInDarkTheme()) {
@@ -102,8 +99,7 @@ fun ProfileScreen(
                 onBackClick = onBackClick,
                 title = stringResource(id = R.string.profile)
             )
-        },
-        bottomBar = bottomBar
+        }
     ) {
 
         if (user != null) {
@@ -201,8 +197,7 @@ fun ProfileScreenPreview() {
             user = userFixture,
             onLogoutClick = {},
             onAccountClick = {},
-            onBackClick = {},
-            bottomBar = {}
+            onBackClick = {}
         )
     }
 }

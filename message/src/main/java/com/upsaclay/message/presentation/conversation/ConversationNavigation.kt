@@ -6,11 +6,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.upsaclay.common.domain.entity.Route
 import com.upsaclay.message.domain.entity.Conversation
 import kotlinx.serialization.Serializable
 
-@Serializable data object ConversationBaseRoute
-@Serializable data object ConversationRoute
+@Serializable data object ConversationBaseRoute: Route
+@Serializable data object ConversationRoute: Route
 
 fun NavController.navigateToConversation(navOptions: NavOptions? = null) {
     navigate(route = ConversationBaseRoute, navOptions = navOptions)

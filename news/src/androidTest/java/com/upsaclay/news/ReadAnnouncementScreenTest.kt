@@ -7,8 +7,8 @@ import androidx.compose.ui.test.performClick
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.news.domain.announcementFixture
-import com.upsaclay.news.presentation.announcement.read.ReadAnnouncementScreenRoute
-import com.upsaclay.news.presentation.announcement.read.ReadAnnouncementViewModel
+import com.upsaclay.news.presentation.announcement.readannouncement.ReadAnnouncementScreenRoute
+import com.upsaclay.news.presentation.announcement.readannouncement.ReadAnnouncementViewModel
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableSharedFlow

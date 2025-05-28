@@ -6,8 +6,8 @@ import androidx.compose.ui.test.isNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.upsaclay.news.domain.announcementFixture
-import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementScreenRoute
-import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementViewModel
+import com.upsaclay.news.presentation.announcement.editannouncement.EditAnnouncementScreenRoute
+import com.upsaclay.news.presentation.announcement.editannouncement.EditAnnouncementViewModel
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableSharedFlow

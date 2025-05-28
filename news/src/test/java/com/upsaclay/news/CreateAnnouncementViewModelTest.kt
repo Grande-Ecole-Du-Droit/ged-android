@@ -3,7 +3,7 @@ package com.upsaclay.news
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.news.domain.usecase.CreateAnnouncementUseCase
-import com.upsaclay.news.presentation.announcement.create.CreateAnnouncementViewModel
+import com.upsaclay.news.presentation.announcement.createannouncement.CreateAnnouncementViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

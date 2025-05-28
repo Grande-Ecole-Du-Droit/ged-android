@@ -1,6 +1,7 @@
 package com.upsaclay.gedoise.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
@@ -10,12 +11,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.upsaclay.authentication.authenticationSection
-import com.upsaclay.authentication.presentation.registration.first.firstRegistrationScreen
-import com.upsaclay.authentication.presentation.registration.first.navigateToFirstRegistration
-import com.upsaclay.authentication.presentation.registration.second.navigateToSecondRegistration
-import com.upsaclay.authentication.presentation.registration.second.secondRegistrationScreen
-import com.upsaclay.authentication.presentation.registration.third.navigateToThirdRegistration
-import com.upsaclay.authentication.presentation.registration.third.thirdRegistrationScreen
+import com.upsaclay.authentication.presentation.registration.firstregistration.firstRegistrationScreen
+import com.upsaclay.authentication.presentation.registration.firstregistration.navigateToFirstRegistration
+import com.upsaclay.authentication.presentation.registration.secondregistration.navigateToSecondRegistration
+import com.upsaclay.authentication.presentation.registration.secondregistration.secondRegistrationScreen
+import com.upsaclay.authentication.presentation.registration.thirdregistration.navigateToThirdRegistration
+import com.upsaclay.authentication.presentation.registration.thirdregistration.thirdRegistrationScreen
+import com.upsaclay.common.domain.entity.Route
 import com.upsaclay.common.presentation.TopLevelDestinationRoute
 import com.upsaclay.gedoise.presentation.components.MainBottomBar
 import com.upsaclay.gedoise.presentation.profile.account.accountScreen
@@ -23,26 +25,28 @@ import com.upsaclay.gedoise.presentation.profile.account.navigateToAccount
 import com.upsaclay.gedoise.presentation.profile.navigateToProfile
 import com.upsaclay.gedoise.presentation.profile.profileScreen
 import com.upsaclay.gedoise.presentation.viewmodels.NavigationViewModel
+import com.upsaclay.message.presentation.chat.ChatRoute
 import com.upsaclay.message.presentation.chat.chatScreen
 import com.upsaclay.message.presentation.chat.navigateToChat
+import com.upsaclay.message.presentation.conversation.ConversationRoute
 import com.upsaclay.message.presentation.conversation.conversationSection
 import com.upsaclay.message.presentation.conversation.create.CreateConversationRoute
 import com.upsaclay.message.presentation.conversation.create.createConversationScreen
 import com.upsaclay.message.presentation.conversation.create.navigateToCreateConversation
 import com.upsaclay.message.presentation.conversation.navigateToConversation
 import com.upsaclay.news.presentation.NewsRoute
-import com.upsaclay.news.presentation.announcement.create.createAnnouncementScreen
-import com.upsaclay.news.presentation.announcement.create.navigateToCreateAnnouncement
-import com.upsaclay.news.presentation.announcement.edit.editAnnouncementScreen
-import com.upsaclay.news.presentation.announcement.edit.navigateToEditAnnouncement
-import com.upsaclay.news.presentation.announcement.read.navigateToReadAnnouncement
-import com.upsaclay.news.presentation.announcement.read.readAnnouncementScreen
+import com.upsaclay.news.presentation.announcement.createannouncement.createAnnouncementScreen
+import com.upsaclay.news.presentation.announcement.createannouncement.navigateToCreateAnnouncement
+import com.upsaclay.news.presentation.announcement.editannouncement.editAnnouncementScreen
+import com.upsaclay.news.presentation.announcement.editannouncement.navigateToEditAnnouncement
+import com.upsaclay.news.presentation.announcement.readannouncement.navigateToReadAnnouncement
+import com.upsaclay.news.presentation.announcement.readannouncement.readAnnouncementScreen
 import com.upsaclay.news.presentation.navigateToNews
 import com.upsaclay.news.presentation.newsSection
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
-@Serializable data object SplashScreenRoute
+@Serializable data object SplashRoute: Route
 
 @Composable
 fun GedNavHost(
@@ -76,11 +80,25 @@ fun GedNavHost(
         )
     }
 
+    LaunchedEffect(uiState.routesToNavigate) {
+        uiState.routesToNavigate.forEach { route ->
+            when (route) {
+                is ConversationRoute -> navController.navigateToConversation()
+                is ChatRoute -> navController.navigateToChat(route.conversationJson)
+                else -> Unit
+            }
+        }
+    }
+
+    navController.addOnDestinationChangedListener { _, destination, arguments ->
+        navigationViewModel.setCurrentRoute(destination, arguments)
+    }
+
     NavHost(
         navController = navController,
         startDestination = uiState.startDestination
     ) {
-        composable<SplashScreenRoute> {}
+        composable<SplashRoute> {}
 
         authenticationSection(
             onRegistrationClick = navController::navigateToFirstRegistration,
@@ -123,8 +141,7 @@ fun GedNavHost(
 
             profileScreen(
                 onAccountClick = navController::navigateToAccount,
-                onBackClick = navController::popBackStack,
-                bottomBar = bottomBar
+                onBackClick = navController::popBackStack
             )
 
             accountScreen(onBackClick = navController::popBackStack)

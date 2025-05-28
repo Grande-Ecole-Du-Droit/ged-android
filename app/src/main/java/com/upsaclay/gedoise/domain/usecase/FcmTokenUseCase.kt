@@ -7,11 +7,8 @@ import com.upsaclay.common.domain.entity.FcmToken
 import com.upsaclay.common.domain.repository.CredentialsRepository
 import com.upsaclay.common.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -25,26 +22,22 @@ class FcmTokenUseCase(
     fun listenEvents() {
         scope.launch {
            combine(
-               authenticationRepository.isAuthenticated,
+               authenticationRepository.authenticated,
                connectivityObserver.connected.filter { it }
            ) { isAuthenticated, _ ->
                 isAuthenticated
            }
-               .collectLatest { isAuthenticated ->
-                   when {
-                       isAuthenticated -> {
-                           credentialsRepository.getUnsentFcmToken()?.let { fcmToken ->
-                               val userId = fcmToken.userId ?: userRepository.user.filterNotNull().first().id
-                               sendFcmToken(fcmToken.copy(userId = userId))
-                           }
+               .collect { isAuthenticated ->
+                   if (isAuthenticated) {
+                       credentialsRepository.getUnsentFcmToken()?.let { fcmToken ->
+                           val userId = fcmToken.userId ?: userRepository.currentUser?.id ?: return@let
+                           sendFcmToken(fcmToken.copy(userId = userId))
                        }
-
-                       !isAuthenticated -> {
-                           credentialsRepository.removeUnsentFcmToken()
-                           FirebaseMessaging.getInstance().deleteToken()
-                           val token = FirebaseMessaging.getInstance().token.await()
-                           credentialsRepository.storeUnsentFcmToken(FcmToken(null, token))
-                       }
+                   } else {
+                       credentialsRepository.removeUnsentFcmToken()
+                       FirebaseMessaging.getInstance().deleteToken()
+                       val token = FirebaseMessaging.getInstance().token.await()
+                       credentialsRepository.storeUnsentFcmToken(FcmToken(null, token))
                    }
                }
            }

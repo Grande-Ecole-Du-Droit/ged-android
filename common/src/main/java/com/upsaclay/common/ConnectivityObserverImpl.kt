@@ -15,10 +15,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.stateIn
 
 @SuppressLint("MissingPermission")
-class ConnectivityObserverImpl(
-    context: Context,
-    scope: CoroutineScope
-): ConnectivityObserver {
+class ConnectivityObserverImpl(context: Context, scope: CoroutineScope): ConnectivityObserver {
     private val connectivityManager = context.getSystemService<ConnectivityManager>()
 
     private val _isConnected = callbackFlow {

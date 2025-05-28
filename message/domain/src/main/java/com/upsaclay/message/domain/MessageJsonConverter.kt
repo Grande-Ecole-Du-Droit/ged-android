@@ -16,14 +16,14 @@ object MessageJsonConverter {
         }.getOrNull()
     }
 
-    fun fromConversation(conversation: Conversation): String {
+    fun toConversationJson(conversation: Conversation): String {
         return GsonBuilder()
             .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter)
             .create()
             .toJson(conversation)
     }
 
-    fun fromConversationMessage(conversationMessageJson: String): ConversationMessage? {
+    fun toConversationMessage(conversationMessageJson: String): ConversationMessage? {
         return runCatching {
             GsonBuilder()
                 .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter)

@@ -1,6 +1,6 @@
 package com.upsaclay.authentication
 
-import com.upsaclay.authentication.presentation.registration.second.SecondRegistrationViewModel
+import com.upsaclay.authentication.presentation.registration.secondregistration.SecondRegistrationViewModel
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

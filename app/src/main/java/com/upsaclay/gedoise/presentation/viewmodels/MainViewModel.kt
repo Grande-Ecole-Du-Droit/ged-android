@@ -20,7 +20,7 @@ class MainViewModel(
 
     private fun updateDataListening() {
         viewModelScope.launch {
-            authenticationRepository.isAuthenticated.collectLatest {
+            authenticationRepository.authenticated.collectLatest {
                 if (it) {
                     dataListeningUseCase.start()
                 } else {

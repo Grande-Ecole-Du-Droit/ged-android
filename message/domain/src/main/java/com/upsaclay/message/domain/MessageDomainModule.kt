@@ -1,16 +1,20 @@
 package com.upsaclay.message.domain
 
 import com.upsaclay.common.domain.e
+import com.upsaclay.common.domain.usecase.NotificationUseCase
+import com.upsaclay.message.domain.entity.ConversationMessage
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
 import com.upsaclay.message.domain.usecase.GetConversationsUiUseCase
 import com.upsaclay.message.domain.usecase.GetLocalConversationUseCase
 import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
 import com.upsaclay.message.domain.usecase.ListenRemoteConversationsMessagesUseCase
+import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -46,11 +50,12 @@ val messageDomainModule = module {
             scope = get(BACKGROUND_SCOPE)
         )
     }
+    singleOf(::MessageNotificationUseCase) { bind<NotificationUseCase<ConversationMessage>>() }
     single {
         SendMessageUseCase(
             messageRepository = get(),
             conversationRepository = get(),
-            notificationUseCase = get(),
+            messageNotificationUseCase = get(),
             scope = get(BACKGROUND_SCOPE)
         )
     }
