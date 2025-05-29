@@ -13,7 +13,7 @@ internal class ImageRepositoryImpl(
         return try {
             imageRemoteDataSource.getImage(fileName)
         } catch (e: Exception) {
-            e("Unexpected error: ${e.message}", e)
+            e("Failed to get image: ${e.message}", e)
             throw e
         }
     }
@@ -22,7 +22,7 @@ internal class ImageRepositoryImpl(
         try {
             imageRemoteDataSource.uploadImage(file)
         } catch (e: Exception) {
-            e("Error uploading image: ${e.message}", e)
+            e("Failed to upload image: ${e.message}", e)
             throw e
         }
     }
@@ -31,7 +31,7 @@ internal class ImageRepositoryImpl(
         try {
             imageRemoteDataSource.deleteImage(fileName)
         } catch (e: Exception) {
-            e("Error deleting image: ${e.message}", e)
+            e("Failed to delete image: ${e.message}", e)
             throw e
         }
     }

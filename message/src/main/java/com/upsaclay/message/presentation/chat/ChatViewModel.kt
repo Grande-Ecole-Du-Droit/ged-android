@@ -2,6 +2,7 @@ package com.upsaclay.message.presentation.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
@@ -19,10 +20,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.LocalDateTime
 
 class ChatViewModel(
     private val conversation: Conversation,
@@ -35,20 +37,19 @@ class ChatViewModel(
     private val user: User? = userRepository.currentUser
     private val _uiState = MutableStateFlow(
         ChatUiState(
-            messages = emptyList(),
             conversation = conversation,
             text = ""
         )
     )
     internal val uiState: StateFlow<ChatUiState> = _uiState
+    internal val messages: Flow<PagingData<Message>> = messageRepository.getPagingMessages(conversation.id)
     private val _event = MutableSharedFlow<SingleUiEvent>()
     internal val event: Flow<SingleUiEvent> = _event
     private var readMessageJob: Job? = null
 
     init {
-        listenMessages()
         listenConversation()
-        emitNewReceivedMessage()
+        emitNewMessageReceived()
         seeMessage()
         clearChatNotifications()
     }
@@ -90,24 +91,11 @@ class ChatViewModel(
         readMessageJob = null
     }
 
-    private fun listenMessages() {
+    private fun emitNewMessageReceived() {
         viewModelScope.launch {
-            messageRepository.getLocalMessages(_uiState.value.conversation.id)
-                .collectLatest { messages ->
-                    _uiState.update {
-                        it.copy(messages = messages)
-                    }
-                }
-        }
-    }
-
-    private fun emitNewReceivedMessage() {
-        viewModelScope.launch {
-            _uiState
-                .map { it.messages }
-                .distinctUntilChanged()
-                .mapNotNull { it.firstOrNull() }
+            messageRepository.getLastMessage(conversation.id)
                 .filter { it.senderId != user?.id }
+                .filter { Duration.between(it.date, LocalDateTime.now()).toMinutes() < 1L }
                 .collect {
                     _event.emit(MessageEvent.NewMessage(it))
                 }
@@ -116,7 +104,7 @@ class ChatViewModel(
 
     private fun listenConversation() {
         viewModelScope.launch {
-            conversationRepository.getLocalConversationFlow(_uiState.value.conversation.interlocutor.id)
+            conversationRepository.getConversationFlow(conversation.interlocutor.id)
                 .collect { conversation ->
                     _uiState.update { it.copy(conversation = conversation) }
                 }
@@ -130,7 +118,6 @@ class ChatViewModel(
     }
 
     internal data class ChatUiState(
-        val messages: List<Message>,
         val conversation: Conversation,
         val text: String
     )

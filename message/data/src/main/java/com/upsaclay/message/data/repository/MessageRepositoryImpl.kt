@@ -1,5 +1,6 @@
 package com.upsaclay.message.data.repository
 
+import androidx.paging.PagingData
 import com.upsaclay.common.data.exceptions.handleNetworkException
 import com.upsaclay.message.data.local.MessageLocalDataSource
 import com.upsaclay.message.data.remote.MessageRemoteDataSource
@@ -12,10 +13,13 @@ internal class MessageRepositoryImpl(
     private val messageLocalDataSource: MessageLocalDataSource,
     private val messageRemoteDataSource: MessageRemoteDataSource
 ): MessageRepository {
-    override fun getLocalMessages(conversationId: String): Flow<List<Message>> =
+    override fun getPagingMessages(conversationId: String): Flow<PagingData<Message>> =
         messageLocalDataSource.getMessages(conversationId)
 
-    override fun getRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message> =
+    override fun getLastMessage(conversationId: String): Flow<Message> =
+        messageLocalDataSource.getLastMessage(conversationId)
+
+    override fun fetchRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message> =
         messageRemoteDataSource.listenMessages(conversationId, offsetTime)
 
     override fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<Message>> =

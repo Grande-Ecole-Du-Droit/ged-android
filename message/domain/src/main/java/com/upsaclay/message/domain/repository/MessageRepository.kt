@@ -1,13 +1,16 @@
 package com.upsaclay.message.domain.repository
 
+import androidx.paging.PagingData
 import com.upsaclay.message.domain.entity.Message
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
 interface MessageRepository {
-    fun getLocalMessages(conversationId: String): Flow<List<Message>>
+    fun getPagingMessages(conversationId: String): Flow<PagingData<Message>>
 
-    fun getRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message>
+    fun getLastMessage(conversationId: String): Flow<Message>
+
+    fun fetchRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message>
 
     fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<Message>>
 

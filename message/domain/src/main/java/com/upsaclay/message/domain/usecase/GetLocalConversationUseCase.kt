@@ -12,7 +12,7 @@ class GetLocalConversationUseCase(
     private val conversationRepository: ConversationRepository
 ) {
     suspend operator fun invoke(interlocutor: User): Conversation {
-        return conversationRepository.getLocalConversation(interlocutor.id) ?: run {
+        return conversationRepository.getConversation(interlocutor.id) ?: run {
             val user = requireNotNull(userRepository.currentUser)
             generateNewConversation(user.id, interlocutor)
         }

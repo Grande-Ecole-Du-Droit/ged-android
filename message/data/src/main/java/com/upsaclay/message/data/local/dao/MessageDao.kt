@@ -1,5 +1,6 @@
 package com.upsaclay.message.data.local.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Update
@@ -16,7 +17,15 @@ interface MessageDao {
         WHERE ${MessageField.CONVERSATION_ID} = :conversationId 
         ORDER BY ${MessageField.TIMESTAMP} DESC
     """)
-    fun getMessages(conversationId: String): Flow<List<LocalMessage>>
+    fun getMessages(conversationId: String): PagingSource<Int, LocalMessage>
+
+    @Query("""
+        SELECT * FROM $MESSAGES_TABLE_NAME
+        WHERE ${MessageField.CONVERSATION_ID} = :conversationId 
+        ORDER BY ${MessageField.TIMESTAMP} DESC
+        LIMIT 1
+    """)
+    fun getLastMessage(conversationId: String): Flow<LocalMessage>
 
     @Query("""
         SELECT * FROM $MESSAGES_TABLE_NAME

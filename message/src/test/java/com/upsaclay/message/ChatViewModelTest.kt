@@ -1,9 +1,10 @@
 package com.upsaclay.message
 
+import androidx.paging.PagingData
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.message.domain.conversationFixture
-import com.upsaclay.message.domain.messageFixture
+import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
@@ -40,11 +41,11 @@ class ChatViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
-        every { conversationRepository.getLocalConversationFlow(any()) } returns flowOf(conversationFixture)
+        every { conversationRepository.getConversationFlow(any()) } returns flowOf(conversationFixture)
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
-        every { messageRepository.getLocalMessages(any()) } returns flowOf(messagesFixture)
-        every { messageRepository.getUnreadMessagesByUser(any(), any()) } returns flowOf(listOf(messageFixture))
+        every { messageRepository.getPagingMessages(any()) } returns flowOf(PagingData.from(messagesFixture))
+        every { getUnreadMessagesByUser() } returns flowOf(emptyList())
         every { sendMessageUseCase(any(), any(), any()) } returns Unit
         coEvery { messageRepository.updateSeenMessage(any()) } returns Unit
         coEvery { messageNotificationUseCase.clearNotifications(any()) } returns Unit

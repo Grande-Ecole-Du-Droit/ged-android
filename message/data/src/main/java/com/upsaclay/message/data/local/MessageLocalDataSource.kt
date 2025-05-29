@@ -1,5 +1,9 @@
 package com.upsaclay.message.data.local
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.upsaclay.message.data.local.dao.MessageDao
 import com.upsaclay.message.data.mapper.toMessage
 import com.upsaclay.message.data.mapper.toLocal
@@ -9,16 +13,28 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
+private const val MESSAGE_LIMIT = 20
+
 internal class MessageLocalDataSource(private val messageDao: MessageDao) {
-    fun getMessages(conversationId: String): Flow<List<Message>> =
-        messageDao.getMessages(conversationId).map { messages ->
+    fun getMessages(conversationId: String): Flow<PagingData<Message>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = MESSAGE_LIMIT,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { messageDao.getMessages(conversationId)  }
+        ).flow.map { messages ->
             messages.map { it.toMessage() }
         }
+    }
 
     fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<Message>> =
         messageDao.getUnreadMessagesByUser(conversationId, userId).map { messages ->
             messages.map { it.toMessage() }
         }
+
+    fun getLastMessage(conversationId: String): Flow<Message> =
+        messageDao.getLastMessage(conversationId).map { it.toMessage() }
 
     suspend fun updateMessage(message: Message) {
         withContext(Dispatchers.IO) {

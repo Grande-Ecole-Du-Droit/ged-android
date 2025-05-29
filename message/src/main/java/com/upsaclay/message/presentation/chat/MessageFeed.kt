@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,6 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.previewText
@@ -39,31 +42,34 @@ import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.presentation.chat.ChatViewModel.MessageEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import java.time.Duration
 
 @Composable
 internal fun MessageFeed(
     modifier: Modifier = Modifier,
-    messages: List<Message>,
+    messages: Flow<PagingData<Message>>,
     interlocutor: User,
     newMessageEvent: MessageEvent.NewMessage?
 ) {
-    val scrollState = rememberLazyListState()
+    val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     var showNewMessageIndicator by remember { mutableStateOf(false) }
     val isAtBottom = remember {
-        derivedStateOf { scrollState.firstVisibleItemIndex == 0 }
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
     }
+    val messageItems = messages.collectAsLazyPagingItems()
 
     LaunchedEffect(newMessageEvent) {
         newMessageEvent?.let { event ->
             when {
-                scrollState.firstVisibleItemIndex <= 1 &&
-                        scrollState.layoutInfo.visibleItemsInfo.size < messages.size ->
-                    scrollState.animateScrollToItem(0)
+                listState.firstVisibleItemIndex <= 1 &&
+                        listState.layoutInfo.visibleItemsInfo.size < messageItems.itemCount ->
+                    listState.animateScrollToItem(0)
 
-                scrollState.firstVisibleItemIndex > 1 && event.message.senderId == interlocutor.id ->
+                listState.firstVisibleItemIndex > 1 && event.message.senderId == interlocutor.id ->
                     showNewMessageIndicator = true
             }
         }
@@ -77,13 +83,20 @@ internal fun MessageFeed(
         LazyColumn(
             modifier = Modifier.testTag(stringResource(R.string.chat_screen_lazy_column_item_tag)),
             reverseLayout = true,
-            state = scrollState
+            state = listState
         ) {
-            itemsIndexed(messages) { index, message ->
+            items(
+                count = messageItems.itemCount,
+                key = messageItems.itemKey { it.id },
+                contentType = messageItems.itemContentType { "MessageFeed" }
+            ) { index ->
+                val message = messageItems[index] ?: return@items
                 val isSender = message.senderId != interlocutor.id
-                val isFirstMessage = index == messages.size - 1
+                val isFirstMessage = index == messageItems.itemCount - 1
                 val isLastMessage = index == 0
-                val previousMessage = if (index + 1 < messages.size) messages[index + 1] else null
+                val previousMessage = if (index + 1 < messageItems.itemCount) {
+                    messageItems[index + 1]
+                } else null
 
                 val previousSenderId = previousMessage?.senderId ?: ""
                 val sameSender = previousSenderId == message.senderId
@@ -143,7 +156,7 @@ internal fun MessageFeed(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .testTag(stringResource(R.string.chat_screen_message_indicator_tag)),
-                onClick = { scope.launch { scrollState.animateScrollToItem(0) } }
+                onClick = { scope.launch { listState.animateScrollToItem(0) } }
             )
         }
     }
@@ -168,7 +181,7 @@ private fun MessageFeedPreview() {
                 modifier = Modifier
                     .fillMaxSize()
                     .mediumPadding(),
-                messages = messagesFixture,
+                messages = flowOf(PagingData.from(messagesFixture)),
                 interlocutor = conversationFixture.interlocutor,
                 newMessageEvent = null
             )

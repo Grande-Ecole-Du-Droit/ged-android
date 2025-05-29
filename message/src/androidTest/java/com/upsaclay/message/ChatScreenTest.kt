@@ -3,6 +3,7 @@ package com.upsaclay.message
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.paging.PagingData
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messageFixture2
@@ -23,7 +24,6 @@ class ChatScreenTest {
 
     private val chatViewModel: ChatViewModel = mockk()
     private val uiState = ChatViewModel.ChatUiState(
-        messages = emptyList(),
         conversation = conversationFixture,
         text = "",
     )
@@ -38,11 +38,9 @@ class ChatScreenTest {
     }
 
     @Test
-    fun sentMessageItem_should_be_displayed_user_is_sender() {
+    fun sentMessageItem_should_be_displayed_when_user_is_sender() {
         // Given
-        every { chatViewModel.uiState } returns MutableStateFlow(
-            uiState.copy(messages = listOf(messageFixture))
-        )
+        every { chatViewModel.messages } returns MutableStateFlow(PagingData.from(listOf(messageFixture)))
 
         // When
         rule.setContent {
@@ -62,9 +60,7 @@ class ChatScreenTest {
     @Test
     fun receiveMessageItem_should_be_displayed_user_is_sender() {
         // Given
-        every { chatViewModel.uiState } returns MutableStateFlow(
-            uiState.copy(messages = listOf(messageFixture2))
-        )
+        every { chatViewModel.messages } returns MutableStateFlow(PagingData.from(listOf(messageFixture2)))
 
         // When
         rule.setContent {
