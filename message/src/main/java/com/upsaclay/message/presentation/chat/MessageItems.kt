@@ -73,6 +73,7 @@ fun SentMessageItem(
     showSeen: Boolean = false
 ) {
     val dateTimeTextColor = if (isSystemInDarkTheme()) Color.LightGray else Color(0xFFC8C8C8)
+    val iconColor = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray
 
     Column(
         horizontalAlignment = Alignment.End
@@ -82,29 +83,31 @@ fun SentMessageItem(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.Bottom
         ) {
-            Spacer(modifier = Modifier.fillMaxWidth(0.2f))
+            Spacer(modifier = Modifier.weight(0.2f))
 
-            MessageText(
-                text = message.content,
-                textColor = Color.White,
-                date = message.date,
-                backgroundColor = MaterialTheme.colorScheme.primary,
-                dateTimeTextColor = dateTimeTextColor
-            )
-
-            val iconColor = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray
-
-            AnimatedVisibility(
-                visible = message.state == MessageState.LOADING
+            Row(
+                modifier = Modifier.weight(0.8f, fill = false)
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Send,
-                    contentDescription = stringResource(id = R.string.send_message_icon_description),
-                    tint = iconColor,
-                    modifier = Modifier
-                        .padding(start = MaterialTheme.spacing.small)
-                        .size(20.dp)
+                MessageText(
+                    text = message.content,
+                    textColor = Color.White,
+                    date = message.date,
+                    backgroundColor = MaterialTheme.colorScheme.primary,
+                    dateTimeTextColor = dateTimeTextColor
                 )
+
+                AnimatedVisibility(
+                    visible = message.state == MessageState.LOADING
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = stringResource(id = R.string.send_message_icon_description),
+                        tint = iconColor,
+                        modifier = Modifier
+                            .padding(start = MaterialTheme.spacing.small)
+                            .size(20.dp)
+                    )
+                }
             }
         }
 
@@ -134,7 +137,8 @@ fun ReceiveMessageItem(
     val foreground = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.white else MaterialTheme.colorScheme.black
 
     Row(
-        modifier = modifier.fillMaxWidth(0.8f),
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
         verticalAlignment = Alignment.Bottom
     ) {
         if (displayProfilePicture) {
@@ -143,15 +147,16 @@ fun ReceiveMessageItem(
             ProfilePicture(modifier = Modifier.alpha(0f), url = null, scale = 0.3f)
         }
 
-        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
-
         MessageText(
+            modifier = Modifier.weight(0.8f, fill = false),
             text = message.content,
             date = message.date,
             backgroundColor = MaterialTheme.colorScheme.inputBackground,
             textColor = foreground,
             dateTimeTextColor = Color(0xFF8E8E93)
         )
+
+        Spacer(modifier = Modifier.weight(0.2f))
     }
 }
 
@@ -317,8 +322,11 @@ private val longtext = "Bonjour, j'espère que vous allez bien. " +
 @Composable
 private fun SentMessageItemPreview() {
     GedoiseTheme {
-        Column(verticalArrangement = Arrangement.SpaceAround) {
-            SentMessageItem(message = messageFixture, showSeen = true)
+        Column {
+            SentMessageItem(
+                message = messageFixture.copy(content = mediumText),
+                showSeen = true
+            )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
 
@@ -331,15 +339,25 @@ private fun SentMessageItemPreview() {
     }
 }
 
-@Preview(widthDp = 360)
+@Preview(widthDp = 400)
 @Composable
 private fun ReceiveMessageItemPreview() {
     GedoiseTheme {
-        ReceiveMessageItem(
-            message = messageFixture.copy(content = mediumText),
-            displayProfilePicture = true,
-            profilePictureUrl = ""
-        )
+        Column {
+            ReceiveMessageItem(
+                message = messageFixture.copy(content = mediumText),
+                displayProfilePicture = true,
+                profilePictureUrl = ""
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
+
+            ReceiveMessageItem(
+                message = messageFixture,
+                displayProfilePicture = false,
+                profilePictureUrl = ""
+            )
+        }
     }
 }
 

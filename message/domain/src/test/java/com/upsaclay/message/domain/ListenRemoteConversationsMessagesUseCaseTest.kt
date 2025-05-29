@@ -33,7 +33,7 @@ class ListenRemoteConversationsMessagesUseCaseTest {
     fun setUp() {
         every { userRepository.user } returns flowOf(userFixture)
         coEvery { conversationRepository.upsertLocalConversation(any()) } returns Unit
-        coEvery { conversationRepository.getRemoteConversations(any()) } returns flowOf(conversationFixture)
+        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(conversationFixture)
 
         useCase = ListenRemoteConversationsMessagesUseCase(
             userRepository = userRepository,
@@ -50,13 +50,13 @@ class ListenRemoteConversationsMessagesUseCaseTest {
 
         // Then
         assert(useCase.job != null)
-        coVerify { conversationRepository.getRemoteConversations(userFixture.id) }
+        coVerify { conversationRepository.fetchRemoteConversations(userFixture.id) }
     }
 
     @Test
     fun start_should_upsert_new_conversations() = runTest {
         // Given
-        coEvery { conversationRepository.getRemoteConversations(any()) } returns flowOf(
+        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(
             conversationFixture, conversationFixture.copy(id = "newId")
         )
 
@@ -73,7 +73,7 @@ class ListenRemoteConversationsMessagesUseCaseTest {
     @Test
     fun start_should_not_upsert_known_conversations() = runTest {
         // Given
-        coEvery { conversationRepository.getRemoteConversations(any()) } returns flowOf(conversationFixture, conversationFixture)
+        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(conversationFixture, conversationFixture)
 
         // When
         useCase.start()
@@ -88,7 +88,7 @@ class ListenRemoteConversationsMessagesUseCaseTest {
         useCase.start()
 
         // Then
-        coVerify { messageRepository.getRemoteMessages(conversationFixture.id, null) }
+        coVerify { messageRepository.fetchRemoteMessages(conversationFixture.id, null) }
     }
 
     @Test

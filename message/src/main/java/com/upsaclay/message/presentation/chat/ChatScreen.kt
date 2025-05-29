@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.PagingData
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.spacing
@@ -32,7 +33,9 @@ import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.presentation.chat.ChatViewModel.MessageEvent
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -68,7 +71,7 @@ fun ChatScreenRoute(
 
     ChatScreen(
         conversation = conversation,
-        messages = uiState.messages,
+        messages = viewModel.messages,
         text = uiState.text,
         snackbarHostState = snackbarHostState,
         newMessageEvent = newMessageEvent,
@@ -81,7 +84,7 @@ fun ChatScreenRoute(
 @Composable
 private fun ChatScreen(
     conversation: Conversation,
-    messages: List<Message>,
+    messages: Flow<PagingData<Message>>,
     text: String,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
     newMessageEvent: MessageEvent.NewMessage?,
@@ -148,7 +151,7 @@ private fun ChatScreenPreview() {
     GedoiseTheme {
         ChatScreen(
             conversation = conversationFixture,
-            messages = messagesFixture,
+            messages = flowOf(PagingData.from(messagesFixture)),
             text = text,
             newMessageEvent = null,
             onTextChange = { text = it },
