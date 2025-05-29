@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.upsaclay.common.R
 import com.upsaclay.common.presentation.theme.GedoiseTheme
-import com.upsaclay.common.presentation.theme.profilePictureError
+import com.upsaclay.common.presentation.theme.profilePictureLoading
 import com.upsaclay.common.presentation.theme.spacing
 
 @Composable
@@ -88,7 +88,7 @@ private fun ProfileImage(
     model: Any,
     onClick: (() -> Unit)? = null
 ) {
-    val color = MaterialTheme.colorScheme.profilePictureError
+    val color = MaterialTheme.colorScheme.profilePictureLoading
 
     AsyncImage(
         model = model,
@@ -120,7 +120,7 @@ private fun ProfileImageWithIcon(
     contentDescription: String,
     onClick: (() -> Unit)?
 ) {
-    val color = MaterialTheme.colorScheme.profilePictureError
+    val color = MaterialTheme.colorScheme.profilePictureLoading
 
     Box(modifier = modifier.size(100.dp * scale)) {
         AsyncImage(

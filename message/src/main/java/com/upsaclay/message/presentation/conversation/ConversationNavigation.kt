@@ -21,17 +21,17 @@ fun NavGraphBuilder.conversationSection(
     onConversationClick: (Conversation) -> Unit,
     onCreateConversation: () -> Unit,
     bottomBar: @Composable () -> Unit,
-    messageDestination: NavGraphBuilder.() -> Unit
+    messageDestinations: NavGraphBuilder.() -> Unit
 ) {
     navigation<ConversationBaseRoute>(startDestination = ConversationRoute) {
         composable<ConversationRoute> {
-            ConversationScreenRoute(
+            ConversationDestination(
                 onConversationClick = onConversationClick,
                 onCreateConversation = onCreateConversation,
                 bottomBar = bottomBar
             )
         }
-        messageDestination()
+        messageDestinations()
     }
 }
 

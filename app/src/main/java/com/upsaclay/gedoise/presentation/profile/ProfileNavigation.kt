@@ -17,7 +17,7 @@ fun NavGraphBuilder.profileScreen(
     onBackClick: () -> Unit
 ) {
     composable<ProfileRoute> {
-        ProfileScreenRoute(
+        ProfileDestination(
             onAccountClick = onAccountClick,
             onBackClick = onBackClick
         )

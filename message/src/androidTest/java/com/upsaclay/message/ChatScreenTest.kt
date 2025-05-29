@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messageFixture2
-import com.upsaclay.message.presentation.chat.ChatScreenRoute
+import com.upsaclay.message.presentation.chat.ChatDestination
 import com.upsaclay.message.presentation.chat.ChatViewModel
 import io.mockk.coEvery
 import io.mockk.every
@@ -43,7 +43,7 @@ class ChatScreenTest {
 
         // When
         rule.setContent {
-            ChatScreenRoute(
+            ChatDestination(
                 conversation = conversationFixture,
                 onBackClick = {},
                 viewModel = chatViewModel
@@ -63,7 +63,7 @@ class ChatScreenTest {
 
         // When
         rule.setContent {
-            ChatScreenRoute(
+            ChatDestination(
                 conversation = conversationFixture,
                 onBackClick = {},
                 viewModel = chatViewModel

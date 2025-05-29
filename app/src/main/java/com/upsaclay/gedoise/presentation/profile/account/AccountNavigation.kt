@@ -16,7 +16,7 @@ fun NavGraphBuilder.accountScreen(
     onBackClick: () -> Unit
 ) {
     composable<AccountRoute> {
-        AccountScreenRoute(
+        AccountDestination(
             onBackClick = onBackClick
         )
     }

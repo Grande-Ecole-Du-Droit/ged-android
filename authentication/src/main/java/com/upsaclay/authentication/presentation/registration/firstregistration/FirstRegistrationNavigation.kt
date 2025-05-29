@@ -17,7 +17,7 @@ fun NavGraphBuilder.firstRegistrationScreen(
     onNextClick: (String, String) -> Unit
 ) {
     composable<FirstRegistrationRoute> {
-        FirstRegistrationScreenRoute(
+        FirstRegistrationDestination(
             onBackClick = onBackClick,
             onNextClick = onNextClick
         )

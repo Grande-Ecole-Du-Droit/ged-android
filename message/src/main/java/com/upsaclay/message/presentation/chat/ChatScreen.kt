@@ -42,7 +42,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun ChatScreenRoute(
+fun ChatDestination(
     conversation: Conversation,
     onBackClick: () -> Unit,
     viewModel: ChatViewModel = koinViewModel {

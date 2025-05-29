@@ -22,7 +22,7 @@ fun NavGraphBuilder.editAnnouncementScreen(
         val announcement = entry.toRoute<EditAnnouncementRoute>().announcementJson
             .let { NewsJsonConverter.toAnnouncement(it) } ?: return@composable onBackClick()
 
-        EditAnnouncementScreenRoute(
+        EditAnnouncementDestination(
             announcement = announcement,
             onBackClick = onBackClick
         )

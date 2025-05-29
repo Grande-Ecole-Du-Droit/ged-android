@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ThirdRegistrationScreenRoute(
+fun ThirdRegistrationDestination(
     firstName: String,
     lastName: String,
     schoolLevel: String,

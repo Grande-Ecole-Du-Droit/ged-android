@@ -41,6 +41,7 @@ import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.inputForeground
 import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
+import com.upsaclay.common.utils.Phones
 import kotlinx.coroutines.android.awaitFrame
 
 @Composable
@@ -209,14 +210,15 @@ fun TransparentFocusedTextField(
  =====================================================================
  */
 
-@Preview(showBackground = true)
+@Phones
 @Composable
 private fun OutlinedTextFieldPreview() {
     var text by remember { mutableStateOf("") }
 
     GedoiseTheme {
-        Surface(modifier = Modifier.padding(MaterialTheme.spacing.small)) {
+        Surface {
             OutlineTextField(
+                modifier = Modifier.padding(MaterialTheme.spacing.small),
                 value = text,
                 label = "Label",
                 onValueChange = { text = it }

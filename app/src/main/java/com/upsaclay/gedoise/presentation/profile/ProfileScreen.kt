@@ -45,7 +45,7 @@ import com.upsaclay.gedoise.R
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ProfileScreenRoute(
+fun ProfileDestination(
     onAccountClick: () -> Unit,
     onBackClick: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()

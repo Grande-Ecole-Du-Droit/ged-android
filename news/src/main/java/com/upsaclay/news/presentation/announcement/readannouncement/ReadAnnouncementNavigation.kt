@@ -20,7 +20,7 @@ fun NavGraphBuilder.readAnnouncementScreen(
 ) {
     composable<ReadAnnouncementRoute> {
         val announcementId = it.toRoute<ReadAnnouncementRoute>().announcementId
-        ReadAnnouncementScreenRoute(
+        ReadAnnouncementDestination(
             announcementId = announcementId,
             onBackClick = onBackClick,
             onEditClick = onEditClick
