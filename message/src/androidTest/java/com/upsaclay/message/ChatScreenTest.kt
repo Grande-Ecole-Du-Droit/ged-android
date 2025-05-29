@@ -34,7 +34,6 @@ class ChatScreenTest {
         every { chatViewModel.event } returns MutableSharedFlow()
         every { chatViewModel.sendMessage() } returns Unit
         coEvery { chatViewModel.seeMessage() } returns Unit
-        coEvery { chatViewModel.clearChatNotifications() } returns Unit
     }
 
     @Test
@@ -74,6 +73,5 @@ class ChatScreenTest {
         // Then
         rule.onNodeWithTag(rule.activity.getString(R.string.chat_screen_receive_message_item_tag) + 0)
             .assertExists()
-
     }
 }

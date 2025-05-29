@@ -22,7 +22,7 @@ internal class MessageLocalDataSource(private val messageDao: MessageDao) {
                 pageSize = MESSAGE_LIMIT,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { messageDao.getMessages(conversationId)  }
+            pagingSourceFactory = { messageDao.getMessages(conversationId) }
         ).flow.map { messages ->
             messages.map { it.toMessage() }
         }

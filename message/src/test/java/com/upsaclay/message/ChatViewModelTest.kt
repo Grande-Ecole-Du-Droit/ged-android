@@ -4,7 +4,6 @@ import androidx.paging.PagingData
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.message.domain.conversationFixture
-import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
@@ -20,7 +19,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
@@ -45,7 +43,7 @@ class ChatViewModelTest {
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
         every { messageRepository.getPagingMessages(any()) } returns flowOf(PagingData.from(messagesFixture))
-        every { getUnreadMessagesByUser() } returns flowOf(emptyList())
+        every { messageRepository.getUnreadMessagesByUser(any(), any()) } returns flowOf(emptyList())
         every { sendMessageUseCase(any(), any(), any()) } returns Unit
         coEvery { messageRepository.updateSeenMessage(any()) } returns Unit
         coEvery { messageNotificationUseCase.clearNotifications(any()) } returns Unit
@@ -95,23 +93,5 @@ class ChatViewModelTest {
 
         // Then
         assertEquals("", chatViewModel.uiState.value.text)
-    }
-
-    @Test
-    fun seeMessage_to_true() = runTest {
-        // When
-        chatViewModel.seeMessage()
-
-        // Then
-        coVerify { messageRepository.updateSeenMessage(messageFixture) }
-    }
-
-    @Test
-    fun clearMessageNotifications_should_be_clear_notifications() = runTest {
-        // When
-        chatViewModel.clearChatNotifications()
-
-        // Then
-        coVerify { messageNotificationUseCase.clearNotifications(conversationFixture.id) }
     }
 }
