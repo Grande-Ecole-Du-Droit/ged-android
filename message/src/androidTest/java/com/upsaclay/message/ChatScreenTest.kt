@@ -7,8 +7,9 @@ import androidx.paging.PagingData
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messageFixture2
-import com.upsaclay.message.presentation.chat.ChatScreenRoute
+import com.upsaclay.message.presentation.chat.ChatDestination
 import com.upsaclay.message.presentation.chat.ChatViewModel
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,6 +33,7 @@ class ChatScreenTest {
         every { chatViewModel.uiState } returns MutableStateFlow(uiState)
         every { chatViewModel.event } returns MutableSharedFlow()
         every { chatViewModel.sendMessage() } returns Unit
+        coEvery { chatViewModel.seeMessage() } returns Unit
     }
 
     @Test
@@ -41,7 +43,7 @@ class ChatScreenTest {
 
         // When
         rule.setContent {
-            ChatScreenRoute(
+            ChatDestination(
                 conversation = conversationFixture,
                 onBackClick = {},
                 viewModel = chatViewModel
@@ -61,7 +63,7 @@ class ChatScreenTest {
 
         // When
         rule.setContent {
-            ChatScreenRoute(
+            ChatDestination(
                 conversation = conversationFixture,
                 onBackClick = {},
                 viewModel = chatViewModel
@@ -71,6 +73,5 @@ class ChatScreenTest {
         // Then
         rule.onNodeWithTag(rule.activity.getString(R.string.chat_screen_receive_message_item_tag) + 0)
             .assertExists()
-
     }
 }

@@ -2,7 +2,7 @@ package com.upsaclay.news
 
 import com.upsaclay.news.domain.announcementFixture
 import com.upsaclay.news.domain.usecase.UpdateAnnouncementUseCase
-import com.upsaclay.news.presentation.announcement.edit.EditAnnouncementViewModel
+import com.upsaclay.news.presentation.announcement.editannouncement.EditAnnouncementViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

@@ -1,10 +1,7 @@
 package com.upsaclay.message.domain.usecase
 
-import com.google.gson.GsonBuilder
-import com.upsaclay.common.domain.LocalDateTimeAdapter
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.usecase.GenerateRandomIdUseCase
-import com.upsaclay.common.domain.usecase.NotificationUseCase
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.ConversationMessage
 import com.upsaclay.message.domain.entity.ConversationState
@@ -12,7 +9,6 @@ import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
-import com.upsaclay.message.domain.toFcm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -20,7 +16,7 @@ import java.time.LocalDateTime
 class SendMessageUseCase(
     private val messageRepository: MessageRepository,
     private val conversationRepository: ConversationRepository,
-    private val notificationUseCase: NotificationUseCase,
+    private val messageNotificationUseCase: MessageNotificationUseCase,
     private val scope: CoroutineScope
 ) {
     operator fun invoke(conversation: Conversation, user: User, content: String) {
@@ -30,7 +26,7 @@ class SendMessageUseCase(
                 createConversation(conversation, user.id)
             }
             createMessage(message)
-            sendNotification(conversation, message, user)
+            messageNotificationUseCase.sendNotification(ConversationMessage(conversation, message))
         }
     }
 
@@ -62,13 +58,5 @@ class SendMessageUseCase(
             date = LocalDateTime.now(),
             state = MessageState.LOADING
         )
-    }
-
-    private suspend fun sendNotification(conversation: Conversation, message: Message, user: User) {
-        val fcmMessage = ConversationMessage(conversation, message).toFcm(user)
-        val gson = GsonBuilder()
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter)
-            .create()
-        notificationUseCase.sendNotification(fcmMessage, gson)
     }
 }

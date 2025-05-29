@@ -36,7 +36,6 @@ class ProfileScreenTest {
         rule.setContent {
             ProfileScreen(
                 user = uiState.user,
-                bottomBar = {},
                 onLogoutClick = profileViewModel::logout,
                 onAccountClick = { },
                 onBackClick = { }

@@ -1,6 +1,6 @@
 package com.upsaclay.authentication
 
-import com.upsaclay.authentication.presentation.registration.first.FirstRegistrationViewModel
+import com.upsaclay.authentication.presentation.registration.firstregistration.FirstRegistrationViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher

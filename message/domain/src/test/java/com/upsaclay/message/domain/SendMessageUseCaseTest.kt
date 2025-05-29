@@ -1,10 +1,10 @@
 package com.upsaclay.message.domain
 
-import com.upsaclay.common.domain.usecase.NotificationUseCase
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
+import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -20,7 +20,7 @@ import org.junit.Test
 class SendMessageUseCaseTest {
     private val conversationRepository: ConversationRepository = mockk()
     private val messageRepository: MessageRepository = mockk()
-    private val notificationUseCase: NotificationUseCase = mockk()
+    private val messageNotificationUseCase: MessageNotificationUseCase = mockk()
 
     private lateinit var useCase: SendMessageUseCase
     private val testScope = TestScope(UnconfinedTestDispatcher())
@@ -31,12 +31,12 @@ class SendMessageUseCaseTest {
         coEvery { conversationRepository.createConversation(any(), any()) } returns Unit
         coEvery { messageRepository.upsertLocalMessage(any()) } returns Unit
         coEvery { messageRepository.createMessage(any()) } returns Unit
-        coEvery { notificationUseCase.sendNotification<Any>(any(), any()) } returns Unit
+        coEvery { messageNotificationUseCase.sendNotification(any()) } returns Unit
 
         useCase = SendMessageUseCase(
             messageRepository = messageRepository,
             conversationRepository = conversationRepository,
-            notificationUseCase = notificationUseCase,
+            messageNotificationUseCase = messageNotificationUseCase,
             scope = testScope
         )
     }
@@ -47,7 +47,7 @@ class SendMessageUseCaseTest {
         useCase(conversationFixture, userFixture, "content")
 
         // Then
-        coEvery { notificationUseCase.sendNotification<Any>(any(), any()) }
+        coEvery { messageNotificationUseCase.sendNotification(any()) }
     }
 
     @Test

@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AccountScreenRoute(
+fun AccountDestination(
     onBackClick: () -> Unit,
     viewModel: AccountViewModel = koinViewModel()
 ) {

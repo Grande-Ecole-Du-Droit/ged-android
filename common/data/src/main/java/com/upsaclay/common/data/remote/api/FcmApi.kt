@@ -16,5 +16,8 @@ interface FcmApi {
 
     @FormUrlEncoded
     @POST("fcm/send-notification")
-    suspend fun sendNotification(@Field("fcmMessage") fcmMessage: String): Response<ServerResponse>
+    suspend fun sendNotification(
+        @Field("recipientId") recipientId: String,
+        @Field("fcmMessage") fcmMessage: String
+    ): Response<ServerResponse>
 }

@@ -10,6 +10,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
@@ -18,6 +19,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FcmTokenUseCaseTest {
     private val userRepository: UserRepository = mockk()
     private val authenticationRepository: AuthenticationRepository = mockk()
@@ -29,7 +31,7 @@ class FcmTokenUseCaseTest {
 
     @Before
     fun setUp() {
-        every { authenticationRepository.isAuthenticated } returns flowOf(true)
+        every { authenticationRepository.authenticated } returns flowOf(true)
         every { connectivityObserver.connected } returns flowOf(true)
         coEvery { credentialsRepository.getUnsentFcmToken() } returns fcmTokenFixture
         coEvery { credentialsRepository.removeUnsentFcmToken() } returns Unit
@@ -57,7 +59,7 @@ class FcmTokenUseCaseTest {
     @Test
     fun fcmTokenUseCase_should_delete_token_when_unauthenticated() {
         // Given
-        coEvery { authenticationRepository.isAuthenticated } returns MutableStateFlow(false)
+        coEvery { authenticationRepository.authenticated } returns MutableStateFlow(false)
 
         // When
         useCase.listenEvents()

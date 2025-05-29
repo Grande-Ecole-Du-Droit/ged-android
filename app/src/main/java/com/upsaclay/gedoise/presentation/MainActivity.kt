@@ -11,30 +11,28 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.upsaclay.authentication.AuthenticationBaseRoute
 import com.upsaclay.common.domain.entity.FcmDataType
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.gedoise.presentation.navigation.GedNavHost
-import com.upsaclay.gedoise.presentation.navigation.SplashScreenRoute
+import com.upsaclay.gedoise.presentation.navigation.SplashRoute
 import com.upsaclay.gedoise.presentation.viewmodels.MainViewModel
 import com.upsaclay.gedoise.presentation.viewmodels.NavigationViewModel
+import com.upsaclay.message.domain.MessageJsonConverter
+import com.upsaclay.message.presentation.CONVERSATION_ID_EXTRA
+import com.upsaclay.message.presentation.MessageNotificationPresenter
 import com.upsaclay.message.presentation.chat.ChatRoute
-import com.upsaclay.news.presentation.NewsBaseRoute
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @SuppressLint("MissingPermission")
 class MainActivity : ComponentActivity() {
-    companion object {
-        const val CONVERSATION_ID_EXTRA = "conversation_id_extra"
-    }
     private val mainViewModel: MainViewModel by viewModel()
     private val navigationViewModel: NavigationViewModel by viewModel()
-    private val notificationPresenter: NotificationPresenter by inject<NotificationPresenter>()
+    private val messageNotificationPresenter: MessageNotificationPresenter by inject<MessageNotificationPresenter>()
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                notificationPresenter.start()
+                messageNotificationPresenter.start()
             }
         }
 
@@ -45,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
         val splashscreen = installSplashScreen()
         splashscreen.setKeepOnScreenCondition {
-            navigationViewModel.uiState.value.startDestination is SplashScreenRoute
+            navigationViewModel.uiState.value.startDestination is SplashRoute
         }
 
         setContent {
@@ -64,12 +62,12 @@ class MainActivity : ComponentActivity() {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 == PackageManager.PERMISSION_GRANTED
             ) {
-                notificationPresenter.start()
+                messageNotificationPresenter.start()
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         } else {
-            notificationPresenter.start()
+            messageNotificationPresenter.start()
         }
     }
 
@@ -94,8 +92,11 @@ class MainActivity : ComponentActivity() {
     private fun handleNotificationIntent(type: String, extras: Bundle?) {
         when (type) {
             FcmDataType.MESSAGE.toString() -> {
-                extras?.getString("value")?.let { conversation ->
-                    navigationViewModel.intentToNavigate(ChatRoute(conversation))
+                extras?.getString("value")?.let { value ->
+                    MessageJsonConverter.toConversationMessage(value)?.let {
+                        val conversationJson = MessageJsonConverter.toConversationJson(it.conversation)
+                        navigationViewModel.intentToNavigate(ChatRoute(conversationJson))
+                    }
                 }
             }
 

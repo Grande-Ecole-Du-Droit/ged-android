@@ -26,7 +26,16 @@ interface MessageDao {
         LIMIT 1
     """)
     fun getLastMessage(conversationId: String): Flow<LocalMessage>
-    
+
+    @Query("""
+        SELECT * FROM $MESSAGES_TABLE_NAME
+        WHERE ${MessageField.CONVERSATION_ID} = :conversationId 
+        AND ${MessageField.SEEN} = 0
+        AND ${MessageField.RECIPIENT_ID} == :userId
+        ORDER BY ${MessageField.TIMESTAMP} DESC
+    """)
+    fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<LocalMessage>>
+
     @Update
     suspend fun updateMessage(localMessage: LocalMessage)
 

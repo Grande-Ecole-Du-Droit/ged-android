@@ -3,10 +3,11 @@ package com.upsaclay.message.presentation.conversation.create
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.upsaclay.common.domain.entity.Route
 import com.upsaclay.message.domain.entity.Conversation
 import kotlinx.serialization.Serializable
 
-@Serializable data object CreateConversationRoute
+@Serializable data object CreateConversationRoute: Route
 
 fun NavController.navigateToCreateConversation() {
     navigate(route = CreateConversationRoute)
@@ -17,7 +18,7 @@ fun NavGraphBuilder.createConversationScreen(
     onCreateConversationClick: (Conversation) -> Unit
 ) {
     composable<CreateConversationRoute> {
-        CreateConversationScreenRoute(
+        CreateConversationDestination(
             onBackClick = onBackClick,
             onCreateConversationClick = onCreateConversationClick
         )

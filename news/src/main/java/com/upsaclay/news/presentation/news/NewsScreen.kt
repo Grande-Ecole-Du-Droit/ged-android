@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun NewsScreenRoute(
+fun NewsDestination(
     onAnnouncementClick: (String) -> Unit,
     onCreateAnnouncementClick: () -> Unit,
     onProfilePictureClick: () -> Unit,

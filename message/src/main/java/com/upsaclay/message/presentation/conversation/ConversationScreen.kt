@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.upsaclay.common.domain.entity.SingleUiEvent
-import com.upsaclay.common.presentation.components.LoadingDialog
 import com.upsaclay.common.presentation.components.SensibleActionDialog
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.previewText
@@ -44,7 +43,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ConversationScreenRoute(
+fun ConversationDestination(
     onConversationClick: (Conversation) -> Unit,
     onCreateConversation: () -> Unit,
     bottomBar: @Composable () -> Unit,

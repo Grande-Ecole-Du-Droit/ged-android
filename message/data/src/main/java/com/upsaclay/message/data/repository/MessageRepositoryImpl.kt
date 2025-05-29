@@ -22,6 +22,9 @@ internal class MessageRepositoryImpl(
     override fun fetchRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message> =
         messageRemoteDataSource.listenMessages(conversationId, offsetTime)
 
+    override fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<Message>> =
+        messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId)
+
     override suspend fun createMessage(message: Message) {
         handleNetworkException(
             message = "Failed to create message",

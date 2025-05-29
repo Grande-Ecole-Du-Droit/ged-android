@@ -85,7 +85,7 @@ val ColorScheme.previewText: Color
     @Composable
     get() = if(isSystemInDarkTheme()) Color(0xFFA1A4B0) else Color(0xFF6F7181)
 
-val ColorScheme.profilePictureError: Color
+val ColorScheme.profilePictureLoading: Color
     @Composable
     get() = if (isSystemInDarkTheme()) Color(0xFF323232) else Color(0xFFE6E6E6)
 

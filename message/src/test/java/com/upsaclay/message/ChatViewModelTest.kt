@@ -2,14 +2,12 @@ package com.upsaclay.message
 
 import androidx.paging.PagingData
 import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.common.domain.usecase.NotificationUseCase
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.message.domain.conversationFixture
-import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
-import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
+import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import com.upsaclay.message.presentation.chat.ChatViewModel
 import io.mockk.coEvery
@@ -32,8 +30,7 @@ class ChatViewModelTest {
     private val conversationRepository: ConversationRepository = mockk()
     private val messageRepository: MessageRepository = mockk()
     private val sendMessageUseCase: SendMessageUseCase = mockk()
-    private val notificationUseCase: NotificationUseCase = mockk()
-    private val getUnreadMessagesUseCase: GetUnreadMessagesUseCase = mockk()
+    private val messageNotificationUseCase: MessageNotificationUseCase = mockk()
 
     private lateinit var chatViewModel: ChatViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -46,11 +43,11 @@ class ChatViewModelTest {
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
         every { messageRepository.getPagingMessages(any()) } returns flowOf(PagingData.from(messagesFixture))
-        every { getUnreadMessagesUseCase() } returns flowOf(emptyList())
+        every { messageRepository.getUnreadMessagesByUser(any(), any()) } returns flowOf(emptyList())
         every { sendMessageUseCase(any(), any(), any()) } returns Unit
         coEvery { messageRepository.updateSeenMessage(any()) } returns Unit
-        coEvery { notificationUseCase.clearNotifications(any()) } returns Unit
-        coEvery { notificationUseCase.sendNotification<Message>(any(), any()) } returns Unit
+        coEvery { messageNotificationUseCase.clearNotifications(any()) } returns Unit
+        coEvery { messageNotificationUseCase.sendNotification(any()) } returns Unit
 
         chatViewModel = ChatViewModel(
             conversation = conversationFixture,
@@ -58,8 +55,7 @@ class ChatViewModelTest {
             conversationRepository = conversationRepository,
             messageRepository = messageRepository,
             sendMessageUseCase = sendMessageUseCase,
-            notificationUseCase = notificationUseCase,
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase
+            messageNotificationUseCase = messageNotificationUseCase,
         )
     }
 
@@ -97,22 +93,5 @@ class ChatViewModelTest {
 
         // Then
         assertEquals("", chatViewModel.uiState.value.text)
-    }
-
-    @Test
-    fun chat_notifications_should_be_cleared() {
-        // When
-        chatViewModel = ChatViewModel(
-            conversation = conversationFixture,
-            userRepository = userRepository,
-            conversationRepository = conversationRepository,
-            messageRepository = messageRepository,
-            sendMessageUseCase = sendMessageUseCase,
-            notificationUseCase = notificationUseCase,
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase
-        )
-
-        // Then
-        coVerify { notificationUseCase.clearNotifications(conversationFixture.id) }
     }
 }

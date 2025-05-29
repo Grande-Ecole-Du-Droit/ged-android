@@ -7,8 +7,8 @@ import androidx.compose.ui.test.performClick
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.news.domain.announcementFixture
-import com.upsaclay.news.presentation.announcement.read.ReadAnnouncementScreenRoute
-import com.upsaclay.news.presentation.announcement.read.ReadAnnouncementViewModel
+import com.upsaclay.news.presentation.announcement.readannouncement.ReadAnnouncementDestination
+import com.upsaclay.news.presentation.announcement.readannouncement.ReadAnnouncementViewModel
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,7 +38,7 @@ class ReadAnnouncementScreenTest {
     fun option_button_should_be_displayed_when_user_is_member_and_author() {
         // When
         rule.setContent {
-            ReadAnnouncementScreenRoute(
+            ReadAnnouncementDestination(
                 announcementId = announcementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
@@ -54,7 +54,7 @@ class ReadAnnouncementScreenTest {
     fun option_button_should_not_be_displayed_when_user_is_not_member() {
         // When
         rule.setContent {
-             ReadAnnouncementScreenRoute(
+             ReadAnnouncementDestination(
                 announcementId = announcementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
@@ -75,7 +75,7 @@ class ReadAnnouncementScreenTest {
 
         // When
         rule.setContent {
-             ReadAnnouncementScreenRoute(
+             ReadAnnouncementDestination(
                 announcementId = announcementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
@@ -91,7 +91,7 @@ class ReadAnnouncementScreenTest {
     fun clicking_option_should_display_bottom_sheet() {
         // When
         rule.setContent {
-             ReadAnnouncementScreenRoute(
+             ReadAnnouncementDestination(
                 announcementId = announcementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
@@ -110,7 +110,7 @@ class ReadAnnouncementScreenTest {
     fun clicking_delete_sheet_field_should_display_delete_dialog() {
         // When
         rule.setContent {
-             ReadAnnouncementScreenRoute(
+             ReadAnnouncementDestination(
                 announcementId = announcementFixture.id,
                 onBackClick = {},
                 onEditClick = {},

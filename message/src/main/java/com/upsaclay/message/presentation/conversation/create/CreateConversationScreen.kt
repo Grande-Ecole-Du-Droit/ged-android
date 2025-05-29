@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CreateConversationScreenRoute(
+fun CreateConversationDestination(
     onBackClick: () -> Unit,
     onCreateConversationClick: (Conversation) -> Unit,
     viewModel: CreateConversationViewModel = koinViewModel()

@@ -4,7 +4,7 @@ import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.news.domain.announcementFixture
 import com.upsaclay.news.domain.repository.AnnouncementRepository
 import com.upsaclay.news.domain.usecase.DeleteAnnouncementUseCase
-import com.upsaclay.news.presentation.announcement.read.ReadAnnouncementViewModel
+import com.upsaclay.news.presentation.announcement.readannouncement.ReadAnnouncementViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.PagingData
 import com.upsaclay.common.domain.entity.SingleUiEvent
@@ -41,7 +42,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun ChatScreenRoute(
+fun ChatDestination(
     conversation: Conversation,
     onBackClick: () -> Unit,
     viewModel: ChatViewModel = koinViewModel {
@@ -66,6 +67,14 @@ fun ChatScreenRoute(
 
                 is SingleUiEvent.Error -> showSnackBar(context.getString(event.messageId))
             }
+        }
+    }
+
+    LifecycleStartEffect(Unit) {
+        viewModel.seeMessage()
+
+        onStopOrDispose {
+            viewModel.stopSeeingMessage()
         }
     }
 

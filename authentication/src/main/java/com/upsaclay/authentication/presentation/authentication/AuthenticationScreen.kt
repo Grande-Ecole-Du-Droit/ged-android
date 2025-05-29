@@ -29,7 +29,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -51,7 +50,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AuthenticationScreenRoute(
+fun AuthenticationDestination(
     onRegistrationClick: () -> Unit,
     onLoginClick: () -> Unit,
     viewModel: AuthenticationViewModel = koinViewModel()
@@ -136,7 +135,7 @@ private fun AuthenticationScreen(
                         )
                     }
             ) {
-                TitleSection()
+                HeaderSection()
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraLarge))
 
@@ -161,7 +160,7 @@ private fun AuthenticationScreen(
 }
 
 @Composable
-private fun TitleSection() {
+private fun HeaderSection() {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
