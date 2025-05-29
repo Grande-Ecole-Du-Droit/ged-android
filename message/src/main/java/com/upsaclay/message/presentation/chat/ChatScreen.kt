@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.compose.rememberNavController
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.presentation.theme.GedoiseTheme
@@ -66,9 +67,12 @@ fun ChatScreenRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.clearChatNotifications()
-        viewModel.markUnreadMessagesAsSeen()
+    LifecycleStartEffect(Unit) {
+        viewModel.seeMessage()
+
+        onStopOrDispose {
+            viewModel.stopSeeingMessage()
+        }
     }
 
     ChatScreen(

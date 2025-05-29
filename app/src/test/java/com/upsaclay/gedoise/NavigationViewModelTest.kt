@@ -7,9 +7,8 @@ import com.upsaclay.gedoise.presentation.navigation.TopLevelDestination
 import com.upsaclay.gedoise.presentation.viewmodels.NavigationViewModel
 import com.upsaclay.message.domain.MessageJsonConverter
 import com.upsaclay.message.domain.conversationFixture
-import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messagesFixture
-import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
+import com.upsaclay.message.domain.usecase.GetUnreadConversationsCountUseCase
 import com.upsaclay.message.presentation.chat.ChatRoute
 import com.upsaclay.news.presentation.NewsBaseRoute
 import io.mockk.every
@@ -28,7 +27,7 @@ import kotlin.test.assertEquals
 class NavigationViewModelTest {
     private val screenRepository: ScreenRepository = mockk()
     private val authenticationRepository: AuthenticationRepository = mockk()
-    private val getUnreadMessagesUseCase: GetUnreadMessagesUseCase = mockk()
+    private val getUnreadConversationsCountUseCase: GetUnreadConversationsCountUseCase = mockk()
 
     private lateinit var navigationViewModel: NavigationViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -37,14 +36,14 @@ class NavigationViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
-        every { getUnreadMessagesUseCase() } returns flowOf(messagesFixture)
+        every { getUnreadConversationsCountUseCase() } returns flowOf(2)
         every { authenticationRepository.authenticated } returns flowOf(true)
         every { authenticationRepository.isAuthenticated } returns true
         every { screenRepository.currentRoute } returns null
         every { screenRepository.setCurrentRoute(any()) } returns Unit
 
         navigationViewModel = NavigationViewModel(
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase,
+            getUnreadConversationsCountUseCase = getUnreadConversationsCountUseCase,
             screenRepository = screenRepository,
             authenticationRepository = authenticationRepository
         )
@@ -54,7 +53,7 @@ class NavigationViewModelTest {
     fun startDestination_should_be_news_screen_when_authenticated() = runTest {
         // When
         navigationViewModel = NavigationViewModel(
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase,
+            getUnreadConversationsCountUseCase = getUnreadConversationsCountUseCase,
             screenRepository = screenRepository,
             authenticationRepository = authenticationRepository
         )
@@ -72,7 +71,7 @@ class NavigationViewModelTest {
 
         // When
         navigationViewModel = NavigationViewModel(
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase,
+            getUnreadConversationsCountUseCase = getUnreadConversationsCountUseCase,
             screenRepository = screenRepository,
             authenticationRepository = authenticationRepository
         )
@@ -91,7 +90,7 @@ class NavigationViewModelTest {
 
         // When
         navigationViewModel = NavigationViewModel(
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase,
+            getUnreadConversationsCountUseCase = getUnreadConversationsCountUseCase,
             screenRepository = screenRepository,
             authenticationRepository = authenticationRepository
         )
@@ -111,7 +110,7 @@ class NavigationViewModelTest {
 
         // When
         navigationViewModel = NavigationViewModel(
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase,
+            getUnreadConversationsCountUseCase = getUnreadConversationsCountUseCase,
             screenRepository = screenRepository,
             authenticationRepository = authenticationRepository
         )
@@ -125,13 +124,9 @@ class NavigationViewModelTest {
 
     @Test
     fun updateMessageBadges_should_be_equals_to_unread_messages() {
-        // Given
-        val unreadMessage = 2
-        every { getUnreadMessagesUseCase() } returns flowOf(listOf(messageFixture, messageFixture))
-
         // When
         navigationViewModel = NavigationViewModel(
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase,
+            getUnreadConversationsCountUseCase = getUnreadConversationsCountUseCase,
             screenRepository = screenRepository,
             authenticationRepository = authenticationRepository
         )
@@ -140,6 +135,6 @@ class NavigationViewModelTest {
         val result = navigationViewModel.uiState.value.topLevelDestinations
         val topLevelDestination = result.find { it is TopLevelDestination.Message } as TopLevelDestination.Message
 
-        assertEquals(unreadMessage, topLevelDestination.badges)
+        assertEquals(2, topLevelDestination.badges)
     }
 }

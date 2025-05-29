@@ -33,7 +33,7 @@ class ChatScreenTest {
         every { chatViewModel.uiState } returns MutableStateFlow(uiState)
         every { chatViewModel.event } returns MutableSharedFlow()
         every { chatViewModel.sendMessage() } returns Unit
-        coEvery { chatViewModel.markUnreadMessagesAsSeen() } returns Unit
+        coEvery { chatViewModel.seeMessage() } returns Unit
         coEvery { chatViewModel.clearChatNotifications() } returns Unit
     }
 

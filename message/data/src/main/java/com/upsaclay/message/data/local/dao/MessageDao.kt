@@ -1,7 +1,6 @@
 package com.upsaclay.message.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
@@ -18,9 +17,15 @@ interface MessageDao {
         ORDER BY ${MessageField.TIMESTAMP} DESC
     """)
     fun getMessages(conversationId: String): Flow<List<LocalMessage>>
-    
-    @Insert
-    suspend fun insertMessage(localMessage: LocalMessage)
+
+    @Query("""
+        SELECT * FROM $MESSAGES_TABLE_NAME
+        WHERE ${MessageField.CONVERSATION_ID} = :conversationId 
+        AND ${MessageField.SEEN} = 0
+        AND ${MessageField.RECIPIENT_ID} == :userId
+        ORDER BY ${MessageField.TIMESTAMP} DESC
+    """)
+    fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<LocalMessage>>
 
     @Update
     suspend fun updateMessage(localMessage: LocalMessage)

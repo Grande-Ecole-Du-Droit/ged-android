@@ -9,6 +9,8 @@ interface MessageRepository {
 
     fun getRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message>
 
+    fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<Message>>
+
     suspend fun createMessage(message: Message)
 
     suspend fun updateSeenMessage(message: Message)

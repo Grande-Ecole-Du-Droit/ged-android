@@ -20,8 +20,7 @@ val messageModule = module {
             conversationRepository = get(),
             messageRepository = get(),
             sendMessageUseCase = get(),
-            messageNotificationUseCase = get(),
-            getUnreadMessagesUseCase = get()
+            messageNotificationUseCase = get()
         )
     }
     singleOf(::MessageNotificationPresenter)

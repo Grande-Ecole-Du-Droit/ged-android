@@ -184,7 +184,6 @@ class MessageNotificationPresenter (
             .setGroup(conversationId)
             .setCategory(Notification.CATEGORY_MESSAGE)
             .setSortKey(messageKey)
-            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setContentIntent(intent)
             .setAutoCancel(true)
             .setStyle(

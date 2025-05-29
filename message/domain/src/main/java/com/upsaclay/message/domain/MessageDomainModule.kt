@@ -6,7 +6,7 @@ import com.upsaclay.message.domain.entity.ConversationMessage
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
 import com.upsaclay.message.domain.usecase.GetConversationsUiUseCase
 import com.upsaclay.message.domain.usecase.GetLocalConversationUseCase
-import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
+import com.upsaclay.message.domain.usecase.GetUnreadConversationsCountUseCase
 import com.upsaclay.message.domain.usecase.ListenRemoteConversationsMessagesUseCase
 import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
@@ -41,7 +41,7 @@ val messageDomainModule = module {
     }
     singleOf(::GetConversationsUiUseCase)
     singleOf(::GetLocalConversationUseCase)
-    singleOf(::GetUnreadMessagesUseCase)
+    singleOf(::GetUnreadConversationsCountUseCase)
     single {
         ListenRemoteConversationsMessagesUseCase(
             userRepository = get(),

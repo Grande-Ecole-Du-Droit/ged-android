@@ -15,11 +15,10 @@ internal class MessageLocalDataSource(private val messageDao: MessageDao) {
             messages.map { it.toMessage() }
         }
 
-    suspend fun createMessage(message: Message) {
-        withContext(Dispatchers.IO) {
-            messageDao.insertMessage(message.toLocal())
+    fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<Message>> =
+        messageDao.getUnreadMessagesByUser(conversationId, userId).map { messages ->
+            messages.map { it.toMessage() }
         }
-    }
 
     suspend fun updateMessage(message: Message) {
         withContext(Dispatchers.IO) {

@@ -7,7 +7,6 @@ import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
-import com.upsaclay.message.domain.usecase.GetUnreadMessagesUseCase
 import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import com.upsaclay.message.presentation.chat.ChatViewModel
@@ -33,7 +32,6 @@ class ChatViewModelTest {
     private val messageRepository: MessageRepository = mockk()
     private val sendMessageUseCase: SendMessageUseCase = mockk()
     private val messageNotificationUseCase: MessageNotificationUseCase = mockk()
-    private val getUnreadMessagesUseCase: GetUnreadMessagesUseCase = mockk()
 
     private lateinit var chatViewModel: ChatViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -46,7 +44,7 @@ class ChatViewModelTest {
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
         every { messageRepository.getLocalMessages(any()) } returns flowOf(messagesFixture)
-        every { getUnreadMessagesUseCase() } returns flowOf(emptyList())
+        every { messageRepository.getUnreadMessagesByUser(any(), any()) } returns flowOf(listOf(messageFixture))
         every { sendMessageUseCase(any(), any(), any()) } returns Unit
         coEvery { messageRepository.updateSeenMessage(any()) } returns Unit
         coEvery { messageNotificationUseCase.clearNotifications(any()) } returns Unit
@@ -59,7 +57,6 @@ class ChatViewModelTest {
             messageRepository = messageRepository,
             sendMessageUseCase = sendMessageUseCase,
             messageNotificationUseCase = messageNotificationUseCase,
-            getUnreadMessagesUseCase = getUnreadMessagesUseCase
         )
     }
 
@@ -100,11 +97,9 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun seeMessage_should_update_message_seen_to_true() = runTest {
-        // Given
-        every { getUnreadMessagesUseCase() } returns flowOf(listOf(messageFixture))
+    fun seeMessage_to_true() = runTest {
         // When
-        chatViewModel.markUnreadMessagesAsSeen()
+        chatViewModel.seeMessage()
 
         // Then
         coVerify { messageRepository.updateSeenMessage(messageFixture) }
