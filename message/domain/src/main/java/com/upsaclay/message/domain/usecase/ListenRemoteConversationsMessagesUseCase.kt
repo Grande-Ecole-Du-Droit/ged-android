@@ -27,7 +27,7 @@ class ListenRemoteConversationsMessagesUseCase(
             userRepository.user
                 .filterNotNull()
                 .collectLatest { user ->
-                    conversationRepository.getRemoteConversations(user.id)
+                    conversationRepository.fetchRemoteConversations(user.id)
                         .catch { e("Failed to fetch conversations", it) }
                         .collect { conversation ->
                             if (messageListeningJobs[conversation.id]?.conversation != conversation) {
@@ -57,7 +57,7 @@ class ListenRemoteConversationsMessagesUseCase(
     }
 
     private suspend fun listenRemoteMessages(conversation: Conversation) {
-        messageRepository.getRemoteMessages(conversation.id, conversation.deleteTime)
+        messageRepository.fetchRemoteMessages(conversation.id, conversation.deleteTime)
             .catch { e("Failed to fetch remote message with ${conversation.interlocutor.fullName}", it) }
             .collect {
                 messageRepository.upsertLocalMessage(it)

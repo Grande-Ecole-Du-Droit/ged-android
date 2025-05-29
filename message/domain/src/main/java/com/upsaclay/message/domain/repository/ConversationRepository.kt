@@ -4,11 +4,11 @@ import com.upsaclay.message.domain.entity.Conversation
 import kotlinx.coroutines.flow.Flow
 
 interface ConversationRepository {
-    fun getLocalConversationFlow(interlocutorId: String): Flow<Conversation>
+    fun getConversationFlow(interlocutorId: String): Flow<Conversation>
 
-    suspend fun getLocalConversation(interlocutorId: String): Conversation?
+    suspend fun getConversation(interlocutorId: String): Conversation?
 
-    suspend fun getRemoteConversations(userId: String): Flow<Conversation>
+    suspend fun fetchRemoteConversations(userId: String): Flow<Conversation>
 
     suspend fun createConversation(conversation: Conversation, userId: String)
 

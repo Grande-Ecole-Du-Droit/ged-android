@@ -25,13 +25,13 @@ internal class ConversationRepositoryImpl(
 ) : ConversationRepository {
     private val interlocutors = mutableMapOf<String, User>()
 
-    override fun getLocalConversationFlow(interlocutorId: String): Flow<Conversation> =
+    override fun getConversationFlow(interlocutorId: String): Flow<Conversation> =
         conversationLocalDataSource.getFlowLocalConversation(interlocutorId).filterNotNull()
 
-    override suspend fun getLocalConversation(interlocutorId: String): Conversation? =
+    override suspend fun getConversation(interlocutorId: String): Conversation? =
         conversationLocalDataSource.getConversation(interlocutorId)
 
-    override suspend fun getRemoteConversations(userId: String): Flow<Conversation> {
+    override suspend fun fetchRemoteConversations(userId: String): Flow<Conversation> {
         return conversationRemoteDataSource.listenConversations(userId)
             .flatMapMerge { remoteConversation ->
                 val interlocutorId = remoteConversation.participants.firstOrNull { it != userId }

@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.koin)
     implementation(libs.koin.core)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.paging.common)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
