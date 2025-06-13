@@ -22,10 +22,9 @@ import com.upsaclay.common.R
 import com.upsaclay.common.domain.IntentHelper
 import com.upsaclay.common.domain.entity.SystemEvent
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.extensions.toLong
+import com.upsaclay.common.domain.extensions.toEpochMilliUTC
 import com.upsaclay.common.domain.repository.ImageRepository
-import com.upsaclay.common.domain.repository.ScreenRepository
-import com.upsaclay.common.domain.usecase.GenerateRandomIdUseCase
+import com.upsaclay.common.domain.repository.RouteRepository
 import com.upsaclay.common.domain.usecase.SharedEventsUseCase
 import com.upsaclay.message.domain.MessageJsonConverter
 import com.upsaclay.message.domain.entity.Conversation
@@ -44,7 +43,7 @@ class MessageNotificationPresenter (
     private val context: Context,
     private val imageRepository: ImageRepository,
     private val sharedEventsUseCase: SharedEventsUseCase,
-    private val screenRepository: ScreenRepository,
+    private val routeRepository: RouteRepository,
     private val intentHelper: IntentHelper
 ) {
     private val notificationManager = NotificationManagerCompat.from(context)
@@ -65,7 +64,7 @@ class MessageNotificationPresenter (
         val message = conversationMessage.lastMessage
         val interlocutor = conversationMessage.conversation.interlocutor
         val intent = buildConversationIntent(conversationMessage.conversation)
-        val userIcon = createUserIcon(interlocutor.profilePictureFileName)
+        val userIcon = createUserIcon(interlocutor.profilePictureUrl)
         val user = buildPerson(interlocutor, userIcon)
 
         val notification = buildMessageNotification(
@@ -76,7 +75,7 @@ class MessageNotificationPresenter (
             intent = intent
         )
 
-        notificationManager.notify(message.id, notification)
+        notificationManager.notify(message.id.toInt(), notification)
     }
 
     private fun listenSystemEvents() {
@@ -98,7 +97,7 @@ class MessageNotificationPresenter (
     }
 
     private fun isCurrentMessageScreen(conversationId: String): Boolean {
-        val messageScreen = screenRepository.currentRoute as? ChatRoute
+        val messageScreen = routeRepository.currentRoute as? ChatRoute
         return messageScreen
             ?.conversationJson
             ?.let(MessageJsonConverter::toConversation)
@@ -125,7 +124,7 @@ class MessageNotificationPresenter (
 
         return PendingIntent.getActivity(
             context,
-            GenerateRandomIdUseCase.intId,
+            System.currentTimeMillis().toInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -175,7 +174,7 @@ class MessageNotificationPresenter (
         person: Person,
         intent: PendingIntent
     ): Notification {
-        val messageKey = message.date.toLong().toString()
+        val messageKey = message.date.toEpochMilliUTC().toString()
         val notificationBuilder = NotificationCompat.Builder(context, MESSAGE_CHANNEL_NOTIFICATION_ID)
             .setContentTitle(interlocutor.fullName)
             .setContentText(message.content)
@@ -190,7 +189,7 @@ class MessageNotificationPresenter (
                 NotificationCompat.MessagingStyle(person)
                     .addMessage(
                         message.content,
-                        message.date.toLong(),
+                        message.date.toEpochMilliUTC(),
                         person
                     )
                     .setConversationTitle(interlocutor.fullName)

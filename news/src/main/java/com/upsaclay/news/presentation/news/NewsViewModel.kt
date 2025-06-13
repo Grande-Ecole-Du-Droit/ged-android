@@ -11,20 +11,19 @@ import com.upsaclay.news.R
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.domain.repository.AnnouncementRepository
 import com.upsaclay.news.domain.usecase.DeleteAnnouncementUseCase
-import com.upsaclay.news.domain.usecase.RecreateAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.RefreshAnnouncementUseCase
+import com.upsaclay.news.domain.usecase.ResendAnnouncementUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NewsViewModel(
-    private val recreateAnnouncementUseCase: RecreateAnnouncementUseCase,
+    private val resendAnnouncementUseCase: ResendAnnouncementUseCase,
     private val deleteAnnouncementUseCase: DeleteAnnouncementUseCase,
     private val refreshAnnouncementUseCase: RefreshAnnouncementUseCase,
     private val announcementRepository: AnnouncementRepository,
@@ -49,11 +48,10 @@ class NewsViewModel(
         }
     }
 
-    fun recreateAnnouncement(announcement: Announcement) {
+    fun resendAnnouncement(announcement: Announcement) {
         viewModelScope.launch {
             try {
-                recreateAnnouncementUseCase(announcement)
-                _event.emit(SingleUiEvent.Success(R.string.announcement_created))
+                resendAnnouncementUseCase(announcement)
             } catch (e: Exception) {
                 viewModelScope.launch {
                     _event.emit(SingleUiEvent.Error(mapNetworkErrorMessage(e)))
@@ -66,7 +64,6 @@ class NewsViewModel(
         viewModelScope.launch {
             try {
                 deleteAnnouncementUseCase(announcement)
-                _event.emit(SingleUiEvent.Success(R.string.announcement_deleted))
             } catch (e: Exception) {
                 _event.emit(SingleUiEvent.Error(mapNetworkErrorMessage(e)))
             }
@@ -74,7 +71,7 @@ class NewsViewModel(
     }
 
     private fun newsUiState(): Flow<NewsUiState> = combine(
-        userRepository.user.filterNotNull(),
+        userRepository.user,
         announcementRepository.announcements,
         refreshAnnouncementUseCase.refreshing
     ) { user, announcements, refreshing ->

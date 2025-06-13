@@ -7,6 +7,7 @@ import com.upsaclay.authentication.R
 import com.upsaclay.authentication.domain.usecase.RegisterUseCase
 import com.upsaclay.common.domain.entity.DuplicateDataException
 import com.upsaclay.common.domain.entity.ForbiddenException
+import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.usecase.VerifyEmailFormatUseCase
 import com.upsaclay.common.utils.mapNetworkErrorMessage
@@ -40,11 +41,7 @@ class ThirdRegistrationViewModel(
         }
     }
 
-    fun register(
-        firstName: String,
-        lastName: String,
-        schoolLevel: String
-    ) {
+    fun register(firstName: String, lastName: String, schoolLevel: String) {
         val email = _uiState.value.email.trim()
         val password = _uiState.value.password
 
@@ -58,8 +55,12 @@ class ThirdRegistrationViewModel(
             try {
                 registerUseCase(email, password, firstName, lastName, schoolLevel)
                 _event.emit(SingleUiEvent.Success())
-            } catch (e: Exception) {
+            } catch (e: NoInternetConnectionException) {
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(errorMessage = mapErrorMessage(e))
+                }
             } finally {
                 _uiState.update {
                     it.copy(loading = false)
@@ -99,7 +100,7 @@ class ThirdRegistrationViewModel(
 
     private fun mapErrorMessage(e: Exception): Int {
         return mapNetworkErrorMessage(e) {
-            when (it) {
+            when (e) {
                 is ForbiddenException -> R.string.user_not_white_listed
                 is DuplicateDataException -> R.string.email_already_associated
                 else -> com.upsaclay.common.R.string.unknown_error
@@ -110,8 +111,9 @@ class ThirdRegistrationViewModel(
     internal data class ThirdRegistrationUiState(
         val email: String = "",
         val password: String = "",
+        val loading: Boolean = false,
         @StringRes val emailError: Int? = null,
         @StringRes val passwordError: Int? = null,
-        val loading: Boolean = false,
+        @StringRes val errorMessage: Int? = null
     )
 }

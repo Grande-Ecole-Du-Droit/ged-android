@@ -7,7 +7,7 @@ import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.utils.mapNetworkErrorMessage
 import com.upsaclay.message.domain.entity.Conversation
-import com.upsaclay.message.domain.usecase.GetLocalConversationUseCase
+import com.upsaclay.message.domain.usecase.GetConversationUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class CreateConversationViewModel(
     private val userRepository: UserRepository,
-    private val getLocalConversationUseCase: GetLocalConversationUseCase
+    private val getConversationUseCase: GetConversationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CreateConversationUiState())
     val uiState: StateFlow<CreateConversationUiState> = _uiState
@@ -31,7 +31,7 @@ class CreateConversationViewModel(
 
     suspend fun getConversation(interlocutor: User): Conversation? {
         return try {
-            getLocalConversationUseCase(interlocutor)
+            getConversationUseCase(interlocutor)
         } catch (e: Exception) {
             _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             null
@@ -47,6 +47,15 @@ class CreateConversationViewModel(
             _uiState.update {
                 it.copy(users = users)
             }
+        }
+    }
+
+    fun resetQuery() {
+        _uiState.update {
+            it.copy(
+                query = "",
+                users = defaultUsers
+            )
         }
     }
 
@@ -75,14 +84,12 @@ class CreateConversationViewModel(
     }
 
     private fun getFilteredUsers(query: String): List<User> {
-       return if (query.isBlank()) {
-            defaultUsers
-        } else {
-           defaultUsers.filter {
-               it.firstName.contains(query, ignoreCase = true) ||
-                       it.lastName.contains(query, ignoreCase = true)
-           }
-        }
+        return query.takeIf { it.isNotBlank() }?.let {
+            defaultUsers.filter { user ->
+                user.firstName.contains(query, ignoreCase = true) ||
+                        user.lastName.contains(query, ignoreCase = true)
+            }
+        } ?: defaultUsers
     }
 
     private fun mapErrorMessage(e: Throwable): Int {

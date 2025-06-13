@@ -4,6 +4,7 @@ import com.upsaclay.common.domain.entity.ElapsedTime
 import com.upsaclay.common.domain.usecase.GetElapsedTimeUseCase
 import org.junit.Test
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.test.assertEquals
 
 class GetElapsedTimeUseCaseTest {
@@ -12,7 +13,7 @@ class GetElapsedTimeUseCaseTest {
     @Test
     fun fromLocalDateTime_should_return_elapsed_time_now_when_duration_is_inferior_to_1_minute() {
         // Given
-        val localDateTime = LocalDateTime.now()
+        val localDateTime = LocalDateTime.now(ZoneOffset.UTC)
 
         // When
         val result = getElapsedTimeUseCase.fromLocalDateTime(localDateTime)
@@ -24,7 +25,7 @@ class GetElapsedTimeUseCaseTest {
     @Test
     fun fromLocalDateTime_should_return_elapsed_time_minute_when_duration_is_inferior_to_1_hour() {
         // Given
-        val localDateTime = LocalDateTime.now().minusMinutes(30)
+        val localDateTime = LocalDateTime.now(ZoneOffset.UTC).minusMinutes(30)
 
         // When
         val result = getElapsedTimeUseCase.fromLocalDateTime(localDateTime)
@@ -36,7 +37,7 @@ class GetElapsedTimeUseCaseTest {
     @Test
     fun fromLocalDateTime_should_return_elapsed_time_hour_when_duration_is_between_1_and_24_hours() {
         // Given
-        val localDateTime = LocalDateTime.now().minusHours(5)
+        val localDateTime = LocalDateTime.now(ZoneOffset.UTC).minusHours(5)
 
         // When
         val result = getElapsedTimeUseCase.fromLocalDateTime(localDateTime)
@@ -48,7 +49,7 @@ class GetElapsedTimeUseCaseTest {
     @Test
     fun fromLocalDateTime_should_return_elapsed_time_day_when_duration_is_between_1_and_7_days() {
         // Given
-        val localDateTime = LocalDateTime.now().minusDays(2)
+        val localDateTime = LocalDateTime.now(ZoneOffset.UTC).minusDays(2)
 
         // When
         val result = getElapsedTimeUseCase.fromLocalDateTime(localDateTime)
@@ -60,7 +61,7 @@ class GetElapsedTimeUseCaseTest {
     @Test
     fun fromLocalDateTime_should_return_elapsed_time_week_when_duration_is_between_7_to_30_days() {
         // Given
-        val localDateTime = LocalDateTime.now().minusDays(14)
+        val localDateTime = LocalDateTime.now(ZoneOffset.UTC).minusDays(14)
 
         // When
         val result = getElapsedTimeUseCase.fromLocalDateTime(localDateTime)
@@ -72,7 +73,7 @@ class GetElapsedTimeUseCaseTest {
     @Test
     fun fromLocalDateTime_should_return_date_when_duration_is_superior_to_30_days() {
         // Given
-        val localDateTime = LocalDateTime.now().minusDays(60)
+        val localDateTime = LocalDateTime.now(ZoneOffset.UTC).minusDays(60)
 
         // When
         val result = getElapsedTimeUseCase.fromLocalDateTime(localDateTime)

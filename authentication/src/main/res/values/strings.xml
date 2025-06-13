@@ -18,6 +18,7 @@
     <string name="select_level_school">Sélectionnez votre niveau d\'étude</string>
 
     <string name="invalid_credentials_error">Adresse e-mail ou mot de passe incorrect.</string>
+    <string name="user_disabled_error">Votre compte a été désactivé. Veuillez contacter le support</string>
     <string name="incorrect_email_format_error">Veuillez entrer une adresse e-mail valide.</string>
     <string name="password_length_error">Le mot de passe doit comporter au moins 8 caractères.</string>
     <string name="email_already_associated">Cette adresse e-mail est déjà utilisée.</string>

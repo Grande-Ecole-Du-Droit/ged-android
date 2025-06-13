@@ -11,16 +11,17 @@ import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
 internal class ConversationRemoteDataSource(private val conversationApi: ConversationApi) {
-    fun listenConversations(userId: String): Flow<RemoteConversation> = conversationApi.listenConversations(userId)
+    fun listenConversations(userId: String, notInConversationIds: List<String>): Flow<RemoteConversation> =
+        conversationApi.listenConversations(userId, notInConversationIds)
 
-    fun createConversation(conversation: Conversation, userId: String) {
+    suspend fun createConversation(conversation: Conversation, userId: String) {
         val data = conversation.toRemote(userId).toMap()
         conversationApi.createConversation(conversation.id, data)
     }
 
-    fun updateConversationDeleteTime(conversationId: String, userId: String, deleteTIme: LocalDateTime) {
+    suspend fun updateConversationDeleteTime(conversationId: String, userId: String, deleteTIme: LocalDateTime) {
         val data = mapOf(
-            "${ConversationField.Remote.DELETE_TIME}.$userId" to deleteTIme.toTimestamp()
+            "${ConversationField.DELETE_TIME}.$userId" to deleteTIme.toTimestamp()
         )
         conversationApi.updateConversation(conversationId, data)
     }

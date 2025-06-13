@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,9 +55,9 @@ import androidx.compose.ui.unit.dp
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.black
+import com.upsaclay.common.presentation.theme.cursor
 import com.upsaclay.common.presentation.theme.inputBackground
 import com.upsaclay.common.presentation.theme.inputForeground
-import com.upsaclay.common.presentation.theme.cursor
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.presentation.theme.white
 import com.upsaclay.common.utils.FormatLocalDateTimeUseCase

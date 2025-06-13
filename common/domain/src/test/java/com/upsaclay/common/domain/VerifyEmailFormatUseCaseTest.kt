@@ -23,9 +23,27 @@ class VerifyEmailFormatUseCaseTest {
     }
 
     @Test
-    fun verifyEmailFormatUseCase_should_return_false_when_email_format_is_incorrect() {
+    fun verifyEmailFormatUseCase_should_return_false_when_email_not_contains_at() {
         // When
-        val result = verifyEmailFormatUseCase("email")
+        val result = verifyEmailFormatUseCase("email.com")
+
+        // Then
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun verifyEmailFormatUseCase_should_return_false_when_email_not_contains_dot_after_at() {
+        // When
+        val result = verifyEmailFormatUseCase("email@com")
+
+        // Then
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun verifyEmailFormatUseCase_should_return_false_when_email_not_contains_string_after_last_dot() {
+        // When
+        val result = verifyEmailFormatUseCase("email@com.")
 
         // Then
         assertEquals(false, result)

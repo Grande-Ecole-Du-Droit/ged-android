@@ -76,6 +76,13 @@ internal fun MessageFeed(
         }
     }
 
+    LaunchedEffect(messageItems.itemCount) {
+        if (listState.firstVisibleItemIndex <= 1 &&
+            listState.layoutInfo.visibleItemsInfo.size < messageItems.itemCount) {
+            listState.animateScrollToItem(0)
+        }
+    }
+
     if (isAtBottom.value) {
         showNewMessageIndicator = false
     }
@@ -127,7 +134,7 @@ internal fun MessageFeed(
                             .testTag(stringResource(R.string.chat_screen_receive_message_item_tag) + index),
                         message = message,
                         displayProfilePicture = displayProfilePicture,
-                        profilePictureUrl = interlocutor.profilePictureFileName
+                        profilePictureUrl = interlocutor.profilePictureUrl
                     )
                 }
 

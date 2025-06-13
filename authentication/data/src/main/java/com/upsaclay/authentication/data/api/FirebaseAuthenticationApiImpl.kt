@@ -5,7 +5,6 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class FirebaseAuthenticationApiImpl: FirebaseAuthenticationApi {
     private val firebaseAuth = Firebase.auth

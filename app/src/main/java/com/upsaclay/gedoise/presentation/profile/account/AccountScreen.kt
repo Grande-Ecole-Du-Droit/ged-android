@@ -61,10 +61,7 @@ fun AccountDestination(
             when (event) {
                 is SingleUiEvent.Error -> showSnackBar(context.getString(event.messageId))
 
-                is SingleUiEvent.Success -> {
-                    showSnackBar(context.getString(event.messageId))
-                    viewModel.resetValues()
-                }
+                is SingleUiEvent.Success -> showSnackBar(context.getString(event.messageId))
             }
         }
     }
@@ -163,7 +160,7 @@ fun AccountScreen(
                             modifier = Modifier.testTag(stringResource(id = R.string.account_screen_profile_picture_tag)),
                             isEdited = screenState == AccountScreenState.EDIT,
                             profilePictureUri = profilePictureUri,
-                            profilePictureUrl = user.profilePictureFileName,
+                            profilePictureUrl = user.profilePictureUrl,
                             onClick = {
                                 if (screenState == AccountScreenState.EDIT) {
                                     singlePhotoPickerLauncher.launch(
@@ -187,7 +184,7 @@ fun AccountScreen(
                                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                                     )
                                 },
-                                showDeleteProfilePicture = user.profilePictureFileName != null,
+                                showDeleteProfilePicture = user.profilePictureUrl != null,
                                 onDeleteProfilePictureClick = {
                                     showDeleteProfilePictureDialog = true
                                 }

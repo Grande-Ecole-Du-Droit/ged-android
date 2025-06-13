@@ -2,8 +2,8 @@ package com.upsaclay.common.data
 
 import com.upsaclay.common.data.local.UserDataStore
 import com.upsaclay.common.data.local.UserLocalDataSource
-import com.upsaclay.common.data.remote.NotificationApiImpl
 import com.upsaclay.common.data.remote.ImageRemoteDataSource
+import com.upsaclay.common.data.remote.NotificationApiImpl
 import com.upsaclay.common.data.remote.UserRemoteDataSource
 import com.upsaclay.common.data.remote.api.FcmApi
 import com.upsaclay.common.data.remote.api.ImageApi

@@ -1,6 +1,6 @@
 package com.upsaclay.common.data.repository
 
-import com.upsaclay.common.data.exceptions.handleNetworkException
+import com.upsaclay.common.data.exceptions.mapNetworkException
 import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.data.remote.api.WhiteListApi
 import com.upsaclay.common.domain.entity.InternalServerException
@@ -12,7 +12,7 @@ class WhiteListRepositoryImpl(
     private val whiteListApi: WhiteListApi
 ): WhiteListRepository {
     override suspend fun isUserWhiteListed(email: String): Boolean = withContext(Dispatchers.IO) {
-        handleNetworkException(
+        mapNetworkException(
             message = "Failed to check user white list",
             block = { sendCheckUserWhiteListRequest(email) }
         )

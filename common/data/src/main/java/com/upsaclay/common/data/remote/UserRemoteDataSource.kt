@@ -1,19 +1,18 @@
 package com.upsaclay.common.data.remote
 
+import com.upsaclay.common.data.exceptions.mapServerResponseException
 import com.upsaclay.common.data.exceptions.parseOracleException
 import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.data.remote.api.UserFirestoreApi
 import com.upsaclay.common.data.remote.api.UserRetrofitApi
-import com.upsaclay.common.data.toDTO
+import com.upsaclay.common.data.toLocal
 import com.upsaclay.common.data.toFirestoreUser
 import com.upsaclay.common.data.toUser
 import com.upsaclay.common.domain.entity.ForbiddenException
-import com.upsaclay.common.domain.entity.InternalServerException
 import com.upsaclay.common.domain.entity.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 
@@ -38,29 +37,25 @@ internal class UserRemoteDataSource(
     suspend fun createUser(user: User) {
         withContext(Dispatchers.IO) {
             createUserWithOracle(user)
-            userFirestoreApi.createUser(user.toFirestoreUser())
+            createUserWithFirestore(user)
         }
     }
 
     suspend fun updateProfilePictureFileName(userId: String, fileName: String) {
         withContext(Dispatchers.IO) {
-            val response = userRetrofitApi.updateProfilePictureFileName(userId, fileName)
-            if (!response.isSuccessful) {
-                val errorMessage = formatHttpError(response)
-                throw InternalServerException(errorMessage)
-            }
+            mapServerResponseException(
+                block = { userRetrofitApi.updateProfilePictureFileName(userId, fileName) }
+            )
             userFirestoreApi.updateProfilePictureFileName(userId, fileName)
         }
     }
 
     suspend fun deleteProfilePictureFileName(userId: String) {
         withContext(Dispatchers.IO) {
-            val response = userRetrofitApi.deleteProfilePictureFileName(userId)
-            if (!response.isSuccessful) {
-                val errorMessage = formatHttpError(response)
-                throw InternalServerException(errorMessage)
-            }
-            launch { userFirestoreApi.updateProfilePictureFileName(userId, null) }
+            mapServerResponseException(
+                block = { userRetrofitApi.deleteProfilePictureFileName(userId) }
+            )
+            userFirestoreApi.updateProfilePictureFileName(userId, null)
         }
     }
 
@@ -68,14 +63,20 @@ internal class UserRemoteDataSource(
         userFirestoreApi.isUserExist(email)
     }
 
+    private suspend fun createUserWithFirestore(user: User) {
+        userFirestoreApi.createUser(user.toFirestoreUser())
+    }
+
     private suspend fun createUserWithOracle(user: User) {
-        val response = userRetrofitApi.createUser(user.toDTO())
-        if (!response.isSuccessful) {
-            val errorMessage = formatHttpError(response)
-            if (response.code() == HttpURLConnection.HTTP_FORBIDDEN) {
-                throw ForbiddenException(errorMessage)
+        mapServerResponseException(
+            block = { userRetrofitApi.createUser(user.toLocal()) },
+            specificHandle = {
+                val errorMessage = formatHttpError(it)
+                if (it.code() == HttpURLConnection.HTTP_FORBIDDEN) {
+                    throw ForbiddenException(errorMessage)
+                }
+                throw parseOracleException(it.body()?.code, errorMessage)
             }
-            throw parseOracleException(response.body()?.code, errorMessage)
-        }
+        )
     }
 }

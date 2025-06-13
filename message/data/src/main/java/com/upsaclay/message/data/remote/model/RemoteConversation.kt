@@ -4,7 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.PropertyName
 import com.upsaclay.message.data.model.ConversationField.CONVERSATION_ID
 import com.upsaclay.message.data.model.ConversationField.CREATED_AT
-import com.upsaclay.message.data.model.ConversationField.Remote.DELETE_TIME
+import com.upsaclay.message.data.model.ConversationField.DELETE_TIME
 import com.upsaclay.message.data.model.ConversationField.Remote.PARTICIPANTS
 
 internal data class RemoteConversation(

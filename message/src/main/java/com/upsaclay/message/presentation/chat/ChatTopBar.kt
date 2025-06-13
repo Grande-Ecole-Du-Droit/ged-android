@@ -57,7 +57,7 @@ fun ChatTopBar(
             )
         }
 
-        ProfilePicture(url = interlocutor.profilePictureFileName, scale = 0.4f)
+        ProfilePicture(url = interlocutor.profilePictureUrl, scale = 0.4f)
 
         Spacer(modifier = Modifier.width(MaterialTheme.spacing.smallMedium))
 

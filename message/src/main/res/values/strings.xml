@@ -4,10 +4,10 @@
     <string name="ic_group_add_description">Nouveau groupe</string>
     <string name="ic_fab_button_add_description">Ouvrir le pannel des boutons flottants</string>
 
-    <string name="message">Message</string>
+    <string name="messages">Messages</string>
     <string name="new_conversation">Nouvelle conversation</string>
     <string name="new_group">Nouveau groupe</string>
-    <string name="no_conversation">Démarrer une conversation avec vos amis.</string>
+    <string name="start_conversation">Démarrer une conversation avec vos amis.</string>
     <string name="delete_conversation_dialog_title">Supprimer la conversation ?</string>
     <string name="delete_conversation_dialog_message">Votre interlocuteur pourra toujours voir la conversation et vous envoyer des messages.</string>
     <string name="conversation_deleted">Conversation supprimé</string>
@@ -20,6 +20,7 @@
     <string name="new_message">Nouveau messages</string>
     <string name="error_fetch_messages">Une erreur est survenue durant la récupération des messages</string>
     <string name="error_fetch_conversations">Une erreur est survenue durant la récupération des conversations</string>
+    <string name="no_conversation">Aucune conversation</string>
 
     <string name="conversation_screen_conversation_item_tag">Conversation Screen Conversation Item Tag</string>
     <string name="conversation_screen_empty_conversation_item_tag">Conversation Screen Empty Conversation Item Tag</string>

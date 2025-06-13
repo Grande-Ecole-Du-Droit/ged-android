@@ -6,8 +6,10 @@ import androidx.paging.PagingData
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
+import com.upsaclay.common.domain.usecase.GenerateIdUseCase
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.Message
+import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
@@ -18,10 +20,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -48,12 +49,12 @@ class ChatViewModel(
     internal val messages: Flow<PagingData<Message>> = messageRepository.getPagingMessages(conversation.id)
     private val _event = MutableSharedFlow<SingleUiEvent>()
     internal val event: Flow<SingleUiEvent> = _event
-    private var readMessageJob: Job? = null
 
     init {
         listenConversation()
         emitNewMessageReceived()
         seeMessage()
+        seeNewMessage()
         clearChatNotifications()
     }
 
@@ -68,7 +69,16 @@ class ChatViewModel(
             val text = _uiState.value.text.takeUnless { it.isEmpty() } ?: return
             val conversation = _uiState.value.conversation
             val user = requireNotNull(user)
-            sendMessageUseCase(conversation, user, text)
+            val message = Message(
+                id = GenerateIdUseCase.longId,
+                conversationId = conversation.id,
+                senderId = user.id,
+                recipientId = conversation.interlocutor.id,
+                content = text,
+                date = LocalDateTime.now(ZoneOffset.UTC),
+                state = MessageState.DRAFT
+            )
+            sendMessageUseCase(message, conversation, user.id)
             _uiState.update { it.copy(text = "") }
         } catch (_: IllegalArgumentException) {
             viewModelScope.launch {
@@ -86,29 +96,32 @@ class ChatViewModel(
     }
 
     fun seeMessage() {
-        readMessageJob = viewModelScope.launch {
-            user ?: return@launch
-            messageRepository.getUnreadMessagesByUser(conversation.id, user.id)
-                .collectLatest { messages ->
-                    messages.forEach {
-                        messageRepository.updateSeenMessage(it.copy(seen = true))
-                    }
-                }
+        viewModelScope.launch {
+            user?.let {
+                messageRepository.updateSeenMessages(conversation.id, it.id)
+            }
         }
-    }
-
-    fun stopSeeingMessage() {
-        readMessageJob?.cancel()
-        readMessageJob = null
     }
 
     private fun emitNewMessageReceived() {
         viewModelScope.launch {
-            messageRepository.getLastMessage(conversation.id)
+            messageRepository.getLastMessageFlow(conversation.id)
+                .filterNotNull()
                 .filter { it.senderId != user?.id }
-                .filter { Duration.between(it.date, LocalDateTime.now()).toMinutes() < 1L }
+                .filter { Duration.between(it.date, LocalDateTime.now(ZoneOffset.UTC)).toMinutes() < 1L }
                 .collect {
                     _event.emit(MessageEvent.NewMessage(it))
+                }
+        }
+    }
+
+    private fun seeNewMessage() {
+        viewModelScope.launch {
+            messageRepository.getLastMessageFlow(conversation.id)
+                .filterNotNull()
+                .filter { it.senderId != user?.id }
+                .collect {
+                    messageRepository.updateSeenMessage(it)
                 }
         }
     }

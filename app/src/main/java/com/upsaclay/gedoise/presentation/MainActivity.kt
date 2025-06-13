@@ -1,5 +1,6 @@
 package com.upsaclay.gedoise.presentation
 
+import MainViewModel
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -14,9 +15,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.upsaclay.common.domain.entity.FcmDataType
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.gedoise.presentation.navigation.GedNavHost
+import com.upsaclay.gedoise.presentation.navigation.NavigationViewModel
 import com.upsaclay.gedoise.presentation.navigation.SplashRoute
-import com.upsaclay.gedoise.presentation.viewmodels.MainViewModel
-import com.upsaclay.gedoise.presentation.viewmodels.NavigationViewModel
 import com.upsaclay.message.domain.MessageJsonConverter
 import com.upsaclay.message.presentation.CONVERSATION_ID_EXTRA
 import com.upsaclay.message.presentation.MessageNotificationPresenter
