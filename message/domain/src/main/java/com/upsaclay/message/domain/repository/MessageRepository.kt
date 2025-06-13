@@ -16,9 +16,13 @@ interface MessageRepository {
 
     suspend fun createMessage(message: Message)
 
+    suspend fun createRemoteMessage(message: Message)
+
     suspend fun updateSeenMessage(message: Message)
 
     suspend fun upsertLocalMessage(message: Message)
+
+    suspend fun updateLocalMessage(message: Message)
 
     suspend fun deleteLocalMessages()
 

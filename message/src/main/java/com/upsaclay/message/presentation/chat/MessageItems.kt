@@ -2,8 +2,10 @@ package com.upsaclay.message.presentation.chat
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -66,11 +68,13 @@ import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.messageFixture
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SentMessageItem(
     modifier: Modifier = Modifier,
     message: Message,
-    showSeen: Boolean = false
+    showSeen: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     val dateTimeTextColor = if (isSystemInDarkTheme()) Color.LightGray else Color(0xFFC8C8C8)
     val iconColor = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray
@@ -80,13 +84,15 @@ fun SentMessageItem(
     ) {
         Row(
             modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.Bottom
+            horizontalArrangement = Arrangement.End
         ) {
             Spacer(modifier = Modifier.weight(0.2f))
 
             Row(
-                modifier = Modifier.weight(0.8f, fill = false)
+                modifier = Modifier
+                    .clickable(onClick = onClick)
+                    .weight(0.8f, fill = false),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 MessageText(
                     text = message.content,
@@ -132,12 +138,16 @@ fun ReceiveMessageItem(
     modifier: Modifier = Modifier,
     profilePictureUrl: String?,
     message: Message,
-    displayProfilePicture: Boolean
+    displayProfilePicture: Boolean,
 ) {
     val foreground = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.white else MaterialTheme.colorScheme.black
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+
+            },
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
         verticalAlignment = Alignment.Bottom
     ) {
@@ -168,7 +178,7 @@ private fun MessageText(
     date: LocalDateTime,
     textColor: Color,
     dateTimeTextColor: Color,
-    backgroundColor: Color
+    backgroundColor: Color,
 ) {
     FlowRow(
         modifier = modifier

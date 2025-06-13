@@ -26,10 +26,19 @@ internal class MessageRepositoryImpl(
         messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId)
 
     override suspend fun createMessage(message: Message) {
+        messageLocalDataSource.upsertMessage(message)
         handleNetworkException(
             message = "Failed to create message",
             block = {
-                messageLocalDataSource.upsertMessage(message)
+                messageRemoteDataSource.createMessage(message)
+            }
+        )
+    }
+
+    override suspend fun createRemoteMessage(message: Message) {
+        handleNetworkException(
+            message = "Failed to create message",
+            block = {
                 messageRemoteDataSource.createMessage(message)
             }
         )
@@ -47,6 +56,10 @@ internal class MessageRepositoryImpl(
 
     override suspend fun upsertLocalMessage(message: Message) {
         messageLocalDataSource.upsertMessage(message)
+    }
+
+    override suspend fun updateLocalMessage(message: Message) {
+        messageLocalDataSource.updateMessage(message)
     }
 
     override suspend fun deleteLocalMessages(conversationId: String) {

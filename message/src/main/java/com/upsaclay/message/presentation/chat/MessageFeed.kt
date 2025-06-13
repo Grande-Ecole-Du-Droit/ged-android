@@ -52,7 +52,8 @@ internal fun MessageFeed(
     modifier: Modifier = Modifier,
     messages: Flow<PagingData<Message>>,
     interlocutor: User,
-    newMessageEvent: MessageEvent.NewMessage?
+    newMessageEvent: MessageEvent.NewMessage?,
+    onClickSendMessage: (Message) -> Unit
 ) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -117,7 +118,8 @@ internal fun MessageFeed(
                         modifier = Modifier
                             .testTag(stringResource(R.string.chat_screen_send_message_item_tag) + index),
                         message = message,
-                        showSeen = showSeenMessage
+                        showSeen = showSeenMessage,
+                        onClick = { onClickSendMessage(message) }
                     )
                 } else {
                     ReceiveMessageItem(
@@ -183,7 +185,8 @@ private fun MessageFeedPreview() {
                     .mediumPadding(),
                 messages = flowOf(PagingData.from(messagesFixture)),
                 interlocutor = conversationFixture.interlocutor,
-                newMessageEvent = null
+                newMessageEvent = null,
+                onClickSendMessage = {}
             )
         }
     }

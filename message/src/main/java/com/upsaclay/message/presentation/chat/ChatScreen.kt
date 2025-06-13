@@ -5,11 +5,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,17 +27,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.PagingData
 import com.upsaclay.common.domain.entity.SingleUiEvent
+import com.upsaclay.common.presentation.components.ClickableItem
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.common.utils.mediumPadding
+import com.upsaclay.message.R
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.Message
+import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.presentation.chat.ChatViewModel.MessageEvent
 import kotlinx.coroutines.flow.Flow
@@ -86,10 +96,12 @@ fun ChatDestination(
         newMessageEvent = newMessageEvent,
         onTextChange = viewModel::onTextChange,
         onSendMessage = viewModel::sendMessage,
+        onResendMessageClick = viewModel::resendErrorMessage,
         onBackClick = onBackClick
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChatScreen(
     conversation: Conversation,
@@ -99,9 +111,12 @@ private fun ChatScreen(
     newMessageEvent: MessageEvent.NewMessage?,
     onTextChange: (String) -> Unit,
     onSendMessage: () -> Unit,
+    onResendMessageClick: (Message) -> Unit,
     onBackClick: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var messageClicked: Message? by remember { mutableStateOf(null) }
 
     Scaffold(
         topBar = {
@@ -133,7 +148,13 @@ private fun ChatScreen(
                 modifier = Modifier.weight(1f),
                 messages = messages,
                 interlocutor = conversation.interlocutor,
-                newMessageEvent = newMessageEvent
+                newMessageEvent = newMessageEvent,
+                onClickSendMessage = {
+                    if (it.state == MessageState.ERROR) {
+                        messageClicked = it
+                        showBottomSheet = true
+                    }
+                }
             )
 
             MessageInput(
@@ -141,6 +162,13 @@ private fun ChatScreen(
                 value = text,
                 onValueChange = onTextChange,
                 onSendClick = onSendMessage
+            )
+        }
+
+        if (showBottomSheet) {
+            ChatBottomSheet(
+                onDismiss = { showBottomSheet = false },
+                onResendMessageClick = { messageClicked?.let(onResendMessageClick) }
             )
         }
     }
@@ -165,6 +193,7 @@ private fun ChatScreenPreview() {
             newMessageEvent = null,
             onTextChange = { text = it },
             onSendMessage = {},
+            onResendMessageClick = {},
             onBackClick = {}
         )
     }
