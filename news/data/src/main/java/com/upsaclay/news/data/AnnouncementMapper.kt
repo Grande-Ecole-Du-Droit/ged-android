@@ -2,8 +2,8 @@ package com.upsaclay.news.data
 
 import com.upsaclay.common.domain.UrlUtils.formatProfilePictureUrl
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.extensions.toLocalDateTime
-import com.upsaclay.common.domain.extensions.toLong
+import com.upsaclay.common.domain.extensions.toEpochMilliUTC
+import com.upsaclay.common.domain.extensions.toLocalDateTimeUTC
 import com.upsaclay.news.data.local.model.LocalAnnouncement
 import com.upsaclay.news.data.remote.model.RemoteAnnouncement
 import com.upsaclay.news.data.remote.model.RemoteAnnouncementWithUser
@@ -14,7 +14,7 @@ fun Announcement.toLocal() = LocalAnnouncement(
     announcementId = id,
     announcementTitle = title,
     announcementContent = content,
-    announcementDate = date.toLong(),
+    announcementDate = date.toEpochMilliUTC(),
     announcementState = state,
     userId = author.id,
     userFirstName = author.firstName,
@@ -22,14 +22,14 @@ fun Announcement.toLocal() = LocalAnnouncement(
     userEmail = author.email,
     userSchoolLevel = author.schoolLevel,
     userIsMember = author.isMember,
-    userProfilePictureFileName = author.profilePictureFileName
+    userProfilePictureFileName = author.profilePictureUrl
 )
 
 fun LocalAnnouncement.toAnnouncement() = Announcement(
     id = announcementId,
     title = announcementTitle,
     content = announcementContent,
-    date = announcementDate.toLocalDateTime(),
+    date = announcementDate.toLocalDateTimeUTC(),
     author = User(
         id = userId,
         firstName = userFirstName,
@@ -37,7 +37,7 @@ fun LocalAnnouncement.toAnnouncement() = Announcement(
         email = userEmail,
         schoolLevel = userSchoolLevel,
         isMember = userIsMember,
-        profilePictureFileName = userProfilePictureFileName
+        profilePictureUrl = userProfilePictureFileName
     ),
     state = announcementState
 )
@@ -46,7 +46,7 @@ internal fun RemoteAnnouncementWithUser.toAnnouncement() = Announcement(
     id = announcementId,
     title = announcementTitle,
     content = announcementContent,
-    date = announcementDate.toLocalDateTime(),
+    date = announcementDate.toLocalDateTimeUTC(),
     author = User(
         id = userId,
         firstName = userFirstName,
@@ -54,7 +54,7 @@ internal fun RemoteAnnouncementWithUser.toAnnouncement() = Announcement(
         email = userEmail,
         schoolLevel = userSchoolLevel,
         isMember = userIsMember == 1,
-        profilePictureFileName = formatProfilePictureUrl(profilePictureFileName)
+        profilePictureUrl = formatProfilePictureUrl(profilePictureFileName)
     ),
     state = AnnouncementState.PUBLISHED
 )
@@ -63,6 +63,6 @@ internal fun Announcement.toRemote() = RemoteAnnouncement(
     announcementId = id,
     announcementTitle = title,
     announcementContent = content,
-    announcementDate = date.toLong(),
+    announcementDate = date.toEpochMilliUTC(),
     userId = author.id
 )

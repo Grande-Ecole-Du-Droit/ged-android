@@ -10,7 +10,7 @@ import com.upsaclay.message.data.model.MessageField
 data class LocalMessage(
     @PrimaryKey
     @ColumnInfo(name = MessageField.MESSAGE_ID)
-    val messageId: Int,
+    val messageId: Long,
     @ColumnInfo(name = MessageField.SENDER_ID)
     val senderId: String,
     @ColumnInfo(name = MessageField.RECIPIENT_ID)

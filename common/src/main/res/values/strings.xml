@@ -29,6 +29,7 @@
     <string name="deletion">Supression...</string>
     <string name="loading">Chargement...</string>
     <string name="search">Rechercher</string>
+    <string name="search_ellipsis">Rechercher…</string>
     <string name="edit">Editer</string>
     <string name="ok">OK</string>
     <string name="arrow_back_icon_description">Retour en arrière</string>

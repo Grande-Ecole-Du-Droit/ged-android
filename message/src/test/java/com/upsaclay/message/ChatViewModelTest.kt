@@ -43,9 +43,8 @@ class ChatViewModelTest {
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
         every { messageRepository.getPagingMessages(any()) } returns flowOf(PagingData.from(messagesFixture))
-        every { messageRepository.getUnreadMessagesByUser(any(), any()) } returns flowOf(emptyList())
         every { sendMessageUseCase(any(), any(), any()) } returns Unit
-        coEvery { messageRepository.updateSeenMessage(any()) } returns Unit
+        coEvery { messageRepository.updateSeenMessages(any(), any()) } returns Unit
         coEvery { messageNotificationUseCase.clearNotifications(any()) } returns Unit
         coEvery { messageNotificationUseCase.sendNotification(any()) } returns Unit
 

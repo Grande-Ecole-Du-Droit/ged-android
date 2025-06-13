@@ -30,9 +30,10 @@ fun RecentAnnouncementSection(
     modifier: Modifier = Modifier,
     announcements: List<Announcement>,
     onAnnouncementClick: (String) -> Unit,
-    onNotCreateAnnouncementClick: (Announcement) -> Unit
+    onUncreatedAnnouncementClick: (Announcement) -> Unit
 ) {
     Column(
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small)
     ) {
         Text(
@@ -44,7 +45,7 @@ fun RecentAnnouncementSection(
         )
 
         LazyColumn(
-            modifier = modifier,
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -64,10 +65,10 @@ fun RecentAnnouncementSection(
                         modifier = Modifier.testTag(stringResource(R.string.news_screen_recent_announcements_tag)),
                         announcement = announcement,
                         onClick = {
-                            if (announcement.state != AnnouncementState.PUBLISHED) {
-                                onNotCreateAnnouncementClick(announcement)
-                            } else {
+                            if (announcement.state == AnnouncementState.PUBLISHED) {
                                 onAnnouncementClick(announcement.id)
+                            } else {
+                                onUncreatedAnnouncementClick(announcement)
                             }
                         }
                     )
@@ -91,7 +92,7 @@ private fun RecentAnnouncementContentPreview() {
             RecentAnnouncementSection(
                 announcements = announcementsFixture,
                 onAnnouncementClick = { },
-                onNotCreateAnnouncementClick = { }
+                onUncreatedAnnouncementClick = { }
             )
         }
     }

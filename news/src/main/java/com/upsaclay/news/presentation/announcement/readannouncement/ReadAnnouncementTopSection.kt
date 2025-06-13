@@ -83,7 +83,7 @@ private fun EditableAnnouncementHeader(
 @Phones
 @Composable
 private fun EditableAnnouncementHeaderPreview() {
-    GedoiseTheme(darkTheme = true) {
+    GedoiseTheme {
         Surface {
             EditableAnnouncementHeader(
                 announcement = announcementFixture,

@@ -1,6 +1,5 @@
 package com.upsaclay.common.domain.entity
 
-import com.upsaclay.common.domain.extensions.uppercaseFirstLetter
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +10,7 @@ data class User(
     val email: String,
     val schoolLevel: String,
     val isMember: Boolean = false,
-    val profilePictureFileName: String? = null
+    val profilePictureUrl: String? = null
 ) {
-    val fullName: String = "${firstName.uppercaseFirstLetter()} ${lastName.uppercaseFirstLetter()}"
+    val fullName: String = firstName + lastName
 }

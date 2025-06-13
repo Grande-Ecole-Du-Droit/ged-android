@@ -89,4 +89,24 @@ class CreateAnnouncementViewModelTest {
         // Then
         coVerify(exactly = 0) { createAnnouncementUseCase(any())}
     }
+
+    @Test
+    fun createEnabled_should_be_false_when_content_is_blank() {
+        // Given
+        createAnnouncementViewModel.onTitleChange("title")
+        createAnnouncementViewModel.onContentChange("")
+
+        // Then
+        assertEquals(false, createAnnouncementViewModel.uiState.value.createEnabled)
+    }
+
+    @Test
+    fun createEnabled_should_be_true_when_content_is_not_blank() {
+        // Given
+        createAnnouncementViewModel.onTitleChange("title")
+        createAnnouncementViewModel.onContentChange("content")
+
+        // Then
+        assertEquals(true, createAnnouncementViewModel.uiState.value.createEnabled)
+    }
 }

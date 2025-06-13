@@ -3,7 +3,7 @@ package com.upsaclay.news.presentation.announcement.createannouncement
 import androidx.lifecycle.ViewModel
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
-import com.upsaclay.common.domain.usecase.GenerateRandomIdUseCase
+import com.upsaclay.common.domain.usecase.GenerateIdUseCase
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.domain.entity.AnnouncementState
 import com.upsaclay.news.domain.usecase.CreateAnnouncementUseCase
@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class CreateAnnouncementViewModel(
     userRepository: UserRepository,
@@ -22,13 +23,19 @@ class CreateAnnouncementViewModel(
 
     fun onTitleChange(title: String) {
         _uiState.update {
-            it.copy(title = title)
+            it.copy(
+                title = title,
+                createEnabled = validateCreate()
+            )
         }
     }
 
     fun onContentChange(content: String) {
         _uiState.update {
-            it.copy(content = content)
+            it.copy(
+                content = content,
+                createEnabled = validateCreate()
+            )
         }
     }
 
@@ -36,18 +43,21 @@ class CreateAnnouncementViewModel(
         if (user == null) return
         val (title, content) = _uiState.value
         val announcement = Announcement(
-            id = GenerateRandomIdUseCase.stringId,
+            id = GenerateIdUseCase.stringId,
             title = if (title.isBlank()) null else title.trim(),
             content = content.trim(),
-            date = LocalDateTime.now(),
+            date = LocalDateTime.now(ZoneOffset.UTC),
             author = user,
-            state = AnnouncementState.PUBLISHING
+            state = AnnouncementState.DRAFT
         )
         createAnnouncementUseCase(announcement)
     }
 
+    private fun validateCreate(): Boolean = uiState.value.content.isNotBlank()
+
     internal data class CreateAnnouncementUiState(
         val title: String = "",
-        val content: String = ""
+        val content: String = "",
+        val createEnabled: Boolean = false
     )
 }

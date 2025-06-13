@@ -110,7 +110,7 @@ fun ProfileScreen(
             ) {
                 Column {
                     TopSection(
-                        profilePictureUrl = user.profilePictureFileName,
+                        profilePictureUrl = user.profilePictureUrl,
                         userFullName = user.fullName
                     )
 

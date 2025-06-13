@@ -17,7 +17,8 @@ data class Announcement(
 )
 
 enum class AnnouncementState {
-    PUBLISHED,
+    DRAFT,
     PUBLISHING,
+    PUBLISHED,
     ERROR
 }

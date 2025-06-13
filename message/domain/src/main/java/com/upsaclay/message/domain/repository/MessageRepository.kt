@@ -8,13 +8,17 @@ import java.time.LocalDateTime
 interface MessageRepository {
     fun getPagingMessages(conversationId: String): Flow<PagingData<Message>>
 
-    fun getLastMessage(conversationId: String): Flow<Message>
+    fun getLastMessageFlow(conversationId: String): Flow<Message?>
 
-    fun fetchRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message>
+    suspend fun getLastMessage(conversationId: String): Message?
 
-    fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<Message>>
+    fun fetchRemoteMessages(conversationId: String, interlocutorId: String, offsetTime: LocalDateTime?): Flow<Message>
 
     suspend fun createMessage(message: Message)
+
+    suspend fun updateLocalMessage(message: Message)
+
+    suspend fun updateSeenMessages(conversationId: String, userId: String)
 
     suspend fun updateSeenMessage(message: Message)
 

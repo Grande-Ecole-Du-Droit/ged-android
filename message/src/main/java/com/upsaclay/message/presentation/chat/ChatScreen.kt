@@ -70,14 +70,6 @@ fun ChatDestination(
         }
     }
 
-    LifecycleStartEffect(Unit) {
-        viewModel.seeMessage()
-
-        onStopOrDispose {
-            viewModel.stopSeeingMessage()
-        }
-    }
-
     ChatScreen(
         conversation = conversation,
         messages = viewModel.messages,

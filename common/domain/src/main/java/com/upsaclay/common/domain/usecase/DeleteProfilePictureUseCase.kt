@@ -7,8 +7,8 @@ class DeleteProfilePictureUseCase(
     private val userRepository: UserRepository,
     private val imageRepository: ImageRepository
 ) {
-    suspend operator fun invoke(userId: String, url: String) {
-        userRepository.deleteProfilePictureUrl(userId)
-        imageRepository.deleteImage(url.substringAfterLast("/"))
+    suspend operator fun invoke(userId: String, profilePictureUrl: String) {
+        userRepository.deleteProfilePictureFileName(userId)
+        imageRepository.deleteImage(profilePictureUrl.substringAfterLast("/"))
     }
 }

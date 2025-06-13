@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.upsaclay.authentication.R
 import com.upsaclay.authentication.domain.entity.exception.InvalidCredentialsException
+import com.upsaclay.authentication.domain.entity.exception.UserDisabledException
 import com.upsaclay.authentication.domain.usecase.LoginUseCase
 import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.common.domain.entity.SingleUiEvent
@@ -48,19 +49,15 @@ class AuthenticationViewModel(
         viewModelScope.launch {
             try {
                 loginUseCase(email, password)
-            } catch (e: Exception) {
-                if (e is NoInternetConnectionException) {
-                    _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
-                    _uiState.update { it.copy(loading = false) }
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            errorMessage = mapErrorMessage(e),
-                            loading = false
-                        )
-                    }
-                    resetPassword()
+            } catch (e: NoInternetConnectionException) {
+                _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
+            } catch (e: Exception)  {
+                _uiState.update {
+                    it.copy(errorMessage = mapErrorMessage(e))
                 }
+                resetPassword()
+            } finally {
+                _uiState.update { it.copy(loading = false) }
             }
         }
     }
@@ -114,8 +111,9 @@ class AuthenticationViewModel(
 
     private fun mapErrorMessage(e: Throwable): Int {
         return mapNetworkErrorMessage(e) {
-            when (it) {
+            when (e) {
                 is InvalidCredentialsException -> R.string.invalid_credentials_error
+                is UserDisabledException -> R.string.user_disabled_error
                 else -> com.upsaclay.common.R.string.unknown_error
             }
         }

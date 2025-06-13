@@ -20,7 +20,7 @@ class UpdateProfilePictureUseCase(
         withTimeout(15000) {
             imageRepository.uploadImage(file)
             userRepository.updateProfilePictureFileName(user.id, file.name)
-            user.profilePictureFileName?.let { deletePreviousProfilePicture(it) }
+            user.profilePictureUrl?.let { deletePreviousProfilePicture(it) }
         }
     }
 

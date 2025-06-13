@@ -31,12 +31,12 @@ class ReadAnnouncementViewModel(
     internal val uiState: StateFlow<ReadAnnouncementUiState> = combine(
         announcementRepository.getAnnouncementFlow(announcementId)
             .filterNotNull()
-            .map {
-                it.copy(
-                    title = it.title?.takeIf { it.isNotBlank() }
+            .map { announcement ->
+                announcement.copy(
+                    title = announcement.title?.takeIf { it.isNotBlank() }
                 )
             },
-        userRepository.user.filterNotNull(),
+        userRepository.user,
         loading,
         ReadAnnouncementViewModel::ReadAnnouncementUiState
     ).stateIn(

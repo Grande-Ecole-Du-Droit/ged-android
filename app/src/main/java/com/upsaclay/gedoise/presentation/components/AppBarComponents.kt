@@ -26,16 +26,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.upsaclay.common.domain.entity.Route
 import com.upsaclay.common.presentation.TopLevelDestinationRoute
 import com.upsaclay.common.presentation.theme.GedoiseTheme
-import com.upsaclay.common.presentation.theme.black
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.gedoise.R
 import com.upsaclay.gedoise.presentation.navigation.TopLevelDestination
-import kotlin.reflect.KClass
 
 @Composable
 fun MainBottomBar(
@@ -88,9 +86,9 @@ fun MainBottomBar(
     }
 }
 
-private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
+private fun NavDestination?.isRouteInHierarchy(route: Route) =
     this?.parent?.any {
-        it.hasRoute(route)
+        it.hasRoute(route::class)
     } ?: false
 
 /*

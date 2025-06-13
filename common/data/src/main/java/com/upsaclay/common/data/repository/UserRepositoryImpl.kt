@@ -1,6 +1,6 @@
 package com.upsaclay.common.data.repository
 
-import com.upsaclay.common.data.exceptions.handleNetworkException
+import com.upsaclay.common.data.exceptions.mapNetworkException
 import com.upsaclay.common.data.local.UserLocalDataSource
 import com.upsaclay.common.data.remote.UserRemoteDataSource
 import com.upsaclay.common.domain.entity.User
@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 internal class UserRepositoryImpl(
     private val userRemoteDataSource: UserRemoteDataSource,
@@ -23,19 +22,19 @@ internal class UserRepositoryImpl(
             started = SharingStarted.Eagerly,
             initialValue = null
         )
-    override val user: Flow<User?> = _user
+    override val user: Flow<User> = _user.filterNotNull()
     override val currentUser: User?
         get() = _user.value
 
     override suspend fun getUsers(): List<User> {
-        return handleNetworkException(
+        return mapNetworkException(
             message = "Failed to get users",
             block = { userRemoteDataSource.getUsers() },
         )
     }
 
     override suspend fun getUser(userId: String): User? {
-        return handleNetworkException(
+        return mapNetworkException(
             message = "Failed to get user",
             block = { userRemoteDataSource.getUser(userId) },
         )
@@ -46,14 +45,14 @@ internal class UserRepositoryImpl(
     override fun getUserFlow(userId: String): Flow<User?> = userRemoteDataSource.getUserFlow(userId)
 
     override suspend fun getUserWithEmail(userEmail: String): User? {
-        return handleNetworkException(
+        return mapNetworkException(
             message = "Failed to get user with email",
             block = { userRemoteDataSource.getUserFirestoreWithEmail(userEmail) }
         )
     }
 
     override suspend fun createUser(user: User) {
-        handleNetworkException(
+        mapNetworkException(
             message = "Failed to create user",
             block = {
                 userRemoteDataSource.createUser(user)
@@ -62,7 +61,7 @@ internal class UserRepositoryImpl(
         )
     }
 
-    override suspend fun storeUser(user: User?) {
+    override suspend fun storeUser(user: User) {
         userLocalDataSource.storeUser(user)
     }
 
@@ -71,7 +70,7 @@ internal class UserRepositoryImpl(
     }
 
     override suspend fun updateProfilePictureFileName(userId: String, fileName: String) {
-        handleNetworkException(
+        mapNetworkException(
             message = "Failed to update profile picture file name",
             block = {
                 userRemoteDataSource.updateProfilePictureFileName(userId, fileName)
@@ -80,17 +79,17 @@ internal class UserRepositoryImpl(
         )
     }
 
-    override suspend fun deleteProfilePictureUrl(userId: String) {
-        handleNetworkException(
+    override suspend fun deleteProfilePictureFileName(userId: String) {
+        mapNetworkException(
             block = {
                 userRemoteDataSource.deleteProfilePictureFileName(userId)
-                userLocalDataSource.deleteProfilePictureFileName()
+                userLocalDataSource.updateProfilePictureFileName(null)
             }
         )
     }
 
     override suspend fun isUserExist(email: String): Boolean {
-        return handleNetworkException(
+        return mapNetworkException(
             message = "Failed to check if user exists",
             block = { userRemoteDataSource.isUserExist(email) }
         )

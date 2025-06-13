@@ -3,8 +3,8 @@ package com.upsaclay.news.domain
 import com.upsaclay.common.domain.e
 import com.upsaclay.news.domain.usecase.CreateAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.DeleteAnnouncementUseCase
-import com.upsaclay.news.domain.usecase.RecreateAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.RefreshAnnouncementUseCase
+import com.upsaclay.news.domain.usecase.ResendAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.UpdateAnnouncementUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +35,7 @@ val newsDomainModule = module {
     }
     singleOf(::DeleteAnnouncementUseCase)
     single {
-        RecreateAnnouncementUseCase(
+        ResendAnnouncementUseCase(
             announcementRepository = get(),
             connectivityObserver = get(),
             scope = get(BACKGROUND_SCOPE)

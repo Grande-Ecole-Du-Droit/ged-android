@@ -30,16 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.inputForeground
-import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
 import kotlinx.coroutines.android.awaitFrame
@@ -142,14 +139,6 @@ fun TransparentFocusedTextField(
     enabled: Boolean = true
 ) {
     val focusRequester = remember { FocusRequester() }
-    val textFieldValue = remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = value,
-                selection = TextRange(value.length)
-            )
-        )
-    }
     val colors: TextFieldColors = TextFieldDefaults.colors()
 
     if (displayKeyboard) {
@@ -160,23 +149,15 @@ fun TransparentFocusedTextField(
     }
 
     BasicTextField(
-        modifier = if (displayKeyboard) {
-            modifier
-                .focusRequester(focusRequester)
-                .clip(shape)
-                .background(backgroundColor)
-                .padding(padding)
-        } else {
-            modifier
-                .clip(shape)
-                .background(backgroundColor)
-                .padding(padding)
-        },
+        modifier =  modifier
+            .then(if (displayKeyboard) Modifier.focusRequester(focusRequester) else Modifier)
+            .clip(shape)
+            .background(backgroundColor)
+            .padding(padding),
         enabled = enabled,
-        value = textFieldValue.value,
-        onValueChange = { newValue ->
-            textFieldValue.value = newValue
-            onValueChange(newValue.text)
+        value = value,
+        onValueChange = {
+            onValueChange(it)
         },
         textStyle = textStyle.copy(color = MaterialTheme.colorScheme.onBackground),
         keyboardOptions = KeyboardOptions(
@@ -186,7 +167,7 @@ fun TransparentFocusedTextField(
     ) { innerTextField ->
         val interactionSource = remember { MutableInteractionSource() }
         TextFieldDefaults.DecorationBox(
-            value = textFieldValue.value.text,
+            value = value,
             innerTextField = innerTextField,
             enabled = true,
             singleLine = false,

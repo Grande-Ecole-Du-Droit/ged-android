@@ -1,11 +1,11 @@
 package com.upsaclay.message.domain
 
+import com.upsaclay.common.domain.entity.FcmAndroid
+import com.upsaclay.common.domain.entity.FcmAndroidNotification
 import com.upsaclay.common.domain.entity.FcmData
 import com.upsaclay.common.domain.entity.FcmDataType
 import com.upsaclay.common.domain.entity.FcmMessage
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.entity.FcmAndroidNotification
-import com.upsaclay.common.domain.entity.FcmAndroid
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.ConversationMessage
 import com.upsaclay.message.domain.entity.ConversationUi
