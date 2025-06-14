@@ -1,6 +1,7 @@
 package com.upsaclay.authentication.presentation.registration.secondregistration
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -68,13 +69,13 @@ private fun SecondRegistrationScreen(
                     detectTapGestures(onPress = { expanded = false })
                 }
         ) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
+            ) {
                 Text(
                     text = stringResource(id = R.string.select_level_school),
                     style = MaterialTheme.typography.titleMedium
                 )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
 
                 SimpleDropDownMenu(
                     items = schoolLevels,

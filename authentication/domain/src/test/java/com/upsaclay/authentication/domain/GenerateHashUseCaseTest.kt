@@ -1,6 +1,5 @@
 package com.upsaclay.authentication.domain
 
-import com.upsaclay.authentication.domain.usecase.GenerateHashUseCase
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertNotEquals
