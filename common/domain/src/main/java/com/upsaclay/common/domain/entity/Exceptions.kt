@@ -24,3 +24,8 @@ class NoInternetConnectionException(
     override val message: String? = null,
     override val cause: Throwable? = null
 ): Exception()
+
+class ConnectionClosedException(
+    override val message: String? = null,
+    override val cause: Throwable? = null
+): Exception()

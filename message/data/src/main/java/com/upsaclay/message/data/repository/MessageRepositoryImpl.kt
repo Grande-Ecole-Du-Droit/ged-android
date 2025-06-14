@@ -2,6 +2,7 @@ package com.upsaclay.message.data.repository
 
 import androidx.paging.PagingData
 import com.upsaclay.common.data.exceptions.mapNetworkException
+import com.upsaclay.common.domain.d
 import com.upsaclay.message.data.local.MessageLocalDataSource
 import com.upsaclay.message.data.remote.MessageRemoteDataSource
 import com.upsaclay.message.domain.entity.Message
@@ -26,17 +27,16 @@ internal class MessageRepositoryImpl(
         messageRemoteDataSource.listenMessages(conversationId, interlocutorId, offsetTime)
 
     override suspend fun createMessage(message: Message) {
+        messageLocalDataSource.insertMessage(message)
         mapNetworkException(
             message = "Failed to create message",
             block = {
-                messageLocalDataSource.insertMessage(message)
                 messageRemoteDataSource.createMessage(message)
             }
         )
     }
 
     override suspend fun updateSeenMessages(conversationId: String, userId: String) {
-        messageLocalDataSource.updateSeenMessages(conversationId, userId)
         mapNetworkException(
             message = "Failed to update seen messages",
             block = {
@@ -45,6 +45,7 @@ internal class MessageRepositoryImpl(
                 }
             }
         )
+        messageLocalDataSource.updateSeenMessages(conversationId, userId)
     }
 
     override suspend fun updateSeenMessage(message: Message) {

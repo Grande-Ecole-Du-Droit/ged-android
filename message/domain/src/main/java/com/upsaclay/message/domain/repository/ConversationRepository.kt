@@ -12,7 +12,7 @@ interface ConversationRepository {
 
     suspend fun getConversation(interlocutorId: String): Conversation?
 
-    suspend fun fetchRemoteConversations(userId: String, notInConversationIds: List<String>): Flow<Conversation>
+    suspend fun fetchRemoteConversations(userId: String): Flow<Conversation>
 
     suspend fun createConversation(conversation: Conversation, userId: String)
 

@@ -1,12 +1,15 @@
 package com.upsaclay.common.data.repository
 
 import com.upsaclay.common.data.exceptions.mapNetworkException
+import com.upsaclay.common.data.exceptions.parseOracleException
 import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.data.remote.api.WhiteListApi
+import com.upsaclay.common.domain.entity.ForbiddenException
 import com.upsaclay.common.domain.entity.InternalServerException
 import com.upsaclay.common.domain.repository.WhiteListRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
 
 class WhiteListRepositoryImpl(
     private val whiteListApi: WhiteListApi

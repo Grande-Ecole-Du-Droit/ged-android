@@ -7,12 +7,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +28,7 @@ class ListenRemoteMessagesUseCaseTest {
     fun setUp() {
         every { conversationRepository.getConversationsFlow() } returns flowOf(listOf(conversationFixture))
         coEvery { conversationRepository.upsertLocalConversation(any()) } returns Unit
-        coEvery { conversationRepository.fetchRemoteConversations(any(), any()) } returns flowOf(conversationFixture)
+        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(conversationFixture)
         coEvery { messageRepository.getLastMessage(any()) } returns messageFixture
         coEvery { messageRepository.fetchRemoteMessages(any(), any(), any()) } returns flowOf(messageFixture)
         coEvery { messageRepository.upsertLocalMessage(any()) } returns Unit
@@ -49,7 +47,7 @@ class ListenRemoteMessagesUseCaseTest {
             conversationFixture,
             conversationFixture.copy(id = "another_new_conversation_id")
         )
-        useCase.fetchedConversations = mutableMapOf(conversationFixture.id to conversationFixture)
+        useCase.messageJobs = mutableMapOf(conversationFixture.id to conversationFixture)
         every { conversationRepository.getConversationsFlow() } returns flowOf(conversations)
 
         // When
@@ -72,8 +70,8 @@ class ListenRemoteMessagesUseCaseTest {
         useCase.getConversationsFlow().first()
 
         // Then
-        assert(useCase.fetchedConversations.containsValue(conversations[0]))
-        assert(useCase.fetchedConversations.containsValue(conversations[1]))
+        assert(useCase.messageJobs.containsValue(conversations[0]))
+        assert(useCase.messageJobs.containsValue(conversations[1]))
     }
 
     @Test

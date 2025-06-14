@@ -12,11 +12,7 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 
 internal class MessageRemoteDataSource(private val messageApi: MessageApi) {
-    fun listenMessages(
-        conversationId: String,
-        interlocutorId: String,
-        offsetTime: LocalDateTime?
-    ): Flow<Message> {
+    fun listenMessages(conversationId: String, interlocutorId: String, offsetTime: LocalDateTime?): Flow<Message> {
         return messageApi.listenMessages(conversationId, interlocutorId, offsetTime?.toTimestamp())
             .map { it.toMessage() }
     }

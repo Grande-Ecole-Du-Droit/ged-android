@@ -1,6 +1,7 @@
 package com.upsaclay.message.data.repository
 
 import com.upsaclay.common.data.exceptions.mapNetworkException
+import com.upsaclay.common.domain.d
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.message.data.local.ConversationLocalDataSource
@@ -37,8 +38,8 @@ internal class ConversationRepositoryImpl(
     override suspend fun getConversation(interlocutorId: String): Conversation? =
         conversationLocalDataSource.getConversation(interlocutorId)
 
-    override suspend fun fetchRemoteConversations(userId: String, notInConversationIds: List<String>): Flow<Conversation> {
-        return conversationRemoteDataSource.listenConversations(userId, notInConversationIds)
+    override suspend fun fetchRemoteConversations(userId: String): Flow<Conversation> {
+        return conversationRemoteDataSource.listenConversations(userId)
             .flatMapMerge { remoteConversation ->
                 val interlocutorId = remoteConversation.participants.firstOrNull { it != userId }
                     ?: return@flatMapMerge emptyFlow()
@@ -54,10 +55,10 @@ internal class ConversationRepositoryImpl(
     }
 
     override suspend fun createConversation(conversation: Conversation, userId: String) {
+        conversationLocalDataSource.upsertConversation(conversation)
         mapNetworkException(
             message = "Failed to create conversation",
             block = {
-                conversationLocalDataSource.upsertConversation(conversation)
                 conversationRemoteDataSource.createConversation(conversation, userId)
             }
         )
@@ -73,10 +74,10 @@ internal class ConversationRepositoryImpl(
 
     override suspend fun deleteConversation(conversation: Conversation, userId: String) {
         val deleteTime = LocalDateTime.now(ZoneOffset.UTC)
+        conversationLocalDataSource.updateConversation(conversation.copy(deleteTime = deleteTime))
         mapNetworkException(
             message = "Failed to delete conversation",
             block = {
-                conversationLocalDataSource.deleteConversation(conversation)
                 conversationRemoteDataSource.updateConversationDeleteTime(conversation.id, userId, deleteTime)
             }
         )

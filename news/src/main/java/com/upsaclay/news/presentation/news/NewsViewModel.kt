@@ -15,11 +15,14 @@ import com.upsaclay.news.domain.usecase.RefreshAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.ResendAnnouncementUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewsViewModel(
@@ -29,20 +32,42 @@ class NewsViewModel(
     private val announcementRepository: AnnouncementRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    val uiState: StateFlow<NewsUiState> = newsUiState()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = NewsUiState()
-        )
+    private val _uiState = MutableStateFlow(NewsUiState())
+    val uiState: StateFlow<NewsUiState> = _uiState
     private val _event = MutableSharedFlow<SingleUiEvent>()
     val event: SharedFlow<SingleUiEvent> = _event
 
+    init {
+        initUiState()
+    }
+
+    private fun initUiState() {
+        combine(
+            userRepository.user,
+            announcementRepository.announcements
+        ) { user, announcements ->
+            _uiState.update {
+                NewsUiState(
+                    user = user,
+                    announcements = announcements.map {
+                        it.copy(
+                            title = it.title?.takeIf { it.isNotBlank() }?.take(100),
+                            content = it.content.take(100)
+                        )
+                    }
+                )
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun refreshAnnouncements() {
+        _uiState.update { it.copy(refreshing = true) }
         viewModelScope.launch {
             try {
                 refreshAnnouncementUseCase()
+                _uiState.update { it.copy(refreshing = false) }
             } catch (e: Exception) {
+                _uiState.update { it.copy(refreshing = false) }
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             }
         }
@@ -68,23 +93,6 @@ class NewsViewModel(
                 _event.emit(SingleUiEvent.Error(mapNetworkErrorMessage(e)))
             }
         }
-    }
-
-    private fun newsUiState(): Flow<NewsUiState> = combine(
-        userRepository.user,
-        announcementRepository.announcements,
-        refreshAnnouncementUseCase.refreshing
-    ) { user, announcements, refreshing ->
-        NewsUiState(
-            user = user,
-            announcements = announcements.map {
-                it.copy(
-                    title = it.title?.takeIf { it.isNotBlank() }?.take(100),
-                    content = it.content.take(100)
-                )
-            },
-            refreshing = refreshing
-        )
     }
 
     private fun mapErrorMessage(e: Exception): Int {

@@ -2,6 +2,7 @@ package com.upsaclay.authentication.domain.usecase
 
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
 import com.upsaclay.common.domain.ConnectivityObserver
+import com.upsaclay.common.domain.entity.ForbiddenException
 import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
@@ -24,7 +25,10 @@ class RegisterUseCase(
             throw NoInternetConnectionException()
         }
 
-        require(whiteListRepository.isUserWhiteListed(email))
+        if (!whiteListRepository.isUserWhiteListed(email)) {
+            throw ForbiddenException()
+        }
+
         val userId = authenticationRepository.registerWithEmailAndPassword(email, password)
         val user = User(userId, email, firstName, lastName, schoolLevel)
         userRepository.createUser(user)

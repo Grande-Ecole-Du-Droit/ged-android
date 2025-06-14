@@ -3,6 +3,7 @@ package com.upsaclay.common.data.remote.api
 import com.upsaclay.common.data.UserField.Oracle.USER_ID
 import com.upsaclay.common.data.UserField.Oracle.USER_PROFILE_PICTURE_FILE_NAME
 import com.upsaclay.common.data.local.LocalUser
+import com.upsaclay.common.data.remote.OracleUser
 import com.upsaclay.common.data.remote.ServerResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -15,7 +16,7 @@ import retrofit2.http.Path
 
 internal interface UserRetrofitApi {
     @POST("users/create")
-    suspend fun createUser(@Body user: LocalUser): Response<ServerResponse>
+    suspend fun createUser(@Body user: OracleUser): Response<ServerResponse>
 
     @FormUrlEncoded
     @PUT("users/profile-picture-file-name")

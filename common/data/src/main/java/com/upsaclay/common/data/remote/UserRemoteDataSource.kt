@@ -7,6 +7,7 @@ import com.upsaclay.common.data.remote.api.UserFirestoreApi
 import com.upsaclay.common.data.remote.api.UserRetrofitApi
 import com.upsaclay.common.data.toLocal
 import com.upsaclay.common.data.toFirestoreUser
+import com.upsaclay.common.data.toOracleUser
 import com.upsaclay.common.data.toUser
 import com.upsaclay.common.domain.entity.ForbiddenException
 import com.upsaclay.common.domain.entity.User
@@ -69,7 +70,7 @@ internal class UserRemoteDataSource(
 
     private suspend fun createUserWithOracle(user: User) {
         mapServerResponseException(
-            block = { userRetrofitApi.createUser(user.toLocal()) },
+            block = { userRetrofitApi.createUser(user.toOracleUser()) },
             specificHandle = {
                 val errorMessage = formatHttpError(it)
                 if (it.code() == HttpURLConnection.HTTP_FORBIDDEN) {

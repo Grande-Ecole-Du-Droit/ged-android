@@ -21,11 +21,7 @@ class ListenRemoteConversationsUseCase(
         job = scope.launch {
             userRepository.user
                 .collectLatest { user ->
-                    val conversationIds = conversationRepository.getConversations().map { it.id }
-                    conversationRepository.fetchRemoteConversations(
-                        userId = user.id,
-                        notInConversationIds = conversationIds
-                    )
+                    conversationRepository.fetchRemoteConversations(user.id)
                         .catch { e("Failed to fetch conversations", it) }
                         .collect { conversation ->
                             conversationRepository.upsertLocalConversation(conversation)

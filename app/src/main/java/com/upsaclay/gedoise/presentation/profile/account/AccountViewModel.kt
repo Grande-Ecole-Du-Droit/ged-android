@@ -50,11 +50,11 @@ class AccountViewModel(
                 _uiState.value.profilePictureUri?.let { uri ->
                     updateState(loading = true)
                     updateProfilePictureUseCase(user, uri)
-                    updateState(loading = false, screenState = AccountScreenState.READ)
+                    resetValues()
                     _event.emit(SingleUiEvent.Success(R.string.profile_picture_updated))
                 }
             } catch (e: Exception) {
-                updateState(loading = false)
+                resetValues()
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             }
         }

@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
 internal class ConversationRemoteDataSource(private val conversationApi: ConversationApi) {
-    fun listenConversations(userId: String, notInConversationIds: List<String>): Flow<RemoteConversation> =
-        conversationApi.listenConversations(userId, notInConversationIds)
+    fun listenConversations(userId: String): Flow<RemoteConversation> =
+        conversationApi.listenConversations(userId)
 
     suspend fun createConversation(conversation: Conversation, userId: String) {
         val data = conversation.toRemote(userId).toMap()

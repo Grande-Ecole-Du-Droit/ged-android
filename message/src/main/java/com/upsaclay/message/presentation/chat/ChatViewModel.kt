@@ -110,6 +110,7 @@ class ChatViewModel(
             messageRepository.getLastMessageFlow(conversation.id)
                 .filterNotNull()
                 .filter { it.senderId != user?.id }
+                .filter { it.seen.not() }
                 .collect {
                     messageRepository.updateSeenMessage(it)
                 }

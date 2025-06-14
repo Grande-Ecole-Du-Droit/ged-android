@@ -34,9 +34,6 @@ interface ConversationDao {
     @Upsert
     suspend fun upsertConversation(localConversation: LocalConversation)
 
-    @Delete
-    suspend fun deleteConversation(localConversation: LocalConversation)
-
     @Query("DELETE FROM $CONVERSATIONS_TABLE_NAME")
     suspend fun deleteConversations()
 }

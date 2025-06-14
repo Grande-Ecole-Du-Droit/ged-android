@@ -7,6 +7,6 @@ import com.upsaclay.message.data.model.MessageField
 
 fun CollectionReference.withOffsetTime(offsetTime: Timestamp?): Query {
     return offsetTime?.let {
-        whereGreaterThan(MessageField.TIMESTAMP, it)
+        whereGreaterThanOrEqualTo(MessageField.TIMESTAMP, it)
     } ?: this
 }

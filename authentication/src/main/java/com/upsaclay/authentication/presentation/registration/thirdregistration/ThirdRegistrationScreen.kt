@@ -74,6 +74,7 @@ fun ThirdRegistrationDestination(
         loading = uiState.loading,
         emailError = uiState.emailError,
         passwordError = uiState.passwordError,
+        errorMessage = uiState.errorMessage,
         snackbarHostState = snackbarHostState,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
@@ -89,6 +90,7 @@ private fun ThirdRegistrationScreen(
     loading: Boolean,
     @StringRes emailError: Int? = null,
     @StringRes passwordError: Int? = null,
+    @StringRes errorMessage: Int? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -125,6 +127,7 @@ private fun ThirdRegistrationScreen(
                     loading = loading,
                     emailError = emailError,
                     passwordError = passwordError,
+                    errorMessage = errorMessage,
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange
                 )
