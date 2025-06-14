@@ -22,7 +22,6 @@ internal class MessageApiImpl : MessageApi {
             .document(conversationId)
             .collection(MESSAGES_TABLE_NAME)
             .withOffsetTime(offsetTime)
-            .whereEqualTo(MessageField.RECIPIENT_ID, interlocutorId)
             .addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
                 error?.let {
                     close(it)
