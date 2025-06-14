@@ -1,7 +1,5 @@
 package com.upsaclay.message.data.repository
 
-import com.upsaclay.common.data.exceptions.mapNetworkException
-import com.upsaclay.common.domain.d
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.message.data.local.ConversationLocalDataSource
@@ -27,8 +25,7 @@ internal class ConversationRepositoryImpl(
 ) : ConversationRepository {
     private val interlocutors = mutableMapOf<String, User>()
 
-    override fun getConversationsFlow(): Flow<List<Conversation>> =
-        conversationLocalDataSource.getConversationsFlow()
+    override fun getConversationsFlow(): Flow<List<Conversation>> = conversationLocalDataSource.getConversationsFlow()
 
     override suspend fun getConversations(): List<Conversation> = conversationLocalDataSource.getConversations()
 
@@ -56,12 +53,7 @@ internal class ConversationRepositoryImpl(
 
     override suspend fun createConversation(conversation: Conversation, userId: String) {
         conversationLocalDataSource.upsertConversation(conversation)
-        mapNetworkException(
-            message = "Failed to create conversation",
-            block = {
-                conversationRemoteDataSource.createConversation(conversation, userId)
-            }
-        )
+        conversationRemoteDataSource.createConversation(conversation, userId)
     }
 
     override suspend fun updateLocalConversation(conversation: Conversation) {
@@ -75,12 +67,7 @@ internal class ConversationRepositoryImpl(
     override suspend fun deleteConversation(conversation: Conversation, userId: String) {
         val deleteTime = LocalDateTime.now(ZoneOffset.UTC)
         conversationLocalDataSource.updateConversation(conversation.copy(deleteTime = deleteTime))
-        mapNetworkException(
-            message = "Failed to delete conversation",
-            block = {
-                conversationRemoteDataSource.updateConversationDeleteTime(conversation.id, userId, deleteTime)
-            }
-        )
+        conversationRemoteDataSource.updateConversationDeleteTime(conversation.id, userId, deleteTime)
     }
 
     override suspend fun deleteLocalConversations() {

@@ -9,10 +9,10 @@ import com.upsaclay.common.domain.entity.TooManyRequestException
 import retrofit2.Response
 import java.net.UnknownHostException
 
-suspend fun <T> Any.mapNetworkException(
+suspend fun <T> Any.mapFirebaseException(
     block: suspend () -> T,
     message: String? = null,
-    handleSpecificException: (Exception) -> Exception = { it }
+    specificMap: (Exception) -> Exception = { it }
 ): T {
     return try {
         block()
@@ -24,19 +24,19 @@ suspend fun <T> Any.mapNetworkException(
         throw TooManyRequestException()
     } catch (e: Exception) {
         e("$message: ${e.message}", e)
-        throw handleSpecificException(e)
+        throw specificMap(e)
     }
 }
 
 suspend fun <T> mapServerResponseException(
     block: suspend () -> Response<T>,
-    specificHandle: ((Response<T>) -> T?)? = null
+    specificMap: ((Response<T>) -> T?)? = null
 ): T? {
     val response = block()
     return if (response.isSuccessful) {
         response.body()
     } else {
-        specificHandle?.let {
+        specificMap?.let {
             it(response)
         } ?: run {
             val errorMessage = formatHttpError(response)

@@ -1,6 +1,5 @@
 package com.upsaclay.common.data.repository
 
-import com.upsaclay.common.data.exceptions.mapNetworkException
 import com.upsaclay.common.data.local.UserLocalDataSource
 import com.upsaclay.common.data.remote.UserRemoteDataSource
 import com.upsaclay.common.domain.entity.User
@@ -26,39 +25,19 @@ internal class UserRepositoryImpl(
     override val currentUser: User?
         get() = _user.value
 
-    override suspend fun getUsers(): List<User> {
-        return mapNetworkException(
-            message = "Failed to get users",
-            block = { userRemoteDataSource.getUsers() },
-        )
-    }
+    override suspend fun getUsers(): List<User> = userRemoteDataSource.getUsers()
 
-    override suspend fun getUser(userId: String): User? {
-        return mapNetworkException(
-            message = "Failed to get user",
-            block = { userRemoteDataSource.getUser(userId) },
-        )
-    }
+    override suspend fun getUser(userId: String): User? = userRemoteDataSource.getUser(userId)
 
     override suspend fun getCurrentUser(): User? = userLocalDataSource.getUser()
 
     override fun getUserFlow(userId: String): Flow<User?> = userRemoteDataSource.getUserFlow(userId)
 
-    override suspend fun getUserWithEmail(userEmail: String): User? {
-        return mapNetworkException(
-            message = "Failed to get user with email",
-            block = { userRemoteDataSource.getUserFirestoreWithEmail(userEmail) }
-        )
-    }
+    override suspend fun getUserWithEmail(userEmail: String): User? = userRemoteDataSource.getUserFirestoreWithEmail(userEmail)
 
     override suspend fun createUser(user: User) {
-        mapNetworkException(
-            message = "Failed to create user",
-            block = {
-                userRemoteDataSource.createUser(user)
-                userLocalDataSource.storeUser(user)
-            }
-        )
+        userRemoteDataSource.createUser(user)
+        userLocalDataSource.storeUser(user)
     }
 
     override suspend fun storeUser(user: User) {
@@ -70,28 +49,14 @@ internal class UserRepositoryImpl(
     }
 
     override suspend fun updateProfilePictureFileName(userId: String, fileName: String) {
-        mapNetworkException(
-            message = "Failed to update profile picture file name",
-            block = {
-                userRemoteDataSource.updateProfilePictureFileName(userId, fileName)
-                userLocalDataSource.updateProfilePictureFileName(fileName)
-            }
-        )
+        userRemoteDataSource.updateProfilePictureFileName(userId, fileName)
+        userLocalDataSource.updateProfilePictureFileName(fileName)
     }
 
     override suspend fun deleteProfilePictureFileName(userId: String) {
-        mapNetworkException(
-            block = {
-                userRemoteDataSource.deleteProfilePictureFileName(userId)
-                userLocalDataSource.updateProfilePictureFileName(null)
-            }
-        )
+        userRemoteDataSource.deleteProfilePictureFileName(userId)
+        userLocalDataSource.updateProfilePictureFileName(null)
     }
 
-    override suspend fun isUserExist(email: String): Boolean {
-        return mapNetworkException(
-            message = "Failed to check if user exists",
-            block = { userRemoteDataSource.isUserExist(email) }
-        )
-    }
+    override suspend fun isUserExist(email: String): Boolean = userRemoteDataSource.isUserExist(email)
 }

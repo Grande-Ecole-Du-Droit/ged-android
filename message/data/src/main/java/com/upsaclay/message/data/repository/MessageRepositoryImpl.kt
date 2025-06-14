@@ -1,8 +1,6 @@
 package com.upsaclay.message.data.repository
 
 import androidx.paging.PagingData
-import com.upsaclay.common.data.exceptions.mapNetworkException
-import com.upsaclay.common.domain.d
 import com.upsaclay.message.data.local.MessageLocalDataSource
 import com.upsaclay.message.data.remote.MessageRemoteDataSource
 import com.upsaclay.message.domain.entity.Message
@@ -28,32 +26,19 @@ internal class MessageRepositoryImpl(
 
     override suspend fun createMessage(message: Message) {
         messageLocalDataSource.insertMessage(message)
-        mapNetworkException(
-            message = "Failed to create message",
-            block = {
-                messageRemoteDataSource.createMessage(message)
-            }
-        )
+        messageRemoteDataSource.createMessage(message)
     }
 
     override suspend fun updateSeenMessages(conversationId: String, userId: String) {
-        mapNetworkException(
-            message = "Failed to update seen messages",
-            block = {
-                messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId).forEach { message ->
-                    messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
-                }
-            }
-        )
+        messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId).forEach { message ->
+            messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
+        }
         messageLocalDataSource.updateSeenMessages(conversationId, userId)
     }
 
     override suspend fun updateSeenMessage(message: Message) {
         messageLocalDataSource.updateMessage(message.copy(seen = true))
-        mapNetworkException(
-            message = "Failed to update seen message",
-            block = { messageRemoteDataSource.updateSeenMessage(message.copy(seen = true)) }
-        )
+        messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
     }
 
     override suspend fun updateLocalMessage(message: Message) {
