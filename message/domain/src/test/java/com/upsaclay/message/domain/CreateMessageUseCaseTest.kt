@@ -17,7 +17,7 @@ class CreateMessageUseCaseTest {
 
     @Before
     fun setUp() {
-        coEvery { messageRepository.upsertLocalMessage(any()) } returns Unit
+        coEvery { messageRepository.updateLocalMessage(any()) } returns Unit
         coEvery { messageRepository.createMessage(any()) } returns Unit
 
         useCase = CreateMessageUseCase(messageRepository)

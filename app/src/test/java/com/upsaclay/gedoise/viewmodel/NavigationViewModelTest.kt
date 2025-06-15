@@ -39,6 +39,7 @@ class NavigationViewModelTest {
         every { authenticationRepository.isAuthenticated } returns true
         every { routeRepository.currentRoute } returns null
         every { routeRepository.setCurrentRoute(any()) } returns Unit
+        every { getUnreadConversationsCountUseCase() } returns flowOf(0)
 
         navigationViewModel = NavigationViewModel(
             getUnreadConversationsCountUseCase = getUnreadConversationsCountUseCase,

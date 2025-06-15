@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.upsaclay.authentication.R
-import com.upsaclay.authentication.domain.entity.exception.UserDisabledException
 import com.upsaclay.authentication.domain.usecase.RegisterUseCase
 import com.upsaclay.common.domain.entity.DuplicateDataException
 import com.upsaclay.common.domain.entity.ForbiddenException

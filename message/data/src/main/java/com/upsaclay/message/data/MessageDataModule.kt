@@ -13,7 +13,6 @@ import com.upsaclay.message.data.remote.api.MessageApiImpl
 import com.upsaclay.message.data.repository.ConversationMessageRepositoryImpl
 import com.upsaclay.message.data.repository.ConversationRepositoryImpl
 import com.upsaclay.message.data.repository.MessageRepositoryImpl
-import com.upsaclay.message.domain.entity.ConversationMessage
 import com.upsaclay.message.domain.repository.ConversationMessageRepository
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository

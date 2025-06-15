@@ -22,6 +22,8 @@ class ListenDataUseCaseTest {
     fun setUp() {
         every { listenRemoteMessagesUseCase.start() } returns Unit
         every { listenRemoteMessagesUseCase.stop() } returns Unit
+        every { listenRemoteConversationsUseCase.start() } returns Unit
+        every { listenRemoteConversationsUseCase.stop() } returns Unit
         every { listenRemoteUserUseCase.start() } returns Unit
         every { listenRemoteUserUseCase.stop() } returns Unit
 

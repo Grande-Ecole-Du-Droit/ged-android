@@ -1,8 +1,8 @@
 package com.upsaclay.gedoise.usecase
 
-import com.upsaclay.authentication.domain.repository.AuthenticationRepository
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.userFixture
+import com.upsaclay.common.domain.userFixture2
 import com.upsaclay.gedoise.domain.usecase.ListenRemoteUserUseCase
 import io.mockk.coVerify
 import io.mockk.every
@@ -11,12 +11,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertFalse
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ListenRemoteUserUseCaseTest {
-    private val authenticationRepository: AuthenticationRepository = mockk()
     private val userRepository: UserRepository = mockk()
 
     private lateinit var useCase: ListenRemoteUserUseCase
@@ -25,31 +26,22 @@ class ListenRemoteUserUseCaseTest {
     @Before
     fun setup() {
         every { userRepository.user } returns flowOf(userFixture)
-        every { userRepository.getUserFlow(any()) } returns flowOf(userFixture)
+        every { userRepository.getUserFlow(any()) } returns flowOf(userFixture2)
 
         useCase = ListenRemoteUserUseCase(
-            authenticationRepository = authenticationRepository,
             userRepository = userRepository,
             scope = testScope
         )
     }
 
     @Test
-    fun start_should_synchronize_local_user_with_remote() {
+    fun start_should_update_local_user_when_different_from_remote() {
         // When
         useCase.start()
+        testScope.advanceUntilIdle()
 
         // Then
-        coVerify { userRepository.storeUser(userFixture) }
-    }
-
-    @Test
-    fun start_should_logout_when_remote_user_is_null() {
-        // When
-        useCase.start()
-
-        // Then
-        coVerify { authenticationRepository.logout() }
+        coVerify { userRepository.storeUser(userFixture2) }
     }
 
     @Test
@@ -59,6 +51,6 @@ class ListenRemoteUserUseCaseTest {
         useCase.stop()
 
         // Then
-        assert(useCase.job!!.isCancelled)
+        assertFalse(useCase.job!!.isActive)
     }
 }
