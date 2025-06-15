@@ -29,6 +29,30 @@ class CreateConversationViewModel(
         fetchUsers()
     }
 
+    private fun fetchUsers() {
+        _uiState.update {
+            it.copy(loading = true)
+        }
+
+        viewModelScope.launch {
+            try {
+                userRepository.getUsers()
+                    .filter { it.id != userRepository.currentUser?.id }
+                    .also { users ->
+                        _uiState.update {
+                            it.copy(users = users, loading = false)
+                        }
+                        defaultUsers = users
+                    }
+            } catch (e: Exception) {
+                _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
+                _uiState.update {
+                    it.copy(loading = false)
+                }
+            }
+        }
+    }
+
     suspend fun getConversation(interlocutor: User): Conversation? {
         return try {
             getConversationUseCase(interlocutor)
@@ -59,30 +83,6 @@ class CreateConversationViewModel(
         }
     }
 
-    private fun fetchUsers() {
-        _uiState.update {
-            it.copy(loading = true)
-        }
-
-        viewModelScope.launch {
-            try {
-                userRepository.getUsers()
-                    .filter { it.id != userRepository.currentUser?.id }
-                    .also { users ->
-                        _uiState.update {
-                            it.copy(users = users, loading = false)
-                        }
-                        defaultUsers = users
-                    }
-            } catch (e: Exception) {
-                _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
-                _uiState.update {
-                    it.copy(loading = false)
-                }
-            }
-        }
-    }
-
     private fun getFilteredUsers(query: String): List<User> {
         return query.takeIf { it.isNotBlank() }?.let {
             defaultUsers.filter { user ->
@@ -95,7 +95,7 @@ class CreateConversationViewModel(
     private fun mapErrorMessage(e: Throwable): Int {
         return mapNetworkErrorMessage(e) {
             when (e) {
-                is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
+                is IllegalArgumentException -> com.upsaclay.common.R.string.current_user_not_found
                 else -> com.upsaclay.common.R.string.unknown_error
             }
         }

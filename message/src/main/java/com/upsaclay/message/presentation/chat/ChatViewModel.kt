@@ -14,14 +14,12 @@ import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -80,7 +78,7 @@ class ChatViewModel(
             _uiState.update { it.copy(text = "") }
         } catch (_: IllegalArgumentException) {
             viewModelScope.launch {
-                _event.emit(SingleUiEvent.Error(com.upsaclay.common.R.string.user_not_found))
+                _event.emit(SingleUiEvent.Error(com.upsaclay.common.R.string.current_user_not_found))
             }
         }
     }

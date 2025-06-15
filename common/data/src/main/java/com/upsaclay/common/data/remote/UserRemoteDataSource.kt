@@ -5,7 +5,7 @@ import com.upsaclay.common.data.exceptions.mapServerResponseException
 import com.upsaclay.common.data.exceptions.parseOracleException
 import com.upsaclay.common.data.formatHttpError
 import com.upsaclay.common.data.remote.api.UserFirestoreApi
-import com.upsaclay.common.data.remote.api.UserRetrofitApi
+import com.upsaclay.common.data.remote.api.UserOracleApi
 import com.upsaclay.common.data.toFirestoreUser
 import com.upsaclay.common.data.toOracleUser
 import com.upsaclay.common.data.toUser
@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 
 internal class UserRemoteDataSource(
-    private val userRetrofitApi: UserRetrofitApi,
+    private val userOracleApi: UserOracleApi,
     private val userFirestoreApi: UserFirestoreApi
 ) {
     suspend fun getUser(userId: String): User? = withContext(Dispatchers.IO) {
@@ -54,7 +54,7 @@ internal class UserRemoteDataSource(
     suspend fun updateProfilePictureFileName(userId: String, fileName: String) {
         withContext(Dispatchers.IO) {
             mapServerResponseException(
-                block = { userRetrofitApi.updateProfilePictureFileName(userId, fileName) }
+                block = { userOracleApi.updateProfilePictureFileName(userId, fileName) }
             )
             mapFirebaseException(
                 block = { userFirestoreApi.updateProfilePictureFileName(userId, fileName) }
@@ -65,7 +65,7 @@ internal class UserRemoteDataSource(
     suspend fun deleteProfilePictureFileName(userId: String) {
         withContext(Dispatchers.IO) {
             mapServerResponseException(
-                block = { userRetrofitApi.deleteProfilePictureFileName(userId) }
+                block = { userOracleApi.deleteProfilePictureFileName(userId) }
             )
             mapFirebaseException(
                 block = { userFirestoreApi.updateProfilePictureFileName(userId, null) }
@@ -88,7 +88,7 @@ internal class UserRemoteDataSource(
 
     private suspend fun createUserWithOracle(user: User) {
         mapServerResponseException(
-            block = { userRetrofitApi.createUser(user.toOracleUser()) },
+            block = { userOracleApi.createUser(user.toOracleUser()) },
             specificMap = {
                 val errorMessage = formatHttpError(it)
                 if (it.code() == HttpURLConnection.HTTP_FORBIDDEN) {

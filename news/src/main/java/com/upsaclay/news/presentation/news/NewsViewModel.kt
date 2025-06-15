@@ -89,6 +89,7 @@ class NewsViewModel(
         viewModelScope.launch {
             try {
                 deleteAnnouncementUseCase(announcement)
+                _event.emit(SingleUiEvent.Success(R.string.announcement_deleted))
             } catch (e: Exception) {
                 _event.emit(SingleUiEvent.Error(mapNetworkErrorMessage(e)))
             }

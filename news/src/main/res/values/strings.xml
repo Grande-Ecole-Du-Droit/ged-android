@@ -16,6 +16,7 @@
     <string name="content_field_entry">Contenu</string>
 
     <string name="announcement_refresh_error">Impossible de rafraîchir les annonces</string>
+    <string name="announcement_deleted">Annonce supprimé</string>
 
     <string name="news_screen_empty_announcement_text_tag">News Screen Empty Announcement Text Tag</string>
     <string name="news_screen_recent_announcements_tag">News Screen Recent Announcement Tag</string>

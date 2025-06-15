@@ -185,10 +185,11 @@ private fun UsersFeed(
             }
         } else {
             item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(id = com.upsaclay.common.R.string.user_not_found),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = MaterialTheme.spacing.medium),
+                    text = stringResource(id = com.upsaclay.common.R.string.users_not_found),
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.previewText
                 )

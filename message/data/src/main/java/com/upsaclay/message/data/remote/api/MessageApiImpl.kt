@@ -28,9 +28,7 @@ internal class MessageApiImpl : MessageApi {
                     return@addSnapshotListener
                 }
 
-                snapshot?.documents
-                    ?.filterNot { it.metadata.isFromCache || it.metadata.hasPendingWrites() }
-                    ?.forEach { document ->
+                snapshot?.documents?.forEach { document ->
                     document.toObject(RemoteMessage::class.java)?.let {
                         trySend(it)
                     }

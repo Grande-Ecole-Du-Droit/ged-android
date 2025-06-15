@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -85,7 +86,8 @@ fun SentMessageItem(
             Spacer(modifier = Modifier.weight(0.2f))
 
             Row(
-                modifier = Modifier.weight(0.8f, fill = false)
+                modifier = Modifier.weight(0.8f, fill = false),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 MessageText(
                     text = message.content,
@@ -102,6 +104,19 @@ fun SentMessageItem(
                         imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = stringResource(id = R.string.send_message_icon_description),
                         tint = iconColor,
+                        modifier = Modifier
+                            .padding(start = MaterialTheme.spacing.small)
+                            .size(20.dp)
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = message.state == MessageState.ERROR
+                ) {
+                    Icon(
+                        painter = painterResource(com.upsaclay.common.R.drawable.ic_error),
+                        contentDescription = stringResource(id = R.string.send_message_icon_description),
+                        tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.small)
                             .size(20.dp)

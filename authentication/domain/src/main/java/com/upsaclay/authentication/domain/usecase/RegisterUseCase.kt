@@ -30,7 +30,13 @@ class RegisterUseCase(
         }
 
         val userId = authenticationRepository.registerWithEmailAndPassword(email, password)
-        val user = User(userId, email, firstName, lastName, schoolLevel)
+        val user = User(
+            id = userId,
+            firstName = firstName,
+            lastName = lastName,
+            email = email,
+            schoolLevel = schoolLevel
+        )
         userRepository.createUser(user)
         authenticationRepository.setAuthenticated(true)
     }

@@ -92,7 +92,6 @@ val appModule = module {
     }
     single {
         ListenRemoteUserUseCase(
-            authenticationRepository = get(),
             userRepository = get(),
             scope = get(BACKGROUND_SCOPE)
         )

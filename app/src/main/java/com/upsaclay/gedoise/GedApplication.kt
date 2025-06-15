@@ -1,11 +1,17 @@
 package com.upsaclay.gedoise
 
 import android.app.Application
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.MemoryCacheSettings
+import com.google.firebase.firestore.MemoryLruGcSettings
+import com.google.firebase.firestore.PersistentCacheSettings
 import com.upsaclay.authentication.authenticationModule
 import com.upsaclay.authentication.data.authenticationDataModule
 import com.upsaclay.authentication.domain.authenticationDomainModule
 import com.upsaclay.common.data.commonDataModule
 import com.upsaclay.common.domain.commonDomainModule
+import com.upsaclay.common.domain.w
 import com.upsaclay.gedoise.domain.usecase.FcmTokenUseCase
 import com.upsaclay.message.data.messageDataModule
 import com.upsaclay.message.domain.messageDomainModule
@@ -23,6 +29,19 @@ import timber.log.Timber.Forest.plant
 class GedApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        val db = FirebaseFirestore.getInstance()
+        db.clearPersistence()
+
+        val localCacheSettings = PersistentCacheSettings.newBuilder()
+            .setSizeBytes(0)
+            .build()
+
+        val firestoreSettings = FirebaseFirestoreSettings.Builder()
+            .setLocalCacheSettings(localCacheSettings)
+            .build()
+
+        db.firestoreSettings = firestoreSettings
+
         startKoin {
             androidLogger()
             androidContext(this@GedApplication)

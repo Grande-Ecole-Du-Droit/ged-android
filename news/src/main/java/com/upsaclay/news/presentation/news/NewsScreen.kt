@@ -1,7 +1,9 @@
 package com.upsaclay.news.presentation.news
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -18,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -30,6 +33,8 @@ import com.upsaclay.common.presentation.components.SensibleActionDialog
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.news.R
+import com.upsaclay.news.domain.announcementFixture
+import com.upsaclay.news.domain.announcementsFixture
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.presentation.announcement.components.CreateAnnouncementFAB
 import kotlinx.coroutines.launch

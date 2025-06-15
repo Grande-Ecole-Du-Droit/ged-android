@@ -11,11 +11,10 @@ class DeleteAnnouncementUseCase(
     private val connectivityObserver: ConnectivityObserver
 ) {
     suspend operator fun invoke(announcement: Announcement) {
-        if (!connectivityObserver.isConnected) {
-            throw NoInternetConnectionException()
-        }
-
         if (announcement.state == AnnouncementState.PUBLISHED) {
+            if (!connectivityObserver.isConnected) {
+                throw NoInternetConnectionException()
+            }
             announcementRepository.deleteAnnouncement(announcement)
         } else {
             announcementRepository.deleteLocalAnnouncement(announcement)
