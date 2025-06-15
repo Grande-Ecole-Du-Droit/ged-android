@@ -4,8 +4,6 @@ import com.upsaclay.common.domain.ConnectivityObserver
 import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.news.domain.repository.AnnouncementRepository
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 private const val DEBOUNCE_INTERVAL = 10000L
 

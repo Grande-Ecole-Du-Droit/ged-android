@@ -1,6 +1,5 @@
 package com.upsaclay.gedoise.domain.usecase
 
-import com.upsaclay.authentication.domain.repository.AuthenticationRepository
 import com.upsaclay.common.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

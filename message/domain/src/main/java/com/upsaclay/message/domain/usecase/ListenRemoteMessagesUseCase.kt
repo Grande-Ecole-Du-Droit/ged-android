@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.sql.Date
 import java.time.LocalDateTime
 
 class ListenRemoteMessagesUseCase(

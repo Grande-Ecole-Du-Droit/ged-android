@@ -3,11 +3,11 @@ package com.upsaclay.common.data.remote
 import com.google.gson.annotations.SerializedName
 import com.upsaclay.common.data.UserField.Oracle.USER_EMAIL
 import com.upsaclay.common.data.UserField.Oracle.USER_FIRST_NAME
+import com.upsaclay.common.data.UserField.Oracle.USER_ID
 import com.upsaclay.common.data.UserField.Oracle.USER_IS_MEMBER
 import com.upsaclay.common.data.UserField.Oracle.USER_LAST_NAME
 import com.upsaclay.common.data.UserField.Oracle.USER_PROFILE_PICTURE_FILE_NAME
 import com.upsaclay.common.data.UserField.Oracle.USER_SCHOOL_LEVEL
-import com.upsaclay.common.data.UserField.Oracle.USER_ID
 
 internal data class OracleUser(
     @SerializedName(USER_ID)
