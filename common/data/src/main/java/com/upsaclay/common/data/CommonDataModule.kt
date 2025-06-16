@@ -56,7 +56,7 @@ val commonDataModule = module {
 
     single<Retrofit>(GED_SERVER_QUALIFIER) {
         Retrofit.Builder()
-            .baseUrl("http://192.168.1.67:3000")
+            .baseUrl(BuildConfig.SERVER_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

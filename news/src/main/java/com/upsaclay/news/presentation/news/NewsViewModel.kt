@@ -13,6 +13,7 @@ import com.upsaclay.news.domain.repository.AnnouncementRepository
 import com.upsaclay.news.domain.usecase.DeleteAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.RefreshAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.ResendAnnouncementUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -58,12 +59,13 @@ class NewsViewModel(
     }
 
     fun refreshAnnouncements() {
-        _uiState.update { it.copy(refreshing = true) }
         viewModelScope.launch {
+            _uiState.update { it.copy(refreshing = true) }
             try {
                 refreshAnnouncementUseCase()
                 _uiState.update { it.copy(refreshing = false) }
             } catch (e: Exception) {
+                delay(500)
                 _uiState.update { it.copy(refreshing = false) }
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             }
