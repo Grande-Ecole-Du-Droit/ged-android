@@ -34,7 +34,7 @@ class DeleteAnnouncementUseCaseTest {
     @Test
     fun deleteAnnouncement_should_delete_remote_announcement_when_published() = runTest {
         // Given
-        val announcement = announcementFixture.copy(state = AnnouncementState.PUBLISHED)
+        val announcement = longAnnouncementFixture.copy(state = AnnouncementState.PUBLISHED)
 
         // When
         useCase(announcement)
@@ -46,7 +46,7 @@ class DeleteAnnouncementUseCaseTest {
     @Test
     fun deleteAnnouncement_should_delete_local_announcement_when_not_published() = runTest {
         // Given
-        val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
+        val announcement = longAnnouncementFixture.copy(state = AnnouncementState.DRAFT)
 
         // When
         useCase(announcement)
@@ -61,6 +61,6 @@ class DeleteAnnouncementUseCaseTest {
         every { connectivityObserver.isConnected } returns false
 
         // When
-        useCase(announcementFixture)
+        useCase(longAnnouncementFixture)
     }
 }

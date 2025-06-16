@@ -32,10 +32,10 @@ class UpdateAnnouncementUseCaseTest {
     @Test
     fun updateAnnouncement_should_update_announcement() = runTest {
         // When
-        useCase(announcementFixture)
+        useCase(longAnnouncementFixture)
 
         // Then
-        coVerify { announcementRepository.updateAnnouncement(announcementFixture) }
+        coVerify { announcementRepository.updateAnnouncement(longAnnouncementFixture) }
     }
 
     @Test(expected = NoInternetConnectionException::class)
@@ -44,6 +44,6 @@ class UpdateAnnouncementUseCaseTest {
         every { connectivityObserver.isConnected } returns false
 
         // When
-        useCase(announcementFixture)
+        useCase(longAnnouncementFixture)
     }
 }

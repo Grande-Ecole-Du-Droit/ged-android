@@ -6,7 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.domain.userFixture2
-import com.upsaclay.news.domain.announcementFixture
+import com.upsaclay.news.domain.longAnnouncementFixture
 import com.upsaclay.news.presentation.announcement.readannouncement.ReadAnnouncementDestination
 import com.upsaclay.news.presentation.announcement.readannouncement.ReadAnnouncementViewModel
 import io.mockk.every
@@ -23,7 +23,7 @@ class ReadAnnouncementScreenTest {
 
     private val readAnnouncementViewModel: ReadAnnouncementViewModel = mockk()
     private val uiState = ReadAnnouncementViewModel.ReadAnnouncementUiState(
-        announcement = announcementFixture,
+        announcement = longAnnouncementFixture,
         user = userFixture,
         loading = false
     )
@@ -39,7 +39,7 @@ class ReadAnnouncementScreenTest {
         // When
         rule.setContent {
             ReadAnnouncementDestination(
-                announcementId = announcementFixture.id,
+                announcementId = longAnnouncementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
                 viewModel = readAnnouncementViewModel
@@ -55,7 +55,7 @@ class ReadAnnouncementScreenTest {
         // When
         rule.setContent {
              ReadAnnouncementDestination(
-                announcementId = announcementFixture.id,
+                announcementId = longAnnouncementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
                 viewModel = readAnnouncementViewModel
@@ -70,13 +70,13 @@ class ReadAnnouncementScreenTest {
     fun option_button_should_not_be_displayed_when_user_is_member_and_not_author() {
         // Given
         every { readAnnouncementViewModel.uiState } returns MutableStateFlow(
-            uiState.copy(announcement = announcementFixture.copy(author = userFixture2))
+            uiState.copy(announcement = longAnnouncementFixture.copy(author = userFixture2))
         )
 
         // When
         rule.setContent {
              ReadAnnouncementDestination(
-                announcementId = announcementFixture.id,
+                announcementId = longAnnouncementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
                 viewModel = readAnnouncementViewModel
@@ -92,7 +92,7 @@ class ReadAnnouncementScreenTest {
         // When
         rule.setContent {
              ReadAnnouncementDestination(
-                announcementId = announcementFixture.id,
+                announcementId = longAnnouncementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
                 viewModel = readAnnouncementViewModel
@@ -111,7 +111,7 @@ class ReadAnnouncementScreenTest {
         // When
         rule.setContent {
              ReadAnnouncementDestination(
-                announcementId = announcementFixture.id,
+                announcementId = longAnnouncementFixture.id,
                 onBackClick = {},
                 onEditClick = {},
                 viewModel = readAnnouncementViewModel

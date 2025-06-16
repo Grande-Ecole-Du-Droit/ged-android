@@ -1,6 +1,6 @@
 package com.upsaclay.news
 
-import com.upsaclay.news.domain.announcementFixture
+import com.upsaclay.news.domain.longAnnouncementFixture
 import com.upsaclay.news.domain.usecase.UpdateAnnouncementUseCase
 import com.upsaclay.news.presentation.announcement.editannouncement.EditAnnouncementViewModel
 import io.mockk.coEvery
@@ -30,7 +30,7 @@ class EditAnnouncementViewModelTest {
         coEvery { updateAnnouncementUseCase(any()) } returns Unit
 
         editAnnouncementViewModel = EditAnnouncementViewModel(
-            announcement = announcementFixture,
+            announcement = longAnnouncementFixture,
             updateAnnouncementUseCase = updateAnnouncementUseCase
         )
     }
@@ -82,8 +82,8 @@ class EditAnnouncementViewModelTest {
     @Test
     fun updateAnnouncement_should_not_update_when_title_and_content_are_same() {
         // Given
-        editAnnouncementViewModel.onTitleChange(announcementFixture.title!!)
-        editAnnouncementViewModel.onContentChange(announcementFixture.content)
+        editAnnouncementViewModel.onTitleChange(longAnnouncementFixture.title!!)
+        editAnnouncementViewModel.onContentChange(longAnnouncementFixture.content)
 
         // When
         editAnnouncementViewModel.updateAnnouncement()
@@ -95,8 +95,8 @@ class EditAnnouncementViewModelTest {
     @Test
     fun announcement_should_be_trim_when_updated() {
         // Given
-        val titleWithSpaces = "  ${announcementFixture.title}  "
-        val contentWithSpaces = "  ${announcementFixture.content}  "
+        val titleWithSpaces = "  ${longAnnouncementFixture.title}  "
+        val contentWithSpaces = "  ${longAnnouncementFixture.content}  "
         editAnnouncementViewModel.onTitleChange(titleWithSpaces)
         editAnnouncementViewModel.onContentChange(contentWithSpaces)
 
@@ -106,7 +106,7 @@ class EditAnnouncementViewModelTest {
         // Then
         coVerify {
             updateAnnouncementUseCase(
-                announcementFixture.copy(
+                longAnnouncementFixture.copy(
                     title = titleWithSpaces.trim(),
                     content = contentWithSpaces.trim())
             )

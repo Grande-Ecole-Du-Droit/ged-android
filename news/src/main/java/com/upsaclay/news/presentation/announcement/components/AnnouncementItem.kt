@@ -29,7 +29,7 @@ import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
 import com.upsaclay.common.utils.Phones
-import com.upsaclay.news.domain.announcementFixture
+import com.upsaclay.news.domain.longAnnouncementFixture
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.domain.entity.AnnouncementState
 
@@ -220,7 +220,7 @@ private fun FullAnnouncementHeaderPreview() {
     GedoiseTheme {
         Surface {
             AnnouncementHeader(
-                announcement = announcementFixture
+                announcement = longAnnouncementFixture
             )
         }
     }
@@ -235,7 +235,7 @@ private fun DefaultShortAnnouncementItemPreview() {
                 modifier = Modifier
                     .padding(MaterialTheme.spacing.smallMedium)
                     .clickable(onClick = {}),
-                announcement = announcementFixture,
+                announcement = longAnnouncementFixture,
                 elapsedTimeValue = "1 min"
             )
         }
@@ -248,7 +248,7 @@ private fun PublishingShortAnnouncementItemPreview() {
     GedoiseTheme {
         Surface {
             PublishingShortAnnouncementItem(
-                announcement = announcementFixture,
+                announcement = longAnnouncementFixture,
                 elapsedTimeValue = "1 min",
                 onClick = { }
             )
@@ -262,7 +262,7 @@ private fun ErrorShortAnnouncementItemPreview() {
     GedoiseTheme {
         Surface {
             ErrorShortAnnouncementItem(
-                announcement = announcementFixture.copy(state = AnnouncementState.ERROR),
+                announcement = longAnnouncementFixture.copy(state = AnnouncementState.ERROR),
                 elapsedTimeValue = "1 min",
                 onClick = { }
             )

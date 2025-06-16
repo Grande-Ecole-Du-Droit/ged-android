@@ -7,7 +7,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import com.upsaclay.common.domain.userFixture
-import com.upsaclay.news.domain.announcementFixture
+import com.upsaclay.news.domain.longAnnouncementFixture
 import com.upsaclay.news.domain.announcementsFixture
 import com.upsaclay.news.presentation.news.NewsDestination
 import com.upsaclay.news.presentation.news.NewsViewModel
@@ -98,7 +98,7 @@ class NewsScreenTest {
         rule.onAllNodesWithTag(rule.activity.getString(R.string.news_screen_recent_announcements_tag))
             .apply {
                 fetchSemanticsNodes().forEachIndexed { i, _ ->
-                    get(i).assert(hasText(announcementFixture.title!!))
+                    get(i).assert(hasText(longAnnouncementFixture.title!!))
                 }
             }
     }
@@ -106,8 +106,8 @@ class NewsScreenTest {
     @Test
     fun announcements_without_title_show_announcements_with_content() {
         // Given
-        val content = announcementFixture.content.take(100)
-        val announcement = announcementFixture.copy(title = null, content = content)
+        val content = longAnnouncementFixture.content.take(100)
+        val announcement = longAnnouncementFixture.copy(title = null, content = content)
         every { newsViewModel.uiState } returns MutableStateFlow(uiState.copy(announcements = listOf(announcement)))
 
         // When

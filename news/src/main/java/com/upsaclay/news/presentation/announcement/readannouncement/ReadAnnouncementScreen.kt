@@ -35,7 +35,7 @@ import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.news.R
-import com.upsaclay.news.domain.announcementFixture
+import com.upsaclay.news.domain.longAnnouncementFixture
 import com.upsaclay.news.domain.entity.Announcement
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -195,7 +195,7 @@ private fun NonEditableAnnouncementScreenPreview() {
         Surface {
             ReadAnnouncementScreen(
                 user = userFixture2,
-                announcement = announcementFixture,
+                announcement = longAnnouncementFixture,
                 snackbarHostState = SnackbarHostState(),
                 onDeleteAnnouncement = {},
                 onBackClick = {},
@@ -211,8 +211,8 @@ private fun EditableAnnouncementScreenPreview() {
     GedoiseTheme {
         Surface {
             ReadAnnouncementScreen(
-                user = announcementFixture.author,
-                announcement = announcementFixture,
+                user = longAnnouncementFixture.author,
+                announcement = longAnnouncementFixture,
                 snackbarHostState = SnackbarHostState(),
                 onDeleteAnnouncement = {},
                 onBackClick = {},
