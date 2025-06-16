@@ -1,10 +1,8 @@
 package com.upsaclay.news.presentation.news
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -27,10 +25,8 @@ import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.presentation.components.PullToRefreshComponent
 import com.upsaclay.common.presentation.components.SensibleActionDialog
 import com.upsaclay.common.presentation.theme.GedoiseTheme
-import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.news.R
-import com.upsaclay.news.domain.announcementsFixture
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.presentation.announcement.components.CreateAnnouncementFAB
 import kotlinx.coroutines.launch
@@ -65,14 +61,14 @@ fun NewsDestination(
 
     NewsScreen(
         user = uiState.user,
-        refreshing = uiState.refreshing,
         announcements = uiState.announcements,
+        refreshing = uiState.refreshing,
         bottomBar = bottomBar,
         snackbarHostState = snackbarHostState,
         onRefresh = viewModel::refreshAnnouncements,
         onAnnouncementClick = onAnnouncementClick,
         onCreateAnnouncementClick = onCreateAnnouncementClick,
-        onResendAnnouncementClick = viewModel::recreateAnnouncement,
+        onResendAnnouncementClick = viewModel::resendAnnouncement,
         onDeleteAnnouncementClick = viewModel::deleteAnnouncement,
         onProfilePictureClick = onProfilePictureClick
     )
@@ -81,8 +77,8 @@ fun NewsDestination(
 @Composable
 private fun NewsScreen(
     user: User?,
-    refreshing: Boolean,
     announcements: List<Announcement>?,
+    refreshing: Boolean,
     bottomBar: @Composable () -> Unit,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
     onRefresh: () -> Unit,
@@ -113,7 +109,7 @@ private fun NewsScreen(
     Scaffold(
         topBar = {
             NewsTopBar(
-                userProfilePictureUrl = user?.profilePictureFileName,
+                userProfilePictureUrl = user?.profilePictureUrl,
                 onProfilePictureClick = onProfilePictureClick
             )
         },
@@ -136,22 +132,18 @@ private fun NewsScreen(
                 onRefresh = onRefresh,
                 isRefreshing = refreshing
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.smallMedium)
-                ) {
-                    if (announcements == null) {
-                        return@Column
+                Column {
+                    announcements?.let {
+                        RecentAnnouncementSection(
+                            modifier = Modifier.weight(1f),
+                            announcements = it,
+                            onAnnouncementClick = onAnnouncementClick,
+                            onUncreatedAnnouncementClick = { announcement ->
+                                announcementClicked = announcement
+                                showAnnouncementBottomSheet = true
+                            }
+                        )
                     }
-
-                    RecentAnnouncementSection(
-                        modifier = Modifier.weight(1f),
-                        announcements = announcements,
-                        onAnnouncementClick = onAnnouncementClick,
-                        onNotCreateAnnouncementClick = {
-                            announcementClicked = it
-                            showAnnouncementBottomSheet = true
-                        }
-                    )
                 }
             }
 
@@ -168,8 +160,6 @@ private fun NewsScreen(
         }
     }
 }
-
-
 /*
  =====================================================================
                                 Preview
@@ -183,7 +173,7 @@ private fun NewsScreenPreview() {
         NewsScreen(
             user = userFixture,
             refreshing = false,
-            announcements = announcementsFixture,
+            announcements = null,
             bottomBar = {},
             onRefresh = {},
             onAnnouncementClick = {},

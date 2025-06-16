@@ -4,8 +4,8 @@ import com.upsaclay.common.data.extensions.toLocalDateTime
 import com.upsaclay.common.data.extensions.toTimestamp
 import com.upsaclay.common.domain.UrlUtils
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.extensions.toLocalDateTime
-import com.upsaclay.common.domain.extensions.toLong
+import com.upsaclay.common.domain.extensions.toEpochMilliUTC
+import com.upsaclay.common.domain.extensions.toLocalDateTimeUTC
 import com.upsaclay.message.data.local.model.LocalConversation
 import com.upsaclay.message.data.local.model.LocalConversationMessage
 import com.upsaclay.message.data.model.ConversationField
@@ -24,16 +24,17 @@ fun Conversation.toLocal() = LocalConversation(
     interlocutorEmail = interlocutor.email,
     interlocutorIsMember = interlocutor.isMember,
     interlocutorSchoolLevel = interlocutor.schoolLevel,
-    interlocutorProfilePictureFileName = UrlUtils.getFileNameFromUrl(interlocutor.profilePictureFileName),
-    createdAt = createdAt.toLong(),
+    interlocutorProfilePictureFileName = UrlUtils.getFileNameFromUrl(interlocutor.profilePictureUrl),
+    createdAt = createdAt.toEpochMilliUTC(),
     conversationState = state.name,
-    conversationDeleteTime = deleteTime?.toLong()
+    conversationDeleteTime = deleteTime?.toEpochMilliUTC()
 )
 
 internal fun Conversation.toRemote(userId: String) = RemoteConversation(
     conversationId = id,
     participants = listOf(userId, interlocutor.id),
-    createdAt = createdAt.toTimestamp()
+    createdAt = createdAt.toTimestamp(),
+    deleteTime = deleteTime?.let { mapOf(userId to it.toTimestamp()) }
 )
 
 fun LocalConversation.toConversation(): Conversation {
@@ -44,15 +45,15 @@ fun LocalConversation.toConversation(): Conversation {
         email = interlocutorEmail,
         schoolLevel = interlocutorSchoolLevel,
         isMember = interlocutorIsMember,
-        profilePictureFileName = UrlUtils.formatProfilePictureUrl(interlocutorProfilePictureFileName)
+        profilePictureUrl = UrlUtils.formatProfilePictureUrl(interlocutorProfilePictureFileName)
     )
 
     return Conversation(
         id = conversationId,
         interlocutor = interlocutor,
-        createdAt = createdAt.toLocalDateTime(),
+        createdAt = createdAt.toLocalDateTimeUTC(),
         state = ConversationState.valueOf(conversationState),
-        deleteTime = conversationDeleteTime?.toLocalDateTime()
+        deleteTime = conversationDeleteTime?.toLocalDateTimeUTC()
     )
 }
 
@@ -71,7 +72,7 @@ internal fun RemoteConversation.toMap(): Map<String, Any> {
     data[ConversationField.Remote.PARTICIPANTS] = participants
     data[ConversationField.CREATED_AT] = createdAt
     deleteTime?.let {
-        data[ConversationField.Remote.DELETE_TIME] = it
+        data[ConversationField.DELETE_TIME] = it
     }
     return data
 }
@@ -90,11 +91,11 @@ private fun LocalConversationMessage.toConversation() = Conversation(
         email = interlocutorEmail,
         schoolLevel = interlocutorSchoolLevel,
         isMember = interlocutorIsMember,
-        profilePictureFileName = UrlUtils.formatProfilePictureUrl(interlocutorProfilePictureFileName)
+        profilePictureUrl = UrlUtils.formatProfilePictureUrl(interlocutorProfilePictureFileName)
     ),
-    createdAt = createdAt.toLocalDateTime(),
+    createdAt = createdAt.toLocalDateTimeUTC(),
     state = ConversationState.valueOf(conversationState),
-    deleteTime = conversationDeleteTime?.toLocalDateTime()
+    deleteTime = conversationDeleteTime?.toLocalDateTimeUTC()
 )
 
 private fun LocalConversationMessage.toMessage() = Message(
@@ -103,7 +104,7 @@ private fun LocalConversationMessage.toMessage() = Message(
     recipientId = recipientId,
     conversationId = conversationId,
     content = content,
-    date = messageTimestamp.toLocalDateTime(),
+    date = messageTimestamp.toLocalDateTimeUTC(),
     seen = seen,
     state = MessageState.valueOf(messageState)
 )

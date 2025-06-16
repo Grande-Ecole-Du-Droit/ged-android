@@ -13,7 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -30,7 +29,6 @@ class FcmService: FirebaseMessagingService() {
         job?.cancel()
         job = scope.launch(Dispatchers.IO) {
             userRepository.user
-                .filterNotNull()
                 .take(1)
                 .collect {
                     fcmTokenUseCase.sendFcmToken(FcmToken(it.id, tokenValue))

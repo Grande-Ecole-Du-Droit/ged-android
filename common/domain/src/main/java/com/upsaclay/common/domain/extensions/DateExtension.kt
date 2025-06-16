@@ -4,11 +4,10 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-fun LocalDateTime.toInstant(): Instant = this.atZone(ZoneOffset.UTC).toInstant()
+private fun LocalDateTime.toInstantUTC(): Instant = this.atZone(ZoneOffset.UTC).toInstant()
 
-fun LocalDateTime.toLong(): Long = this.toInstant(ZoneOffset.UTC).toEpochMilli()
+fun LocalDateTime.toEpochMilliUTC(): Long = this.toInstantUTC().toEpochMilli()
 
-fun Instant.toLocalDateTime(): LocalDateTime = LocalDateTime.ofInstant(this, ZoneOffset.UTC)
+fun Instant.toLocalDateTimeUTC(): LocalDateTime = LocalDateTime.ofInstant(this, ZoneOffset.UTC)
 
-fun Long.toLocalDateTime(): LocalDateTime = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDateTime()
-
+fun Long.toLocalDateTimeUTC(): LocalDateTime = Instant.ofEpochMilli(this).toLocalDateTimeUTC()

@@ -36,9 +36,7 @@ fun NavController.navigateToChat(
     }
 }
 
-fun NavGraphBuilder.chatScreen(
-    onBackClick: () -> Unit
-) {
+fun NavGraphBuilder.chatScreen(onBackClick: () -> Unit) {
     composable<ChatRoute> { entry ->
         val conversation = entry.toRoute<ChatRoute>().conversationJson
             .let { MessageJsonConverter.toConversation(it) } ?: return@composable onBackClick()

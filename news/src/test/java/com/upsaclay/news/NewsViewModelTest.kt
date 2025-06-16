@@ -5,8 +5,8 @@ import com.upsaclay.common.domain.userFixture
 import com.upsaclay.news.domain.announcementsFixture
 import com.upsaclay.news.domain.repository.AnnouncementRepository
 import com.upsaclay.news.domain.usecase.DeleteAnnouncementUseCase
-import com.upsaclay.news.domain.usecase.RecreateAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.RefreshAnnouncementUseCase
+import com.upsaclay.news.domain.usecase.ResendAnnouncementUseCase
 import com.upsaclay.news.presentation.news.NewsViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -24,7 +24,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NewsViewModelTest {
-    private val recreateAnnouncementUseCase: RecreateAnnouncementUseCase = mockk()
+    private val resendAnnouncementUseCase: ResendAnnouncementUseCase = mockk()
     private val deleteAnnouncementUseCase: DeleteAnnouncementUseCase = mockk()
     private val refreshAnnouncementUseCase: RefreshAnnouncementUseCase = mockk()
 
@@ -40,13 +40,12 @@ class NewsViewModelTest {
 
         every { announcementRepository.announcements } returns flowOf(announcementsFixture)
         every { userRepository.user } returns MutableStateFlow(userFixture)
-        every { recreateAnnouncementUseCase(any()) } returns Unit
+        every { resendAnnouncementUseCase(any()) } returns Unit
         coEvery { refreshAnnouncementUseCase() } returns Unit
-        coEvery { refreshAnnouncementUseCase.refreshing } returns MutableStateFlow(false)
         coEvery { deleteAnnouncementUseCase(any()) } returns Unit
 
         newsViewModel = NewsViewModel(
-            recreateAnnouncementUseCase = recreateAnnouncementUseCase,
+            resendAnnouncementUseCase = resendAnnouncementUseCase,
             deleteAnnouncementUseCase = deleteAnnouncementUseCase,
             refreshAnnouncementUseCase = refreshAnnouncementUseCase,
             announcementRepository = announcementRepository,
@@ -64,15 +63,15 @@ class NewsViewModelTest {
     }
 
     @Test
-    fun retryAnnouncement_should_resend_announcementSending() = runTest {
+    fun resendAnnouncement_should_resend_announcement() = runTest {
         // Given
         val announcement = announcementsFixture.first()
 
         // When
-        newsViewModel.recreateAnnouncement(announcement)
+        newsViewModel.resendAnnouncement(announcement)
 
         // Then
-        coVerify { recreateAnnouncementUseCase(announcement) }
+        coVerify { resendAnnouncementUseCase(announcement) }
     }
 
     @Test

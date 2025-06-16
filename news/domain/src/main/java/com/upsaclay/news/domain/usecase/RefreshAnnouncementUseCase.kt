@@ -1,26 +1,28 @@
 package com.upsaclay.news.domain.usecase
 
+import com.upsaclay.common.domain.ConnectivityObserver
+import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.news.domain.repository.AnnouncementRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.delay
+
+private const val DEBOUNCE_INTERVAL = 10000L
 
 class RefreshAnnouncementUseCase(
-    private val announcementRepository: AnnouncementRepository
+    private val announcementRepository: AnnouncementRepository,
+    private val connectivityObserver: ConnectivityObserver
 ) {
-    private var lastRequestTime: Long = 0
-    private val debounceInterval = 3000L
-    private val _refreshing = MutableStateFlow(false)
-    val refreshing: Flow<Boolean> = _refreshing
+    internal var lastRequestTime: Long = 0
 
     suspend operator fun invoke() {
-        val currentTime = System.currentTimeMillis()
+        if (!connectivityObserver.isConnected) {
+            delay(1500)
+            throw NoInternetConnectionException()
+        }
 
-        if (currentTime - lastRequestTime > debounceInterval) {
-            _refreshing.emit(true)
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastRequestTime > DEBOUNCE_INTERVAL) {
             announcementRepository.refreshAnnouncements()
             lastRequestTime = currentTime
         }
-
-        _refreshing.emit(false)
     }
 }

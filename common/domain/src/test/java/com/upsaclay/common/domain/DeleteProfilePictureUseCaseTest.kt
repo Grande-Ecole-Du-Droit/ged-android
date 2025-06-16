@@ -18,7 +18,7 @@ class DeleteProfilePictureUseCaseTest {
 
     @Before
     fun setUp() {
-        coEvery { userRepository.deleteProfilePictureUrl(any()) } returns Unit
+        coEvery { userRepository.deleteProfilePictureFileName(any()) } returns Unit
         coEvery { imageRepository.deleteImage(any()) } returns Unit
 
         deleteProfilePictureUseCase = DeleteProfilePictureUseCase(
@@ -36,7 +36,7 @@ class DeleteProfilePictureUseCaseTest {
         deleteProfilePictureUseCase(userFixture.id, url)
 
         // Then
-        coVerify { userRepository.deleteProfilePictureUrl(userFixture.id) }
+        coVerify { userRepository.deleteProfilePictureFileName(userFixture.id) }
         coVerify { imageRepository.deleteImage(url.substringAfterLast("/")) }
     }
 }

@@ -23,7 +23,7 @@ data class LocalConversationMessage(
     @ColumnInfo(name = ConversationField.Local.CONVERSATION_STATE) val conversationState: String,
     @ColumnInfo(name = ConversationField.Local.CONVERSATION_DELETE_TIME) val conversationDeleteTime: Long?,
 
-    @ColumnInfo(name = MessageField.MESSAGE_ID) val messageId: Int,
+    @ColumnInfo(name = MessageField.MESSAGE_ID) val messageId: Long,
     @ColumnInfo(name = MessageField.SENDER_ID) val senderId: String,
     @ColumnInfo(name = MessageField.RECIPIENT_ID) val recipientId: String,
     @ColumnInfo(name = MessageField.CONTENT) val content: String,

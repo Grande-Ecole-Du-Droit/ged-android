@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -43,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -54,9 +54,9 @@ import androidx.compose.ui.unit.dp
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.black
+import com.upsaclay.common.presentation.theme.cursor
 import com.upsaclay.common.presentation.theme.inputBackground
 import com.upsaclay.common.presentation.theme.inputForeground
-import com.upsaclay.common.presentation.theme.cursor
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.presentation.theme.white
 import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
@@ -86,7 +86,8 @@ fun SentMessageItem(
             Spacer(modifier = Modifier.weight(0.2f))
 
             Row(
-                modifier = Modifier.weight(0.8f, fill = false)
+                modifier = Modifier.weight(0.8f, fill = false),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 MessageText(
                     text = message.content,
@@ -103,6 +104,19 @@ fun SentMessageItem(
                         imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = stringResource(id = R.string.send_message_icon_description),
                         tint = iconColor,
+                        modifier = Modifier
+                            .padding(start = MaterialTheme.spacing.small)
+                            .size(20.dp)
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = message.state == MessageState.ERROR
+                ) {
+                    Icon(
+                        painter = painterResource(com.upsaclay.common.R.drawable.ic_error),
+                        contentDescription = stringResource(id = R.string.send_message_icon_description),
+                        tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.small)
                             .size(20.dp)

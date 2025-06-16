@@ -46,6 +46,10 @@ class EditAnnouncementViewModel(
     }
 
     fun updateAnnouncement() {
+        if (!validateUpdate(_uiState.value.title, _uiState.value.content)) {
+            return
+        }
+
         val updatedAnnouncement = announcement.copy(
             title = _uiState.value.title.trim(),
             content = _uiState.value.content.trim()

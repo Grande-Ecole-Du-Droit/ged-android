@@ -3,15 +3,17 @@ package com.upsaclay.common.data.remote.api
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
-import com.upsaclay.common.data.UserField
+import com.upsaclay.common.data.UserField.Firestore.EMAIL
+import com.upsaclay.common.data.UserField.Firestore.PROFILE_PICTURE_FILE_NAME
 import com.upsaclay.common.data.remote.FirestoreUser
-import com.upsaclay.common.domain.e
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
 private const val TABLE_NAME = "users"
 
 internal class UserFirestoreApiImpl : UserFirestoreApi {
@@ -30,8 +32,8 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
         val listener = usersCollection.document(userId)
             .addSnapshotListener { snapshot, error ->
                 error?.let {
-                    e("Error getting firestore user", it)
-                    trySend(null)
+                    close(it)
+                    return@addSnapshotListener
                 }
 
                 snapshot?.let {
@@ -43,52 +45,45 @@ internal class UserFirestoreApiImpl : UserFirestoreApi {
         awaitClose { listener.remove() }
     }
 
-    override suspend fun getUserWithEmail(userEmail: String): FirestoreUser? = suspendCoroutine { continuation ->
-        usersCollection.whereEqualTo(UserField.EMAIL, userEmail)
+    override suspend fun getUserWithEmail(userEmail: String): FirestoreUser? =
+        usersCollection.whereEqualTo(EMAIL, userEmail)
             .get()
-            .addOnSuccessListener { snapshot ->
-                val user = snapshot.documents.firstOrNull()?.toObject(FirestoreUser::class.java)
-                continuation.resume(user)
+            .await()
+            .firstOrNull()
+            .let {
+                it?.toObject(FirestoreUser::class.java)
             }
-            .addOnFailureListener { continuation.resumeWithException(it) }
-    }
 
-    override suspend fun getUsers(): List<FirestoreUser> = suspendCoroutine { continuation ->
+    override suspend fun getUsers(): List<FirestoreUser> =
         usersCollection
+            .limit(20)
             .get()
-            .addOnSuccessListener { snapshot ->
-                val users = snapshot?.documents?.mapNotNull {
-                    it.toObject(FirestoreUser::class.java)
-                } ?: emptyList()
-
-                continuation.resume(users)
+            .await()
+            .mapNotNull {
+                it.toObject(FirestoreUser::class.java)
             }
-            .addOnFailureListener { continuation.resume(emptyList()) }
-    }
 
     override suspend fun createUser(firestoreUser: FirestoreUser) {
-        suspendCoroutine { continuation ->
-            usersCollection.document(firestoreUser.userId).set(firestoreUser)
-                .addOnSuccessListener { continuation.resume(Unit) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
+        usersCollection.document(firestoreUser.userId)
+            .set(firestoreUser)
+            .await()
     }
 
-    override fun updateProfilePictureFileName(userId: String, fileName: String?) {
+    override suspend fun updateProfilePictureFileName(userId: String, fileName: String?) {
         usersCollection.document(userId)
-            .update(UserField.PROFILE_PICTURE_FILE_NAME, fileName)
-            .addOnFailureListener { e("Failed to update profile picture file name with firestore: ${it.message}", it) }
+            .update(PROFILE_PICTURE_FILE_NAME, fileName)
+            .await()
     }
 
-    override fun deleteProfilePictureFileName(userId: String) {
+    override suspend fun deleteProfilePictureFileName(userId: String) {
         usersCollection.document(userId)
-            .update(UserField.PROFILE_PICTURE_FILE_NAME, FieldValue.delete())
-            .addOnFailureListener { e("Failed to delete profile picture file name with firestore: ${it.message}", it) }
+            .update(PROFILE_PICTURE_FILE_NAME, FieldValue.delete())
+            .await()
     }
 
-    override suspend fun isUserExist(email: String): Boolean = suspendCoroutine { continuation ->
-        usersCollection.whereEqualTo(UserField.EMAIL, email).get()
-            .addOnSuccessListener { continuation.resume(!it.isEmpty) }
-            .addOnFailureListener { continuation.resumeWithException(it) }
-    }
+    override suspend fun isUserExist(email: String): Boolean =
+        usersCollection.whereEqualTo(EMAIL, email)
+            .get()
+            .await()
+            .isEmpty.not()
 }

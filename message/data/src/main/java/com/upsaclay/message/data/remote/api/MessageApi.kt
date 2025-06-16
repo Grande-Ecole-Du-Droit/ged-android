@@ -5,9 +5,8 @@ import com.upsaclay.message.data.remote.model.RemoteMessage
 import kotlinx.coroutines.flow.Flow
 
 internal interface MessageApi {
-    fun listenMessages(conversationId: String, offsetTime: Timestamp?): Flow<RemoteMessage>
+    fun listenMessages(conversationId: String, interlocutorId: String, offsetTime: Timestamp?): Flow<RemoteMessage>
 
     suspend fun createMessage(remoteMessage: RemoteMessage)
 
-    suspend fun updateSeenMessage(remoteMessage: RemoteMessage)
-}
+    suspend fun updateSeenMessage(remoteMessage: RemoteMessage)}

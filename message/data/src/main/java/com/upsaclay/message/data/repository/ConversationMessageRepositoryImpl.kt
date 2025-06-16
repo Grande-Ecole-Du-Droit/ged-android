@@ -12,12 +12,11 @@ class ConversationMessageRepositoryImpl(
     conversationMessageLocalDataSource: ConversationMessageLocalDataSource,
     scope: CoroutineScope
 ): ConversationMessageRepository {
-    private val _conversationMessages = conversationMessageLocalDataSource
-        .getConversationsMessage()
+    private val _conversationsMessage = conversationMessageLocalDataSource.getConversationsMessage()
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
             initialValue = emptyList()
         )
-    override val conversationsMessage: Flow<List<ConversationMessage>> = _conversationMessages
+    override val conversationsMessage: Flow<List<ConversationMessage>> = _conversationsMessage
 }

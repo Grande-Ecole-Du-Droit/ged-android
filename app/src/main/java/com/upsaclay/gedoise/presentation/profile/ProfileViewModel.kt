@@ -7,7 +7,6 @@ import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,11 +19,9 @@ class ProfileViewModel(
 
     init {
         viewModelScope.launch {
-            userRepository.user
-                .filterNotNull()
-                .collect { user ->
-                    _uiState.update { it.copy(user = user) }
-                }
+            userRepository.user.collect { user ->
+                _uiState.update { it.copy(user = user) }
+            }
         }
     }
 

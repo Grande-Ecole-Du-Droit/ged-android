@@ -33,7 +33,7 @@ fun UserItem(
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ProfilePicture(url = user.profilePictureFileName, scale = 0.5f)
+        ProfilePicture(url = user.profilePictureUrl, scale = 0.5f)
 
         Spacer(modifier = Modifier.width(MaterialTheme.spacing.smallMedium))
 

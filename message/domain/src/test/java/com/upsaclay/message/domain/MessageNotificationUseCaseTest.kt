@@ -44,7 +44,7 @@ class MessageNotificationUseCaseTest {
     }
 
     @Test
-    fun clearNotifications_should_send_clear_notification_shared_event() = runTest {
+    fun clearNotifications_should_send_clear_notification() = runTest {
         // Given
         val notificationGroupId = "notificationGroupId"
 

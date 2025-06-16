@@ -1,6 +1,6 @@
 package com.upsaclay.news
 
-import com.upsaclay.news.domain.announcementFixture
+import com.upsaclay.news.domain.longAnnouncementFixture
 import com.upsaclay.news.domain.usecase.UpdateAnnouncementUseCase
 import com.upsaclay.news.presentation.announcement.editannouncement.EditAnnouncementViewModel
 import io.mockk.coEvery
@@ -30,7 +30,7 @@ class EditAnnouncementViewModelTest {
         coEvery { updateAnnouncementUseCase(any()) } returns Unit
 
         editAnnouncementViewModel = EditAnnouncementViewModel(
-            announcement = announcementFixture,
+            announcement = longAnnouncementFixture,
             updateAnnouncementUseCase = updateAnnouncementUseCase
         )
     }
@@ -54,7 +54,7 @@ class EditAnnouncementViewModelTest {
     }
 
     @Test
-    fun updateAnnouncement_should_call_updateAnnouncementUseCase() {
+    fun updateAnnouncement_should_updateAnnouncement() {
         // Given
         editAnnouncementViewModel.onTitleChange(title)
         editAnnouncementViewModel.onContentChange(content)
@@ -64,7 +64,52 @@ class EditAnnouncementViewModelTest {
 
         // Then
         coVerify { updateAnnouncementUseCase(any()) }
-        assertEquals(title.trim(), editAnnouncementViewModel.uiState.value.title)
-        assertEquals(content.trim(), editAnnouncementViewModel.uiState.value.content)
+    }
+
+    @Test
+    fun updateAnnouncement_should_not_update_when_content_is_empty() {
+        // Given
+        editAnnouncementViewModel.onTitleChange("title")
+        editAnnouncementViewModel.onContentChange("")
+
+        // When
+        editAnnouncementViewModel.updateAnnouncement()
+
+        // Then
+        coVerify(exactly = 0) { updateAnnouncementUseCase(any()) }
+    }
+
+    @Test
+    fun updateAnnouncement_should_not_update_when_title_and_content_are_same() {
+        // Given
+        editAnnouncementViewModel.onTitleChange(longAnnouncementFixture.title!!)
+        editAnnouncementViewModel.onContentChange(longAnnouncementFixture.content)
+
+        // When
+        editAnnouncementViewModel.updateAnnouncement()
+
+        // Then
+        coVerify(exactly = 0) { updateAnnouncementUseCase(any()) }
+    }
+
+    @Test
+    fun announcement_should_be_trim_when_updated() {
+        // Given
+        val titleWithSpaces = "  ${longAnnouncementFixture.title}  "
+        val contentWithSpaces = "  ${longAnnouncementFixture.content}  "
+        editAnnouncementViewModel.onTitleChange(titleWithSpaces)
+        editAnnouncementViewModel.onContentChange(contentWithSpaces)
+
+        // When
+        editAnnouncementViewModel.updateAnnouncement()
+
+        // Then
+        coVerify {
+            updateAnnouncementUseCase(
+                longAnnouncementFixture.copy(
+                    title = titleWithSpaces.trim(),
+                    content = contentWithSpaces.trim())
+            )
+        }
     }
 }

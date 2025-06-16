@@ -1,7 +1,6 @@
 package com.upsaclay.common.data.extensions
 
 import com.google.firebase.Timestamp
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 

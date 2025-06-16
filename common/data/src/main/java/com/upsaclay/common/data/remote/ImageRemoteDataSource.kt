@@ -2,49 +2,35 @@ package com.upsaclay.common.data.remote
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.upsaclay.common.data.formatHttpError
+import com.upsaclay.common.data.exceptions.mapServerResponseException
 import com.upsaclay.common.data.remote.api.ImageApi
-import com.upsaclay.common.domain.entity.InternalServerException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.io.IOException
 
-internal class ImageRemoteDataSource(
-    private val imageApi: ImageApi
-) {
+internal class ImageRemoteDataSource(private val imageApi: ImageApi) {
     suspend fun getImage(fileName: String): Bitmap? = withContext(Dispatchers.IO) {
-        val response = imageApi.getImage(fileName)
-        if (response.isSuccessful) {
-            response.body?.byteStream()?.let(BitmapFactory::decodeStream)
-        } else {
-            val errorMesage = formatHttpError(response)
-            throw InternalServerException(errorMesage)
-        }
+        imageApi.getImage(fileName).body?.byteStream()?.let(BitmapFactory::decodeStream)
     }
 
     suspend fun uploadImage(file: File) {
         withContext(Dispatchers.IO) {
             val requestBody = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
             val multipartBody = MultipartBody.Part.createFormData("image", file.name, requestBody)
-            val response = imageApi.uploadImage(multipartBody)
-            if (!response.isSuccessful) {
-                val errorMessage = formatHttpError(response)
-                throw InternalServerException(errorMessage)
-            }
+            mapServerResponseException(
+                block = { imageApi.uploadImage(multipartBody) }
+            )
         }
     }
 
-    suspend fun deleteImage(imageName: String) {
+    suspend fun deleteImage(fileName: String) {
         withContext(Dispatchers.IO) {
-            val response = imageApi.deleteImage(imageName)
-            if (!response.isSuccessful) {
-                val errorMessage = formatHttpError(response)
-                throw IOException(errorMessage)
-            }
+            mapServerResponseException(
+               block = { imageApi.deleteImage(fileName) }
+           )
         }
     }
 }

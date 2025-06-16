@@ -7,7 +7,7 @@ import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.utils.mapNetworkErrorMessage
 import com.upsaclay.message.domain.entity.Conversation
-import com.upsaclay.message.domain.usecase.GetLocalConversationUseCase
+import com.upsaclay.message.domain.usecase.GetConversationUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class CreateConversationViewModel(
     private val userRepository: UserRepository,
-    private val getLocalConversationUseCase: GetLocalConversationUseCase
+    private val getConversationUseCase: GetConversationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CreateConversationUiState())
     val uiState: StateFlow<CreateConversationUiState> = _uiState
@@ -27,27 +27,6 @@ class CreateConversationViewModel(
 
     init {
         fetchUsers()
-    }
-
-    suspend fun getConversation(interlocutor: User): Conversation? {
-        return try {
-            getLocalConversationUseCase(interlocutor)
-        } catch (e: Exception) {
-            _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
-            null
-        }
-    }
-
-    fun onQueryChange(userName: String) {
-        _uiState.update {
-            it.copy(query = userName)
-        }
-
-        getFilteredUsers(userName).also { users ->
-            _uiState.update {
-                it.copy(users = users)
-            }
-        }
     }
 
     private fun fetchUsers() {
@@ -74,21 +53,49 @@ class CreateConversationViewModel(
         }
     }
 
-    private fun getFilteredUsers(query: String): List<User> {
-       return if (query.isBlank()) {
-            defaultUsers
-        } else {
-           defaultUsers.filter {
-               it.firstName.contains(query, ignoreCase = true) ||
-                       it.lastName.contains(query, ignoreCase = true)
-           }
+    suspend fun getConversation(interlocutor: User): Conversation? {
+        return try {
+            getConversationUseCase(interlocutor)
+        } catch (e: Exception) {
+            _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
+            null
         }
+    }
+
+    fun onQueryChange(userName: String) {
+        _uiState.update {
+            it.copy(query = userName)
+        }
+
+        getFilteredUsers(userName).also { users ->
+            _uiState.update {
+                it.copy(users = users)
+            }
+        }
+    }
+
+    fun resetQuery() {
+        _uiState.update {
+            it.copy(
+                query = "",
+                users = defaultUsers
+            )
+        }
+    }
+
+    private fun getFilteredUsers(query: String): List<User> {
+        return query.takeIf { it.isNotBlank() }?.let {
+            defaultUsers.filter { user ->
+                user.firstName.contains(query, ignoreCase = true) ||
+                        user.lastName.contains(query, ignoreCase = true)
+            }
+        } ?: defaultUsers
     }
 
     private fun mapErrorMessage(e: Throwable): Int {
         return mapNetworkErrorMessage(e) {
             when (e) {
-                is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
+                is IllegalArgumentException -> com.upsaclay.common.R.string.current_user_not_found
                 else -> com.upsaclay.common.R.string.unknown_error
             }
         }

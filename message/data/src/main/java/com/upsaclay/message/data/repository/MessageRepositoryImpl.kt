@@ -1,7 +1,6 @@
 package com.upsaclay.message.data.repository
 
 import androidx.paging.PagingData
-import com.upsaclay.common.data.exceptions.handleNetworkException
 import com.upsaclay.message.data.local.MessageLocalDataSource
 import com.upsaclay.message.data.remote.MessageRemoteDataSource
 import com.upsaclay.message.domain.entity.Message
@@ -16,33 +15,34 @@ internal class MessageRepositoryImpl(
     override fun getPagingMessages(conversationId: String): Flow<PagingData<Message>> =
         messageLocalDataSource.getMessages(conversationId)
 
-    override fun getLastMessage(conversationId: String): Flow<Message> =
+    override fun getLastMessageFlow(conversationId: String): Flow<Message?> =
+        messageLocalDataSource.getLastMessageFlow(conversationId)
+
+    override suspend fun getLastMessage(conversationId: String): Message? =
         messageLocalDataSource.getLastMessage(conversationId)
 
-    override fun fetchRemoteMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message> =
-        messageRemoteDataSource.listenMessages(conversationId, offsetTime)
-
-    override fun getUnreadMessagesByUser(conversationId: String, userId: String): Flow<List<Message>> =
-        messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId)
+    override fun fetchRemoteMessages(conversationId: String, interlocutorId: String, offsetTime: LocalDateTime?): Flow<Message> =
+        messageRemoteDataSource.listenMessages(conversationId, interlocutorId, offsetTime)
 
     override suspend fun createMessage(message: Message) {
-        handleNetworkException(
-            message = "Failed to create message",
-            block = {
-                messageLocalDataSource.upsertMessage(message)
-                messageRemoteDataSource.createMessage(message)
-            }
-        )
+        messageLocalDataSource.insertMessage(message)
+        messageRemoteDataSource.createMessage(message)
+    }
+
+    override suspend fun updateSeenMessages(conversationId: String, userId: String) {
+        messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId).forEach { message ->
+            messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
+        }
+        messageLocalDataSource.updateSeenMessages(conversationId, userId)
     }
 
     override suspend fun updateSeenMessage(message: Message) {
-        handleNetworkException(
-            message = "Failed to update seen message",
-            block = {
-                messageRemoteDataSource.updateSeenMessage(message)
-                messageLocalDataSource.updateMessage(message)
-            }
-        )
+        messageLocalDataSource.updateMessage(message.copy(seen = true))
+        messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
+    }
+
+    override suspend fun updateLocalMessage(message: Message) {
+        messageLocalDataSource.updateMessage(message)
     }
 
     override suspend fun upsertLocalMessage(message: Message) {

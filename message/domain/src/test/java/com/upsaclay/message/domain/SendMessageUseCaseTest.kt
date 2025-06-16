@@ -2,8 +2,8 @@ package com.upsaclay.message.domain
 
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.message.domain.entity.ConversationState
-import com.upsaclay.message.domain.repository.ConversationRepository
-import com.upsaclay.message.domain.repository.MessageRepository
+import com.upsaclay.message.domain.usecase.CreateConversationUseCase
+import com.upsaclay.message.domain.usecase.CreateMessageUseCase
 import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import io.mockk.coEvery
@@ -18,8 +18,8 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SendMessageUseCaseTest {
-    private val conversationRepository: ConversationRepository = mockk()
-    private val messageRepository: MessageRepository = mockk()
+    private val createConversationUseCase: CreateConversationUseCase = mockk()
+    private val createMessageUseCase: CreateMessageUseCase = mockk()
     private val messageNotificationUseCase: MessageNotificationUseCase = mockk()
 
     private lateinit var useCase: SendMessageUseCase
@@ -27,51 +27,47 @@ class SendMessageUseCaseTest {
 
     @Before
     fun setUp() {
-        coEvery { conversationRepository.upsertLocalConversation(any()) } returns Unit
-        coEvery { conversationRepository.createConversation(any(), any()) } returns Unit
-        coEvery { messageRepository.upsertLocalMessage(any()) } returns Unit
-        coEvery { messageRepository.createMessage(any()) } returns Unit
         coEvery { messageNotificationUseCase.sendNotification(any()) } returns Unit
 
         useCase = SendMessageUseCase(
-            messageRepository = messageRepository,
-            conversationRepository = conversationRepository,
+            createConversationUseCase = createConversationUseCase,
+            createMessageUseCase = createMessageUseCase,
             messageNotificationUseCase = messageNotificationUseCase,
             scope = testScope
         )
     }
 
     @Test
-    fun sendMessageUseCase_should_send_notification() = runTest {
-        // When
-        useCase(conversationFixture, userFixture, "content")
+    fun sendMessageUseCase_should_create_conversation_when_not_created() = runTest {
+        // Given
+        val conversation = conversationFixture.copy(state = ConversationState.DRAFT)
 
-        // Then
-        coEvery { messageNotificationUseCase.sendNotification(any()) }
-    }
-
-    @Test
-    fun sendMessageUseCase_should_create_conversation_if_needed() = runTest {
         // When
         useCase(
-            conversationFixture.copy(state = ConversationState.DRAFT),
-            userFixture, "content"
+            messageFixture,
+            conversation,
+            userFixture.id
         )
 
         // Then
-        coVerify {
-            conversationRepository.createConversation(
-                conversationFixture.copy(state = ConversationState.CREATED), userFixture.id
-            )
-        }
+        coVerify { createConversationUseCase(conversation, userFixture.id) }
     }
 
     @Test
     fun sendMessageUseCase_should_create_message() = runTest {
         // When
-        useCase(conversationFixture, userFixture, "content")
+        useCase(messageFixture, conversationFixture, userFixture.id)
 
         // Then
-        coEvery { messageRepository.upsertLocalMessage(any()) }
+        coEvery { createMessageUseCase(messageFixture) }
+    }
+
+    @Test
+    fun sendMessageUseCase_should_send_notification() = runTest {
+        // When
+        useCase(messageFixture, conversationFixture, userFixture.id)
+
+        // Then
+        coEvery { messageNotificationUseCase.sendNotification(any()) }
     }
 }

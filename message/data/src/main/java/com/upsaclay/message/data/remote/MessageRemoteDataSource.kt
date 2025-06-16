@@ -1,5 +1,6 @@
 package com.upsaclay.message.data.remote
 
+import com.upsaclay.common.data.exceptions.mapFirebaseException
 import com.upsaclay.common.data.extensions.toTimestamp
 import com.upsaclay.message.data.mapper.toMessage
 import com.upsaclay.message.data.mapper.toRemote
@@ -12,19 +13,26 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 
 internal class MessageRemoteDataSource(private val messageApi: MessageApi) {
-    fun listenMessages(conversationId: String, offsetTime: LocalDateTime?): Flow<Message> =
-        messageApi.listenMessages(conversationId, offsetTime?.toTimestamp())
+    fun listenMessages(conversationId: String, interlocutorId: String, offsetTime: LocalDateTime?): Flow<Message> {
+        return messageApi.listenMessages(conversationId, interlocutorId, offsetTime?.toTimestamp())
             .map { it.toMessage() }
+    }
 
     suspend fun createMessage(message: Message) {
         withContext(Dispatchers.IO) {
-            messageApi.createMessage(message.toRemote())
+            mapFirebaseException(
+                message = "Failed to create message",
+                block = { messageApi.createMessage(message.toRemote()) }
+            )
         }
     }
 
     suspend fun updateSeenMessage(message: Message) {
         withContext(Dispatchers.IO) {
-            messageApi.updateSeenMessage(message.toRemote())
+            mapFirebaseException(
+                message = "Failed to update seen message",
+                block = { messageApi.updateSeenMessage(message.toRemote()) }
+            )
         }
     }
 }

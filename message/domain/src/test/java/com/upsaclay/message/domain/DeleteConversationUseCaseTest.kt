@@ -1,7 +1,6 @@
 package com.upsaclay.message.domain
 
 import com.upsaclay.common.domain.userFixture
-import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
@@ -36,14 +35,20 @@ class DeleteConversationUseCaseTest {
     }
 
     @Test
-    fun deleteConversation_should_update_conversation_state_to_loading() = runTest {
-        // Given
-        val conversation = conversationFixture.copy(state = ConversationState.LOADING)
-
+    fun deleteConversation_should_delete_conversation() = runTest {
         // When
-        useCase(conversation, userFixture.id)
+        useCase(conversationFixture, userFixture.id)
 
         // Then
-        coVerify { conversationRepository.upsertLocalConversation(conversation) }
+        coVerify { conversationRepository.deleteConversation(conversationFixture, userFixture.id) }
+    }
+
+    @Test
+    fun deleteConversation_should_delete_local_conversation_messages() = runTest {
+        // When
+        useCase(conversationFixture, userFixture.id)
+
+        // Then
+        coVerify { messageRepository.deleteLocalMessages(conversationFixture.id) }
     }
 }

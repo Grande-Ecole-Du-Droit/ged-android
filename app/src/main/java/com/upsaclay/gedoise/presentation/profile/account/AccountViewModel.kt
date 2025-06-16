@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -36,7 +35,6 @@ class AccountViewModel(
 
     init {
         userRepository.user
-            .filterNotNull()
             .map(::updateState)
             .launchIn(viewModelScope)
     }
@@ -52,11 +50,11 @@ class AccountViewModel(
                 _uiState.value.profilePictureUri?.let { uri ->
                     updateState(loading = true)
                     updateProfilePictureUseCase(user, uri)
-                    updateState(loading = false, screenState = AccountScreenState.READ)
+                    resetValues()
                     _event.emit(SingleUiEvent.Success(R.string.profile_picture_updated))
                 }
             } catch (e: Exception) {
-                updateState(loading = false)
+                resetValues()
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             }
         }
@@ -71,13 +69,13 @@ class AccountViewModel(
 
                 val user = requireNotNull(_uiState.value.user)
                 updateState(loading = true)
-                user.profilePictureFileName?.let {
+                user.profilePictureUrl?.let {
                     deleteProfilePictureUseCase(user.id, it)
                 }
                 resetValues()
                 _event.emit(SingleUiEvent.Success(R.string.profile_picture_deleted))
             } catch (e: Exception) {
-                updateState(loading = false)
+                resetValues()
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             }
         }
@@ -119,7 +117,7 @@ class AccountViewModel(
     private fun mapErrorMessage(e: Exception): Int {
         return mapNetworkErrorMessage(e) {
             when (e) {
-                is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
+                is IllegalArgumentException -> com.upsaclay.common.R.string.current_user_not_found
                 else -> com.upsaclay.common.R.string.unknown_error
             }
         }

@@ -15,7 +15,7 @@ class FirstRegistrationViewModel: ViewModel() {
     fun onFirstNameChange(firstName: String) {
         if (validateName(firstName)) {
             _uiState.update {
-                it.copy(firstName = firstName)
+                it.copy(firstName = firstName.capitalizeWordsRegex())
             }
         }
     }
@@ -23,7 +23,7 @@ class FirstRegistrationViewModel: ViewModel() {
     fun onLastNameChange(lastName: String) {
         if (validateName(lastName)) {
             _uiState.update {
-                it.copy(lastName = lastName)
+                it.copy(lastName = lastName.capitalizeWordsRegex())
             }
         }
     }

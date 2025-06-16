@@ -3,17 +3,15 @@ package com.upsaclay.gedoise.presentation.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.upsaclay.common.R
-import com.upsaclay.gedoise.presentation.profile.ProfileRoute
+import com.upsaclay.common.domain.entity.Route
 import com.upsaclay.message.presentation.conversation.ConversationRoute
 import com.upsaclay.news.presentation.NewsRoute
-import kotlinx.serialization.Serializable
-import kotlin.reflect.KClass
 
 sealed class TopLevelDestination(
     open val badges: Int,
     open val hasNews: Boolean
 ) {
-    abstract val route: KClass<*>
+    abstract val route: Route
     abstract val label: Int
     abstract val filledIcon: Int
     abstract val outlinedIcon: Int
@@ -23,7 +21,7 @@ sealed class TopLevelDestination(
         override val badges: Int = 0,
         override val hasNews: Boolean = false
     ): TopLevelDestination(badges, hasNews) {
-        override val route = NewsRoute::class
+        override val route = NewsRoute
         @StringRes override val label: Int = R.string.home
         @DrawableRes override val filledIcon: Int = R.drawable.ic_fill_home
         @DrawableRes override val outlinedIcon: Int = R.drawable.ic_outline_home
@@ -34,7 +32,7 @@ sealed class TopLevelDestination(
         override val badges: Int = 0,
         override val hasNews: Boolean = false
     ): TopLevelDestination(badges, hasNews) {
-        override val route = ConversationRoute::class
+        override val route = ConversationRoute
         @StringRes override val label: Int = R.string.messages
         @DrawableRes override val filledIcon: Int = R.drawable.ic_fill_message
         @DrawableRes override val outlinedIcon: Int = R.drawable.ic_outline_message

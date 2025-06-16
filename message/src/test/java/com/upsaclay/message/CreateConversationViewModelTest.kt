@@ -4,9 +4,7 @@ import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.domain.usersFixture
 import com.upsaclay.message.domain.conversationFixture
-import com.upsaclay.message.domain.entity.ConversationState
-import com.upsaclay.message.domain.repository.ConversationRepository
-import com.upsaclay.message.domain.usecase.GetLocalConversationUseCase
+import com.upsaclay.message.domain.usecase.GetConversationUseCase
 import com.upsaclay.message.presentation.conversation.create.CreateConversationViewModel
 import io.mockk.coEvery
 import io.mockk.every
@@ -24,7 +22,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class CreateConversationViewModelTest {
     private val userRepository: UserRepository = mockk()
-    private val getLocalConversationUseCase: GetLocalConversationUseCase = mockk()
+    private val getConversationUseCase: GetConversationUseCase = mockk()
 
     private lateinit var createConversationViewModel: CreateConversationViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -33,19 +31,19 @@ class CreateConversationViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
-        coEvery { getLocalConversationUseCase(any()) } returns conversationFixture
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
+        coEvery { getConversationUseCase(any()) } returns conversationFixture
         coEvery { userRepository.getUsers() } returns usersFixture
 
         createConversationViewModel = CreateConversationViewModel(
             userRepository = userRepository,
-            getLocalConversationUseCase = getLocalConversationUseCase
+            getConversationUseCase = getConversationUseCase
         )
     }
 
     @Test
-    fun getConversation_should_return_conversation_when_present() = runTest {
+    fun getConversation_should_return_conversation() = runTest {
         // When
         val result = createConversationViewModel.getConversation(userFixture)
 
@@ -62,7 +60,7 @@ class CreateConversationViewModelTest {
         // When
         createConversationViewModel = CreateConversationViewModel(
             userRepository = userRepository,
-            getLocalConversationUseCase = getLocalConversationUseCase
+            getConversationUseCase = getConversationUseCase
         )
 
         // Then
@@ -92,5 +90,30 @@ class CreateConversationViewModelTest {
 
         // Then
         assertEquals(filteredUsers, createConversationViewModel.uiState.value.users)
+    }
+
+    @Test
+    fun resetQuery_should_reset_query_and_users() = runTest {
+        // Given
+        createConversationViewModel.onQueryChange("test")
+
+        // When
+        createConversationViewModel.resetQuery()
+
+        // Then
+        assertEquals("", createConversationViewModel.uiState.value.query)
+    }
+
+    @Test
+    fun resetQuery_should_reset_users_to_default() = runTest {
+        // Given
+        val defaultUsers = usersFixture.filterNot { it.id == userFixture.id }
+        createConversationViewModel.onQueryChange("test")
+
+        // When
+        createConversationViewModel.resetQuery()
+
+        // Then
+        assertEquals(defaultUsers, createConversationViewModel.uiState.value.users)
     }
 }

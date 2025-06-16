@@ -20,28 +20,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import com.upsaclay.common.R
 import com.upsaclay.common.presentation.theme.GedoiseTheme
-import com.upsaclay.common.presentation.theme.inputBackground
 import com.upsaclay.common.presentation.theme.cursor
+import com.upsaclay.common.presentation.theme.inputBackground
+import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SimpleSearchBar(
+fun StaticSearchBar(
     modifier: Modifier = Modifier,
-    placeholder: String,
-    value: String,
-    onValueChange: (String) -> Unit,
+    placeholder: String = stringResource(R.string.search),
+    query: String,
+    textStyle: TextStyle = TextStyle.Default,
+    icon: @Composable () -> Unit = {
+        Icon(
+            imageVector = Icons.Default.Search,
+            contentDescription = null
+        )
+    },
+    onQueryChange: (String) -> Unit,
 ) {
     BasicTextField(
         modifier = modifier,
-        value = value,
-        onValueChange = onValueChange,
-        textStyle = TextStyle.Default.copy(color = MaterialTheme.colorScheme.onBackground),
+        value = query,
+        onValueChange = onQueryChange,
+        textStyle = textStyle.copy(color = MaterialTheme.colorScheme.onBackground),
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences
         ),
@@ -49,8 +59,8 @@ fun SimpleSearchBar(
     ) { innerTextField ->
         TextFieldDefaults.DecorationBox(
             innerTextField = innerTextField,
-            value = value,
-            placeholder = { Text(text = placeholder) },
+            value = query,
+            placeholder = { Text(text = placeholder, color = MaterialTheme.colorScheme.previewText) },
             shape = ShapeDefaults.ExtraLarge,
             enabled = true,
             colors = TextFieldDefaults.colors(
@@ -62,12 +72,7 @@ fun SimpleSearchBar(
             ),
             contentPadding = PaddingValues(),
             singleLine = true,
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null
-                )
-            },
+            leadingIcon = icon,
             visualTransformation = VisualTransformation.None,
             interactionSource = remember { MutableInteractionSource() }
         )
@@ -87,11 +92,11 @@ private fun SearchBarPreview() {
         Box(
             modifier = Modifier.padding(MaterialTheme.spacing.small)
         ) {
-            SimpleSearchBar(
+            StaticSearchBar(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = "Search",
-                value = "",
-                onValueChange = {}
+                query = "",
+                onQueryChange = {}
             )
         }
     }

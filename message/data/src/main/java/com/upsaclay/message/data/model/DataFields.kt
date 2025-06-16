@@ -2,11 +2,11 @@ package com.upsaclay.message.data.model
 
 internal object ConversationField {
     const val CONVERSATION_ID = "conversationId"
-    const val CREATED_AT = "created_at"
+    const val CREATED_AT = "createdAt"
+    const val DELETE_TIME = "deleteTime"
 
     object Remote {
         const val PARTICIPANTS = "participants"
-        const val DELETE_TIME = "deleteTime"
     }
 
     object Local {
