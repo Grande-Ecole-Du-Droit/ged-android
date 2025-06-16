@@ -13,7 +13,9 @@ import com.upsaclay.message.domain.usecase.GetUnreadConversationsCountUseCase
 import com.upsaclay.message.presentation.chat.ChatRoute
 import com.upsaclay.message.presentation.conversation.ConversationRoute
 import com.upsaclay.news.presentation.NewsBaseRoute
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -26,6 +28,8 @@ class NavigationViewModel(
 ): ViewModel() {
     private val _uiState = MutableStateFlow(NavigationState())
     val uiState: StateFlow<NavigationState> = _uiState
+    private val _routesToNavigate = MutableSharedFlow<List<Route>>(replay = 1)
+    val routesToNavigate: SharedFlow<List<Route>> = _routesToNavigate
 
     init {
         updateStartDestination()
@@ -38,14 +42,26 @@ class NavigationViewModel(
         }
     }
 
+    private fun navigate(route: Route) {
+        val routes = when(route) {
+            is ChatRoute -> listOf(ConversationRoute, route)
+            AuthenticationRoute -> listOf(route)
+            else -> return
+        }
+
+        viewModelScope.launch {
+            _routesToNavigate.emit(routes)
+        }
+    }
+
     fun setCurrentRoute(destination: NavDestination, arguments: Bundle?) {
-        val route = resolveRoute(destination, arguments)
+        val route = resolveCurrentRoute(destination, arguments)
         viewModelScope.launch {
             routeRepository.setCurrentRoute(route)
         }
     }
 
-    private fun resolveRoute(destination: NavDestination, arguments: Bundle?): Route? {
+    private fun resolveCurrentRoute(destination: NavDestination, arguments: Bundle?): Route? {
         val routeName = destination.route?.split('.')?.last() ?: return null
         return when {
             routeName.startsWith(ChatRoute.NAME) -> {
@@ -82,24 +98,11 @@ class NavigationViewModel(
         }
     }
 
-    private fun navigate(route: Route) {
-        val routes = when(route) {
-            is ChatRoute -> listOf(ConversationRoute, route)
-            AuthenticationRoute -> listOf(route)
-            else -> return
-        }
-
-        _uiState.update {
-            it.copy(routesToNavigate = routes)
-        }
-    }
-
     data class NavigationState(
         val topLevelDestinations: List<TopLevelDestination> = listOf(
             TopLevelDestination.Home(),
-            TopLevelDestination.Message(),
+            TopLevelDestination.Message()
         ),
         val startDestination: Route = SplashRoute,
-        val routesToNavigate: List<Route> = emptyList()
     )
 }

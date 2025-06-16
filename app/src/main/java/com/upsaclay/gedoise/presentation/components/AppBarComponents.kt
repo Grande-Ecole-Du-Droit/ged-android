@@ -29,11 +29,11 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.upsaclay.common.domain.entity.Route
-import com.upsaclay.common.presentation.TopLevelDestinationRoute
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.gedoise.R
 import com.upsaclay.gedoise.presentation.navigation.TopLevelDestination
+import com.upsaclay.gedoise.presentation.navigation.TopLevelDestinationRoute
 
 @Composable
 fun MainBottomBar(

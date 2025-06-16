@@ -39,3 +39,8 @@ sealed class TopLevelDestination(
         @StringRes override val iconDescription: Int = R.string.message_icon_description
     }
 }
+
+enum class TopLevelDestinationRoute {
+    HOME,
+    MESSAGE
+}

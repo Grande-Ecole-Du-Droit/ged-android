@@ -17,8 +17,8 @@ import com.upsaclay.authentication.presentation.registration.secondregistration.
 import com.upsaclay.authentication.presentation.registration.secondregistration.secondRegistrationScreen
 import com.upsaclay.authentication.presentation.registration.thirdregistration.navigateToThirdRegistration
 import com.upsaclay.authentication.presentation.registration.thirdregistration.thirdRegistrationScreen
+import com.upsaclay.common.domain.d
 import com.upsaclay.common.domain.entity.Route
-import com.upsaclay.common.presentation.TopLevelDestinationRoute
 import com.upsaclay.gedoise.presentation.components.MainBottomBar
 import com.upsaclay.gedoise.presentation.profile.account.accountScreen
 import com.upsaclay.gedoise.presentation.profile.account.navigateToAccount
@@ -33,6 +33,7 @@ import com.upsaclay.message.presentation.conversation.create.CreateConversationR
 import com.upsaclay.message.presentation.conversation.create.createConversationScreen
 import com.upsaclay.message.presentation.conversation.create.navigateToCreateConversation
 import com.upsaclay.message.presentation.conversation.navigateToConversation
+import com.upsaclay.news.presentation.NewsBaseRoute
 import com.upsaclay.news.presentation.NewsRoute
 import com.upsaclay.news.presentation.announcement.createannouncement.createAnnouncementScreen
 import com.upsaclay.news.presentation.announcement.createannouncement.navigateToCreateAnnouncement
@@ -66,7 +67,10 @@ fun GedNavHost(
 
     fun NavController.navigateToTopLevelDestination(destination: TopLevelDestinationRoute) {
         when (destination) {
-            TopLevelDestinationRoute.HOME -> navigateToNews(navOptions = navOptions)
+            TopLevelDestinationRoute.HOME -> {
+                popBackStack()
+                navigateToNews(navOptions = navOptions)
+            }
             TopLevelDestinationRoute.MESSAGE -> navigateToConversation(navOptions = navOptions)
         }
     }
@@ -79,12 +83,15 @@ fun GedNavHost(
         )
     }
 
-    LaunchedEffect(uiState.routesToNavigate) {
-        uiState.routesToNavigate.forEach { route ->
-            when (route) {
-                is ConversationRoute -> navController.navigateToConversation()
-                is ChatRoute -> navController.navigateToChat(route.conversationJson)
-                else -> Unit
+    LaunchedEffect(Unit) {
+        navigationViewModel.routesToNavigate.collect { routes ->
+            d("Navigatagata to routes: $routes")
+            routes.forEach {
+                when (it) {
+                    is ConversationRoute -> navController.navigateToConversation()
+                    is ChatRoute -> navController.navigateToChat(it.conversationJson)
+                    else -> Unit
+                }
             }
         }
     }
