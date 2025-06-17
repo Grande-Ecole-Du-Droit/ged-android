@@ -4,7 +4,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +26,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ChatBottomSheet(
     onResendMessageClick: () -> Unit,
+    onDeleteMessageClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -42,6 +46,23 @@ fun ChatBottomSheet(
         ClickableItem(
             modifier = Modifier.fillMaxWidth(),
             text = {
+                Text(text = stringResource(id = com.upsaclay.common.R.string.resend))
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = null
+                )
+            },
+            onClick = {
+                hideBottomSheet()
+                onResendMessageClick()
+            }
+        )
+
+        ClickableItem(
+            modifier = Modifier.fillMaxWidth(),
+            text = {
                 Text(
                     text = stringResource(id = com.upsaclay.common.R.string.delete),
                     color = MaterialTheme.colorScheme.error
@@ -56,7 +77,7 @@ fun ChatBottomSheet(
             },
             onClick = {
                 hideBottomSheet()
-                onResendMessageClick()
+                onDeleteMessageClick()
             }
         )
 

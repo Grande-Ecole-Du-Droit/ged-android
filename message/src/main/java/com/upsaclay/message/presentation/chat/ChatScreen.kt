@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -22,18 +21,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.PagingData
 import com.upsaclay.common.domain.entity.SingleUiEvent
+import com.upsaclay.common.presentation.components.SensibleActionDialog
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.common.utils.mediumPadding
+import com.upsaclay.message.R
 import com.upsaclay.message.domain.conversationFixture
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.messagesFixture
+import com.upsaclay.message.domain.toConversation
 import com.upsaclay.message.presentation.chat.ChatViewModel.MessageEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -80,11 +83,11 @@ fun ChatDestination(
         onTextChange = viewModel::onTextChange,
         onSendMessage = viewModel::sendMessage,
         onResendMessageClick = viewModel::resendErrorMessage,
+        onDeleteMessageClick = viewModel::deleteErrorMessage,
         onBackClick = onBackClick
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChatScreen(
     conversation: Conversation,
@@ -95,11 +98,26 @@ private fun ChatScreen(
     onTextChange: (String) -> Unit,
     onSendMessage: () -> Unit,
     onResendMessageClick: (Message) -> Unit,
+    onDeleteMessageClick: (Message) -> Unit,
     onBackClick: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var showBottomSheet by remember { mutableStateOf(false) }
     var messageClicked: Message? by remember { mutableStateOf(null) }
+    var showDeleteMessageDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteMessageDialog) {
+        SensibleActionDialog(
+            title = stringResource(id = R.string.delete_conversation_dialog_title),
+            text = stringResource(id = R.string.delete_conversation_dialog_message),
+            confirmText = stringResource(id = com.upsaclay.common.R.string.delete),
+            onConfirm = {
+                showDeleteMessageDialog = false
+                messageClicked?.let(onDeleteMessageClick)
+            },
+            onCancel = { showDeleteMessageDialog  = false }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -151,7 +169,8 @@ private fun ChatScreen(
         if (showBottomSheet) {
             ChatBottomSheet(
                 onDismiss = { showBottomSheet = false },
-                onResendMessageClick = { messageClicked?.let(onResendMessageClick) }
+                onResendMessageClick = { messageClicked?.let(onResendMessageClick) },
+                onDeleteMessageClick = { showDeleteMessageDialog = true }
             )
         }
     }
@@ -176,6 +195,7 @@ private fun ChatScreenPreview() {
             newMessageEvent = null,
             onTextChange = { text = it },
             onSendMessage = {},
+            onDeleteMessageClick = {},
             onResendMessageClick = {},
             onBackClick = {}
         )

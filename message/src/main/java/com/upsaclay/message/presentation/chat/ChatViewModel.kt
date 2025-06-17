@@ -93,6 +93,12 @@ class ChatViewModel(
         }
     }
 
+    fun deleteErrorMessage(message: Message) {
+        viewModelScope.launch {
+            messageRepository.deleteLocalMessage(message)
+        }
+    }
+
     fun seeMessage() {
         viewModelScope.launch {
             user?.let {

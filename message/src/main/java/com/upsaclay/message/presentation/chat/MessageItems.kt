@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -74,7 +75,6 @@ fun SentMessageItem(
     onClick: () -> Unit = {}
 ) {
     val dateTimeTextColor = if (isSystemInDarkTheme()) Color.LightGray else Color(0xFFC8C8C8)
-    val iconColor = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray
 
     Column(
         horizontalAlignment = Alignment.End
@@ -86,12 +86,17 @@ fun SentMessageItem(
             Spacer(modifier = Modifier.weight(0.2f))
 
             Row(
-                modifier = Modifier
-                    .clickable(onClick = onClick)
-                    .weight(0.8f, fill = false),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.weight(0.8f, fill = false),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small)
             ) {
                 MessageText(
+                    modifier = Modifier
+                        .weight(0.9f)
+                        .clickable(
+                            enabled = message.state == MessageState.ERROR,
+                            onClick = onClick
+                        ),
                     text = message.content,
                     textColor = Color.White,
                     date = message.date,
@@ -100,28 +105,26 @@ fun SentMessageItem(
                 )
 
                 AnimatedVisibility(
+                    modifier = Modifier.weight(0.1f),
                     visible = message.state == MessageState.LOADING
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = stringResource(id = R.string.send_message_icon_description),
-                        tint = iconColor,
-                        modifier = Modifier
-                            .padding(start = MaterialTheme.spacing.small)
-                            .size(20.dp)
+                        tint = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 
                 AnimatedVisibility(
+                    modifier = Modifier.weight(0.1f),
                     visible = message.state == MessageState.ERROR
                 ) {
                     Icon(
                         painter = painterResource(com.upsaclay.common.R.drawable.ic_error),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .padding(start = MaterialTheme.spacing.small)
-                            .size(20.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
             }

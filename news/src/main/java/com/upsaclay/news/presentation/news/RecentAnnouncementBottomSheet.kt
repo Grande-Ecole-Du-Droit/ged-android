@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,10 +48,10 @@ fun RecentAnnouncementBottomSheet(
     ) {
         ClickableItem(
             modifier = Modifier.fillMaxWidth(),
-            text = { Text(text = stringResource(id = R.string.resend_announcement)) },
+            text = { Text(text = stringResource(id = com.upsaclay.common.R.string.resend)) },
             icon = {
                 Icon(
-                    imageVector = Icons.Default.Refresh,
+                    imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = null
                 )
             },
