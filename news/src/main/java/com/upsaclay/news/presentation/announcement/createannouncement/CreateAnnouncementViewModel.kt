@@ -25,7 +25,7 @@ class CreateAnnouncementViewModel(
         _uiState.update {
             it.copy(
                 title = title,
-                createEnabled = validateCreate()
+                createEnabled = validateCreate(_uiState.value.content)
             )
         }
     }
@@ -34,7 +34,7 @@ class CreateAnnouncementViewModel(
         _uiState.update {
             it.copy(
                 content = content,
-                createEnabled = validateCreate()
+                createEnabled = validateCreate(content)
             )
         }
     }
@@ -53,7 +53,7 @@ class CreateAnnouncementViewModel(
         createAnnouncementUseCase(announcement)
     }
 
-    private fun validateCreate(): Boolean = uiState.value.content.isNotBlank()
+    private fun validateCreate(content: String): Boolean = content.isNotBlank()
 
     internal data class CreateAnnouncementUiState(
         val title: String = "",

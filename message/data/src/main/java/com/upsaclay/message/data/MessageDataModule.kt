@@ -43,7 +43,12 @@ val messageDataModule = module {
     singleOf(::ConversationLocalDataSource)
 
     singleOf(::ConversationRepositoryImpl) { bind<ConversationRepository>() }
-    singleOf(::ConversationMessageRepositoryImpl) { bind<ConversationMessageRepository>() }
+    single<ConversationMessageRepository> {
+        ConversationMessageRepositoryImpl(
+            conversationMessageLocalDataSource = get(),
+            scope = get(BACKGROUND_SCOPE)
+        )
+    }
 
     singleOf(::ConversationMessageLocalDataSource)
 

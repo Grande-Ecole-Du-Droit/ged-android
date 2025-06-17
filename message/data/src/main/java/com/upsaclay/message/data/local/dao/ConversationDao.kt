@@ -1,7 +1,6 @@
 package com.upsaclay.message.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -33,9 +32,6 @@ interface ConversationDao {
 
     @Upsert
     suspend fun upsertConversation(localConversation: LocalConversation)
-
-    @Delete
-    suspend fun deleteConversation(localConversation: LocalConversation)
 
     @Query("DELETE FROM $CONVERSATIONS_TABLE_NAME")
     suspend fun deleteConversations()

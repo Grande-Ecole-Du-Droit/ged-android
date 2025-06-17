@@ -1,7 +1,6 @@
 package com.upsaclay.message.data.repository
 
 import androidx.paging.PagingData
-import com.upsaclay.common.data.exceptions.mapNetworkException
 import com.upsaclay.message.data.local.MessageLocalDataSource
 import com.upsaclay.message.data.remote.MessageRemoteDataSource
 import com.upsaclay.message.domain.entity.Message
@@ -26,13 +25,8 @@ internal class MessageRepositoryImpl(
         messageRemoteDataSource.listenMessages(conversationId, interlocutorId, offsetTime)
 
     override suspend fun createMessage(message: Message) {
-        mapNetworkException(
-            message = "Failed to create message",
-            block = {
-                messageLocalDataSource.insertMessage(message)
-                messageRemoteDataSource.createMessage(message)
-            }
-        )
+        messageLocalDataSource.insertMessage(message)
+        messageRemoteDataSource.createMessage(message)
     }
 
     override suspend fun createRemoteMessage(message: Message) {
@@ -44,23 +38,15 @@ internal class MessageRepositoryImpl(
         )
     }
     override suspend fun updateSeenMessages(conversationId: String, userId: String) {
+        messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId).forEach { message ->
+            messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
+        }
         messageLocalDataSource.updateSeenMessages(conversationId, userId)
-        mapNetworkException(
-            message = "Failed to update seen messages",
-            block = {
-                messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId).forEach { message ->
-                    messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
-                }
-            }
-        )
     }
 
     override suspend fun updateSeenMessage(message: Message) {
         messageLocalDataSource.updateMessage(message.copy(seen = true))
-        mapNetworkException(
-            message = "Failed to update seen message",
-            block = { messageRemoteDataSource.updateSeenMessage(message.copy(seen = true)) }
-        )
+        messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
     }
 
     override suspend fun updateLocalMessage(message: Message) {

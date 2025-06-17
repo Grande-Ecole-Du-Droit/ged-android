@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable data object NewsRoute: Route
 
 fun NavController.navigateToNews(navOptions: NavOptions? = null) {
-    navigate(route = NewsRoute, navOptions = navOptions)
+    navigate(route = NewsBaseRoute, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.newsSection(

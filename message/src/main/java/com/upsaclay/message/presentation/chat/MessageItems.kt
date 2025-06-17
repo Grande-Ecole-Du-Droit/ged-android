@@ -2,10 +2,8 @@ package com.upsaclay.message.presentation.chat
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -150,13 +148,12 @@ fun ReceiveMessageItem(
     modifier: Modifier = Modifier,
     profilePictureUrl: String?,
     message: Message,
-    displayProfilePicture: Boolean,
+    displayProfilePicture: Boolean
 ) {
     val foreground = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.white else MaterialTheme.colorScheme.black
 
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
         verticalAlignment = Alignment.Bottom
     ) {
@@ -187,7 +184,7 @@ private fun MessageText(
     date: LocalDateTime,
     textColor: Color,
     dateTimeTextColor: Color,
-    backgroundColor: Color,
+    backgroundColor: Color
 ) {
     FlowRow(
         modifier = modifier

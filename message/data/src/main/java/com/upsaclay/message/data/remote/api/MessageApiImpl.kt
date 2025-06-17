@@ -22,16 +22,13 @@ internal class MessageApiImpl : MessageApi {
             .document(conversationId)
             .collection(MESSAGES_TABLE_NAME)
             .withOffsetTime(offsetTime)
-            .whereEqualTo(MessageField.RECIPIENT_ID, interlocutorId)
             .addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
                 error?.let {
                     close(it)
                     return@addSnapshotListener
                 }
 
-                snapshot?.documents
-                    ?.filterNot { it.metadata.isFromCache || it.metadata.hasPendingWrites() }
-                    ?.forEach { document ->
+                snapshot?.documents?.forEach { document ->
                     document.toObject(RemoteMessage::class.java)?.let {
                         trySend(it)
                     }

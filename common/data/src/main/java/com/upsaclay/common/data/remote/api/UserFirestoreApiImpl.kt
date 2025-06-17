@@ -3,8 +3,8 @@ package com.upsaclay.common.data.remote.api
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
-import com.upsaclay.common.data.UserField.Firestore.PROFILE_PICTURE_FILE_NAME
 import com.upsaclay.common.data.UserField.Firestore.EMAIL
+import com.upsaclay.common.data.UserField.Firestore.PROFILE_PICTURE_FILE_NAME
 import com.upsaclay.common.data.remote.FirestoreUser
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +13,7 @@ import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
 private const val TABLE_NAME = "users"
 
 internal class UserFirestoreApiImpl : UserFirestoreApi {

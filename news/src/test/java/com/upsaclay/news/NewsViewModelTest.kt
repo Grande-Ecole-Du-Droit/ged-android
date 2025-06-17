@@ -42,7 +42,6 @@ class NewsViewModelTest {
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { resendAnnouncementUseCase(any()) } returns Unit
         coEvery { refreshAnnouncementUseCase() } returns Unit
-        coEvery { refreshAnnouncementUseCase.refreshing } returns MutableStateFlow(false)
         coEvery { deleteAnnouncementUseCase(any()) } returns Unit
 
         newsViewModel = NewsViewModel(

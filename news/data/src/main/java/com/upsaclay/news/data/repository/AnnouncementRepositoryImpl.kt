@@ -1,6 +1,5 @@
 package com.upsaclay.news.data.repository
 
-import com.upsaclay.common.data.exceptions.mapNetworkException
 import com.upsaclay.news.data.local.AnnouncementLocalDataSource
 import com.upsaclay.news.data.remote.AnnouncementRemoteDataSource
 import com.upsaclay.news.domain.entity.Announcement
@@ -34,10 +33,7 @@ internal class AnnouncementRepositoryImpl(
         _announcements.value.firstOrNull { it.id == announcementId }
 
     override suspend fun refreshAnnouncements() {
-        val remoteAnnouncements = mapNetworkException(
-            block = { announcementRemoteDataSource.getAnnouncement() },
-            message = "Failed to fetch remote announcements"
-        )
+        val remoteAnnouncements = announcementRemoteDataSource.getAnnouncement()
 
         val announcementsToDelete = _announcements.value
             .filter { it.state == AnnouncementState.PUBLISHED }
@@ -51,20 +47,12 @@ internal class AnnouncementRepositoryImpl(
 
     override suspend fun createAnnouncement(announcement: Announcement) {
         announcementLocalDataSource.upsertAnnouncement(announcement)
-        mapNetworkException(
-            message = "Failed to create remote announcement",
-            block = { announcementRemoteDataSource.createAnnouncement(announcement) }
-        )
+        announcementRemoteDataSource.createAnnouncement(announcement)
     }
 
     override suspend fun updateAnnouncement(announcement: Announcement) {
-        mapNetworkException(
-            message = "Failed to update announcement",
-            block = {
-                announcementRemoteDataSource.updateAnnouncement(announcement)
-                announcementLocalDataSource.upsertAnnouncement(announcement)
-            }
-        )
+        announcementRemoteDataSource.updateAnnouncement(announcement)
+        announcementLocalDataSource.upsertAnnouncement(announcement)
     }
 
     override suspend fun updateLocalAnnouncement(announcement: Announcement) {
@@ -72,13 +60,8 @@ internal class AnnouncementRepositoryImpl(
     }
 
     override suspend fun deleteAnnouncement(announcement: Announcement) {
-        mapNetworkException(
-            message = "Failed to delete announcement",
-            block = {
-                announcementRemoteDataSource.deleteAnnouncement(announcement.id)
-                announcementLocalDataSource.deleteAnnouncement(announcement)
-            }
-        )
+        announcementRemoteDataSource.deleteAnnouncement(announcement.id)
+        announcementLocalDataSource.deleteAnnouncement(announcement)
     }
 
     override suspend fun deleteLocalAnnouncement(announcement: Announcement) {

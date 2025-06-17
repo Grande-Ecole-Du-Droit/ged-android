@@ -1,6 +1,5 @@
 package com.upsaclay.message.data.repository
 
-import com.upsaclay.common.data.exceptions.mapNetworkException
 import com.upsaclay.common.domain.entity.User
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.message.data.local.ConversationLocalDataSource
@@ -26,8 +25,7 @@ internal class ConversationRepositoryImpl(
 ) : ConversationRepository {
     private val interlocutors = mutableMapOf<String, User>()
 
-    override fun getConversationsFlow(): Flow<List<Conversation>> =
-        conversationLocalDataSource.getConversationsFlow()
+    override fun getConversationsFlow(): Flow<List<Conversation>> = conversationLocalDataSource.getConversationsFlow()
 
     override suspend fun getConversations(): List<Conversation> = conversationLocalDataSource.getConversations()
 
@@ -37,8 +35,8 @@ internal class ConversationRepositoryImpl(
     override suspend fun getConversation(interlocutorId: String): Conversation? =
         conversationLocalDataSource.getConversation(interlocutorId)
 
-    override suspend fun fetchRemoteConversations(userId: String, notInConversationIds: List<String>): Flow<Conversation> {
-        return conversationRemoteDataSource.listenConversations(userId, notInConversationIds)
+    override suspend fun fetchRemoteConversations(userId: String): Flow<Conversation> {
+        return conversationRemoteDataSource.listenConversations(userId)
             .flatMapMerge { remoteConversation ->
                 val interlocutorId = remoteConversation.participants.firstOrNull { it != userId }
                     ?: return@flatMapMerge emptyFlow()
@@ -54,13 +52,8 @@ internal class ConversationRepositoryImpl(
     }
 
     override suspend fun createConversation(conversation: Conversation, userId: String) {
-        mapNetworkException(
-            message = "Failed to create conversation",
-            block = {
-                conversationLocalDataSource.upsertConversation(conversation)
-                conversationRemoteDataSource.createConversation(conversation, userId)
-            }
-        )
+        conversationLocalDataSource.upsertConversation(conversation)
+        conversationRemoteDataSource.createConversation(conversation, userId)
     }
 
     override suspend fun updateLocalConversation(conversation: Conversation) {
@@ -73,13 +66,8 @@ internal class ConversationRepositoryImpl(
 
     override suspend fun deleteConversation(conversation: Conversation, userId: String) {
         val deleteTime = LocalDateTime.now(ZoneOffset.UTC)
-        mapNetworkException(
-            message = "Failed to delete conversation",
-            block = {
-                conversationLocalDataSource.deleteConversation(conversation)
-                conversationRemoteDataSource.updateConversationDeleteTime(conversation.id, userId, deleteTime)
-            }
-        )
+        conversationLocalDataSource.updateConversation(conversation.copy(deleteTime = deleteTime))
+        conversationRemoteDataSource.updateConversationDeleteTime(conversation.id, userId, deleteTime)
     }
 
     override suspend fun deleteLocalConversations() {

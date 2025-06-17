@@ -7,12 +7,12 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +30,7 @@ class ListenRemoteMessagesUseCaseTest {
     fun setUp() {
         every { conversationRepository.getConversationsFlow() } returns flowOf(listOf(conversationFixture))
         coEvery { conversationRepository.upsertLocalConversation(any()) } returns Unit
-        coEvery { conversationRepository.fetchRemoteConversations(any(), any()) } returns flowOf(conversationFixture)
+        coEvery { conversationRepository.fetchRemoteConversations(any()) } returns flowOf(conversationFixture)
         coEvery { messageRepository.getLastMessage(any()) } returns messageFixture
         coEvery { messageRepository.fetchRemoteMessages(any(), any(), any()) } returns flowOf(messageFixture)
         coEvery { messageRepository.upsertLocalMessage(any()) } returns Unit
@@ -49,37 +49,25 @@ class ListenRemoteMessagesUseCaseTest {
             conversationFixture,
             conversationFixture.copy(id = "another_new_conversation_id")
         )
-        useCase.fetchedConversations = mutableMapOf(conversationFixture.id to conversationFixture)
+        useCase.messageJobs = mutableMapOf(
+            conversationFixture.id to ListenRemoteMessagesUseCase.MessageJob(conversations[0], Job())
+        )
         every { conversationRepository.getConversationsFlow() } returns flowOf(conversations)
 
         // When
         val result = useCase.getConversationsFlow()
 
         // Then
-        assert(result.first().count() == 1)
-    }
-
-    @Test
-    fun getConversationsFlow_should_update_fetched_conversations() = runTest {
-        // Given
-        val conversations = listOf(
-            conversationFixture,
-            conversationFixture.copy(id = "another_new_conversation_id")
+        assert(
+            result.first().count() == 1 &&
+                    result.first().first() == conversations[1]
         )
-        every { conversationRepository.getConversationsFlow() } returns flowOf(conversations)
-
-        // When
-        useCase.getConversationsFlow().first()
-
-        // Then
-        assert(useCase.fetchedConversations.containsValue(conversations[0]))
-        assert(useCase.fetchedConversations.containsValue(conversations[1]))
     }
 
     @Test
     fun listenRemoteMessages_should_listen_message_with_last_message_date_offset() = runTest {
         // When
-        useCase.listenRemoteMessages(conversationsFixture)
+        useCase.listenRemoteMessages(conversationFixture)
 
         // Then
         coVerify {
@@ -94,7 +82,7 @@ class ListenRemoteMessagesUseCaseTest {
     @Test
     fun listenRemoteMessages_should_upsert_local_message() = runTest {
         // When
-        useCase.listenRemoteMessages(conversationsFixture)
+        useCase.listenRemoteMessages(conversationFixture)
 
         // Then
         coVerify { messageRepository.upsertLocalMessage(messageFixture) }

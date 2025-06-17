@@ -1,14 +1,11 @@
 package com.upsaclay.message.data.remote.api
 
 import com.google.firebase.Firebase
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 import com.upsaclay.message.data.model.CONVERSATIONS_TABLE_NAME
 import com.upsaclay.message.data.model.ConversationField
 import com.upsaclay.message.data.remote.model.RemoteConversation
-import com.upsaclay.message.data.remote.withOffsetTime
-import com.upsaclay.message.domain.entity.Conversation
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -17,10 +14,9 @@ import kotlinx.coroutines.tasks.await
 internal class ConversationApiImpl: ConversationApi {
     private val conversationsCollection = Firebase.firestore.collection(CONVERSATIONS_TABLE_NAME)
 
-    override fun listenConversations(userId: String, notInConversationIds: List<String>): Flow<RemoteConversation> = callbackFlow {
+    override fun listenConversations(userId: String): Flow<RemoteConversation> = callbackFlow {
         val listener = conversationsCollection
             .whereArrayContains(ConversationField.Remote.PARTICIPANTS, userId)
-            .whereNotIn(ConversationField.CONVERSATION_ID, notInConversationIds)
             .addSnapshotListener { snapshot, error ->
                 error?.let {
                     close(it)

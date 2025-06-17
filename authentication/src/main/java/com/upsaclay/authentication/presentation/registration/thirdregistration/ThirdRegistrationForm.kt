@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -25,6 +26,7 @@ fun ThirdRegistrationForm(
     loading: Boolean,
     @StringRes emailError: Int?,
     @StringRes passwordError: Int?,
+    @StringRes errorMessage: Int?,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit
 ) {
@@ -56,6 +58,15 @@ fun ThirdRegistrationForm(
             onValueChange = onPasswordChange,
             errorMessage = passwordError
         )
+
+        errorMessage?.let {
+            Text(
+                modifier = Modifier.align(Alignment.Start),
+                text = stringResource(it),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
     }
 }
 
@@ -76,6 +87,7 @@ private fun PreviewThirdRegistrationForm() {
                 loading = false,
                 emailError = null,
                 passwordError = null,
+                errorMessage = null,
                 onEmailChange = {},
                 onPasswordChange = {}
             )

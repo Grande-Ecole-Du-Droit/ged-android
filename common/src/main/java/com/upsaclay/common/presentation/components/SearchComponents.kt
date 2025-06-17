@@ -29,7 +29,6 @@ import com.upsaclay.common.R
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.cursor
 import com.upsaclay.common.presentation.theme.inputBackground
-import com.upsaclay.common.presentation.theme.inputForeground
 import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 

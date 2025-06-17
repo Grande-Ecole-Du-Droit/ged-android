@@ -24,7 +24,7 @@ import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.common.utils.mediumPadding
 import com.upsaclay.news.R
-import com.upsaclay.news.domain.announcementFixture
+import com.upsaclay.news.domain.longAnnouncementFixture
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.presentation.announcement.components.AnnouncementInput
 import kotlinx.coroutines.launch
@@ -136,8 +136,8 @@ private fun EditAnnouncementScreenPreview() {
     GedoiseTheme {
         Surface {
             EditAnnouncementScreen(
-                title = announcementFixture.title ?: "",
-                content = announcementFixture.content,
+                title = longAnnouncementFixture.title ?: "",
+                content = longAnnouncementFixture.content,
                 loading = false,
                 updateEnabled = false,
                 snackbarHostState = SnackbarHostState(),

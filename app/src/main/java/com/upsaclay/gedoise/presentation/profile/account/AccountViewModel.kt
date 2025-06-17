@@ -50,11 +50,11 @@ class AccountViewModel(
                 _uiState.value.profilePictureUri?.let { uri ->
                     updateState(loading = true)
                     updateProfilePictureUseCase(user, uri)
-                    updateState(loading = false, screenState = AccountScreenState.READ)
+                    resetValues()
                     _event.emit(SingleUiEvent.Success(R.string.profile_picture_updated))
                 }
             } catch (e: Exception) {
-                updateState(loading = false)
+                resetValues()
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             }
         }
@@ -117,7 +117,7 @@ class AccountViewModel(
     private fun mapErrorMessage(e: Exception): Int {
         return mapNetworkErrorMessage(e) {
             when (e) {
-                is IllegalArgumentException -> com.upsaclay.common.R.string.user_not_found
+                is IllegalArgumentException -> com.upsaclay.common.R.string.current_user_not_found
                 else -> com.upsaclay.common.R.string.unknown_error
             }
         }

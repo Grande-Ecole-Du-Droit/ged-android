@@ -4,7 +4,6 @@ import com.upsaclay.common.domain.ConnectivityObserver
 import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.news.domain.entity.AnnouncementState
 import com.upsaclay.news.domain.repository.AnnouncementRepository
-import com.upsaclay.news.domain.usecase.RefreshAnnouncementUseCase
 import com.upsaclay.news.domain.usecase.ResendAnnouncementUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -13,6 +12,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
@@ -27,6 +28,7 @@ class ResendAnnouncementUseCaseTest {
     @Before
     fun setUp() {
         every { connectivityObserver.isConnected } returns true
+        coEvery { announcementRepository.createAnnouncement(any()) } returns Unit
         coEvery { announcementRepository.refreshAnnouncements() } returns Unit
 
         useCase = ResendAnnouncementUseCase(
@@ -39,7 +41,7 @@ class ResendAnnouncementUseCaseTest {
     @Test
     fun resendAnnouncement_should_create_announcement_with_publishing_state() {
         // Given
-        val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
+        val announcement = longAnnouncementFixture.copy(state = AnnouncementState.DRAFT)
 
         // When
         useCase(announcement)
@@ -51,12 +53,13 @@ class ResendAnnouncementUseCaseTest {
     }
 
     @Test
-    fun resendAnnouncement_should_update_local_announcement_to_published_state_when_succeeds() {
+    fun resendAnnouncement_should_update_local_announcement_to_published_state_when_succeeds() = runTest {
         // Given
         val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
 
         // When
         useCase(announcement)
+        testScope.advanceUntilIdle()
 
         // Then
         coVerify {
@@ -67,7 +70,7 @@ class ResendAnnouncementUseCaseTest {
     @Test
     fun resendAnnouncement_should_update_local_announcement_to_error_state_when_fails() {
         // Given
-        val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
+        val announcement = longAnnouncementFixture.copy(state = AnnouncementState.DRAFT)
         coEvery { announcementRepository.createAnnouncement(any()) } throws Exception()
 
         // When
@@ -83,7 +86,7 @@ class ResendAnnouncementUseCaseTest {
     fun resendAnnouncement_should_throw_NoInternetConnectionException_when_not_connected() {
         // Given
         every { connectivityObserver.isConnected } returns false
-        val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
+        val announcement = longAnnouncementFixture.copy(state = AnnouncementState.DRAFT)
 
         // When
         useCase(announcement)

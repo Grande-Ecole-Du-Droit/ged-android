@@ -34,7 +34,7 @@ class CreateAnnouncementUseCaseTest {
     @Test
     fun createAnnouncement_should_create_announcement_with_publishing_state() {
         // Given
-        val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
+        val announcement = longAnnouncementFixture.copy(state = AnnouncementState.DRAFT)
 
         // When
         useCase(announcement)
@@ -48,7 +48,7 @@ class CreateAnnouncementUseCaseTest {
     @Test
     fun createAnnouncement_should_update_local_announcement_to_published_state_when_succeeds() {
         // Given
-        val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
+        val announcement = longAnnouncementFixture.copy(state = AnnouncementState.DRAFT)
 
         // When
         useCase(announcement)
@@ -62,7 +62,7 @@ class CreateAnnouncementUseCaseTest {
     @Test
     fun createAnnouncement_should_update_local_announcement_to_error_state_when_fails() {
         // Given
-        val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
+        val announcement = longAnnouncementFixture.copy(state = AnnouncementState.DRAFT)
         coEvery { announcementRepository.createAnnouncement(any()) } throws Exception()
 
         // When

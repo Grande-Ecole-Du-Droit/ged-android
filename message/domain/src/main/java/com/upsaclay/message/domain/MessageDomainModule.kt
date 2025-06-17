@@ -6,8 +6,8 @@ import com.upsaclay.message.domain.entity.ConversationMessage
 import com.upsaclay.message.domain.usecase.CreateConversationUseCase
 import com.upsaclay.message.domain.usecase.CreateMessageUseCase
 import com.upsaclay.message.domain.usecase.DeleteConversationUseCase
-import com.upsaclay.message.domain.usecase.GetConversationsUiUseCase
 import com.upsaclay.message.domain.usecase.GetConversationUseCase
+import com.upsaclay.message.domain.usecase.GetConversationsUiUseCase
 import com.upsaclay.message.domain.usecase.GetUnreadConversationsCountUseCase
 import com.upsaclay.message.domain.usecase.ListenRemoteConversationsUseCase
 import com.upsaclay.message.domain.usecase.ListenRemoteMessagesUseCase

@@ -4,9 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -185,10 +183,11 @@ private fun UsersFeed(
             }
         } else {
             item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(id = com.upsaclay.common.R.string.user_not_found),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = MaterialTheme.spacing.medium),
+                    text = stringResource(id = com.upsaclay.common.R.string.users_not_found),
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.previewText
                 )

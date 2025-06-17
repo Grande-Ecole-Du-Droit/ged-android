@@ -3,9 +3,9 @@ package com.upsaclay.news.data.local.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.upsaclay.news.data.AnnouncementField.Local.ANNOUNCEMENT_ID
 import com.upsaclay.news.data.AnnouncementField.Local.CONTENT
 import com.upsaclay.news.data.AnnouncementField.Local.DATE
-import com.upsaclay.news.data.AnnouncementField.Local.ANNOUNCEMENT_ID
 import com.upsaclay.news.data.AnnouncementField.Local.STATE
 import com.upsaclay.news.data.AnnouncementField.Local.TITLE
 import com.upsaclay.news.data.AnnouncementField.Local.USER_EMAIL

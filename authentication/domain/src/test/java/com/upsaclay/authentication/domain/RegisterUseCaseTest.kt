@@ -3,6 +3,7 @@ package com.upsaclay.authentication.domain
 import com.upsaclay.authentication.domain.repository.AuthenticationRepository
 import com.upsaclay.authentication.domain.usecase.RegisterUseCase
 import com.upsaclay.common.domain.ConnectivityObserver
+import com.upsaclay.common.domain.entity.NoInternetConnectionException
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.repository.WhiteListRepository
 import com.upsaclay.common.domain.userFixture
@@ -47,7 +48,7 @@ class RegisterUseCaseTest {
         )
     }
 
-    @Test
+    @Test(expected = NoInternetConnectionException::class)
     fun register_should_throw_NoInternetConnectionException_when_not_connected() = runTest {
         // Given
         every { connectivityObserver.isConnected } returns false

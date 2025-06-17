@@ -14,8 +14,8 @@ import com.upsaclay.common.domain.repository.RouteRepository
 import com.upsaclay.gedoise.data.GedoiseDatabase
 import com.upsaclay.gedoise.data.repository.RouteRepositoryImpl
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
-import com.upsaclay.gedoise.domain.usecase.ListenDataUseCase
 import com.upsaclay.gedoise.domain.usecase.FcmTokenUseCase
+import com.upsaclay.gedoise.domain.usecase.ListenDataUseCase
 import com.upsaclay.gedoise.domain.usecase.ListenRemoteUserUseCase
 import com.upsaclay.gedoise.presentation.navigation.NavigationViewModel
 import com.upsaclay.gedoise.presentation.profile.ProfileViewModel
@@ -92,7 +92,6 @@ val appModule = module {
     }
     single {
         ListenRemoteUserUseCase(
-            authenticationRepository = get(),
             userRepository = get(),
             scope = get(BACKGROUND_SCOPE)
         )

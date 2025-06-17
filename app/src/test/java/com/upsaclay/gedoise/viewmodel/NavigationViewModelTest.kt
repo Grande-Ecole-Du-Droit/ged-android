@@ -39,6 +39,7 @@ class NavigationViewModelTest {
         every { authenticationRepository.isAuthenticated } returns true
         every { routeRepository.currentRoute } returns null
         every { routeRepository.setCurrentRoute(any()) } returns Unit
+        every { getUnreadConversationsCountUseCase() } returns flowOf(0)
 
         navigationViewModel = NavigationViewModel(
             getUnreadConversationsCountUseCase = getUnreadConversationsCountUseCase,
@@ -95,7 +96,7 @@ class NavigationViewModelTest {
         navigationViewModel.intentToNavigate(route)
 
         // Then
-        val result = navigationViewModel.uiState.value.routesToNavigate
+        val result = navigationViewModel.routesToNavigate.replayCache[0]
 
         assert(result.contains(route))
     }
@@ -115,7 +116,7 @@ class NavigationViewModelTest {
         navigationViewModel.intentToNavigate(route)
 
         // Then
-        val result = navigationViewModel.uiState.value.routesToNavigate
+        val result = navigationViewModel.routesToNavigate.replayCache.getOrNull(0) ?: emptyList()
 
         assertEquals(emptyList(), result)
     }

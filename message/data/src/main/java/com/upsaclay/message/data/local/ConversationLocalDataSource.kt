@@ -44,12 +44,6 @@ internal class ConversationLocalDataSource(
         }
     }
 
-    suspend fun deleteConversation(conversation: Conversation) {
-        withContext(Dispatchers.IO) {
-            conversationDao.deleteConversation(conversation.toLocal())
-        }
-    }
-
     suspend fun deleteConversations() {
         withContext(Dispatchers.IO) {
             conversationDao.deleteConversations()
