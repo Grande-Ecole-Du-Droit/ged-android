@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -67,7 +68,6 @@ import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.messageFixture
 import java.time.LocalDateTime
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SentMessageItem(
     modifier: Modifier = Modifier,
@@ -113,6 +113,19 @@ fun SentMessageItem(
                             .size(20.dp)
                     )
                 }
+
+                AnimatedVisibility(
+                    visible = message.state == MessageState.ERROR
+                ) {
+                    Icon(
+                        painter = painterResource(com.upsaclay.common.R.drawable.ic_error),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier
+                            .padding(start = MaterialTheme.spacing.small)
+                            .size(20.dp)
+                    )
+                }
             }
         }
 
@@ -143,10 +156,7 @@ fun ReceiveMessageItem(
 
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable {
-
-            },
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
         verticalAlignment = Alignment.Bottom
     ) {
