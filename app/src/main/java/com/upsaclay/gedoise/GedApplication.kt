@@ -3,6 +3,7 @@ package com.upsaclay.gedoise
 import android.app.Application
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.MemoryCacheSettings
 import com.google.firebase.firestore.PersistentCacheSettings
 import com.upsaclay.authentication.authenticationModule
 import com.upsaclay.authentication.data.authenticationDataModule
@@ -29,12 +30,12 @@ class GedApplication : Application() {
         val db = FirebaseFirestore.getInstance()
         db.clearPersistence()
 
-        val localCacheSettings = PersistentCacheSettings.newBuilder()
-            .setSizeBytes(0)
+        val memoryCacheSettings = MemoryCacheSettings
+            .newBuilder()
             .build()
 
         val firestoreSettings = FirebaseFirestoreSettings.Builder()
-            .setLocalCacheSettings(localCacheSettings)
+            .setLocalCacheSettings(memoryCacheSettings)
             .build()
 
         db.firestoreSettings = firestoreSettings
