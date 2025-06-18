@@ -4,10 +4,12 @@ import androidx.paging.PagingData
 import com.upsaclay.common.domain.repository.UserRepository
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.message.domain.conversationFixture
+import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.messagesFixture
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
+import com.upsaclay.message.domain.usecase.ResendMessageUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import com.upsaclay.message.presentation.chat.ChatViewModel
 import io.mockk.coEvery
@@ -22,6 +24,8 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -30,6 +34,7 @@ class ChatViewModelTest {
     private val conversationRepository: ConversationRepository = mockk()
     private val messageRepository: MessageRepository = mockk()
     private val sendMessageUseCase: SendMessageUseCase = mockk()
+    private val resendMessageUseCase: ResendMessageUseCase = mockk()
     private val messageNotificationUseCase: MessageNotificationUseCase = mockk()
 
     private lateinit var chatViewModel: ChatViewModel
@@ -43,7 +48,9 @@ class ChatViewModelTest {
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { userRepository.currentUser } returns userFixture
         every { messageRepository.getPagingMessages(any()) } returns flowOf(PagingData.from(messagesFixture))
+        every { messageRepository.getLastMessageFlow(any()) } returns flowOf(messageFixture)
         every { sendMessageUseCase(any(), any(), any()) } returns Unit
+        coEvery { resendMessageUseCase(any()) } returns Unit
         coEvery { messageRepository.updateSeenMessages(any(), any()) } returns Unit
         coEvery { messageNotificationUseCase.clearNotifications(any()) } returns Unit
         coEvery { messageNotificationUseCase.sendNotification(any()) } returns Unit
@@ -54,6 +61,7 @@ class ChatViewModelTest {
             conversationRepository = conversationRepository,
             messageRepository = messageRepository,
             sendMessageUseCase = sendMessageUseCase,
+            resendMessageUseCase = resendMessageUseCase,
             messageNotificationUseCase = messageNotificationUseCase,
         )
     }
