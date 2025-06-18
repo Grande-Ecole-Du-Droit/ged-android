@@ -41,7 +41,7 @@ fun ConversationFeed(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag(stringResource(id = R.string.conversation_screen_conversation_item_tag)),
-                    conversation = conversation,
+                    conversationUi = conversation,
                     onClick = { onClick(conversation) },
                     onLongClick = { onLongClick(conversation) }
                 )

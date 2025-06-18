@@ -50,7 +50,7 @@ fun ChatBottomSheet(
             },
             icon = {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    imageVector = Icons.Default.Refresh,
                     contentDescription = null
                 )
             },
