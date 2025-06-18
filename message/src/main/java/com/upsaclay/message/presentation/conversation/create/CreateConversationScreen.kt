@@ -148,10 +148,10 @@ fun CreateConversationScreen(
         ) {
             if (loading) {
                 Box(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = MaterialTheme.spacing.medium),
+                    contentAlignment = Alignment.TopCenter
                 ) {
                     CircularProgressBar()
                 }

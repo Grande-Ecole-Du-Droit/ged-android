@@ -36,6 +36,7 @@ import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
 import com.upsaclay.common.utils.Phones
+import com.upsaclay.common.utils.getElapsedTimeValue
 import com.upsaclay.message.R
 import com.upsaclay.message.domain.entity.ConversationState
 import com.upsaclay.message.domain.entity.ConversationUi
@@ -45,27 +46,23 @@ import com.upsaclay.message.domain.messageFixture
 @Composable
 fun ConversationItem(
     modifier: Modifier = Modifier,
-    conversation: ConversationUi,
+    conversationUi: ConversationUi,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
-    val lastMessage = conversation.lastMessage
-    val interlocutor = conversation.interlocutor
-    val elapsedTimeValue = when (val elapsedTime = GetElapsedTimeUseCase.fromLocalDateTime(lastMessage.date)) {
-        is ElapsedTime.Now -> stringResource(id = com.upsaclay.common.R.string.now)
-        is ElapsedTime.Minute -> stringResource(com.upsaclay.common.R.string.minute_ago_short, elapsedTime.value)
-        is ElapsedTime.Hour -> stringResource(com.upsaclay.common.R.string.hour_ago_short, elapsedTime.value)
-        is ElapsedTime.Day -> stringResource(com.upsaclay.common.R.string.day_ago_short, elapsedTime.value)
-        is ElapsedTime.Week -> stringResource(com.upsaclay.common.R.string.week_ago_short, elapsedTime.value)
-        is ElapsedTime.Later -> FormatLocalDateTimeUseCase.formatDayMonthYear(elapsedTime.value)
+    val lastMessage = conversationUi.lastMessage
+    val interlocutor = conversationUi.interlocutor
+    val elapsedTimeValue = getElapsedTimeValue(lastMessage.date)
+    val text = when(lastMessage.state) {
+        MessageState.SENT, MessageState.DRAFT, MessageState.ERROR -> lastMessage.content
+        MessageState.LOADING -> stringResource(R.string.sending)
     }
-    val text = if (lastMessage.state == MessageState.SENT) lastMessage.content else stringResource(R.string.sending)
     val isNotSender = lastMessage.senderId == interlocutor.id
 
     SwitchConversationItem(
         modifier = modifier,
-        interlocutor = conversation.interlocutor,
-        conversationState = conversation.state,
+        interlocutor = conversationUi.interlocutor,
+        conversationState = conversationUi.state,
         text = text,
         isUnread = isNotSender && !lastMessage.seen,
         elapsedTime = elapsedTimeValue,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -70,72 +71,67 @@ import java.time.LocalDateTime
 fun SentMessageItem(
     modifier: Modifier = Modifier,
     message: Message,
-    showSeen: Boolean = false
+    showSeen: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     val dateTimeTextColor = if (isSystemInDarkTheme()) Color.LightGray else Color(0xFFC8C8C8)
-    val iconColor = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray
 
-    Column(
-        horizontalAlignment = Alignment.End
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
     ) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.Bottom
+        Spacer(modifier = Modifier.weight(0.2f))
+
+        Column(
+            modifier = Modifier.weight(0.8f, fill = false),
+            horizontalAlignment = Alignment.End
         ) {
-            Spacer(modifier = Modifier.weight(0.2f))
+            MessageText(
+                text = message.content,
+                textColor = Color.White,
+                date = message.date,
+                backgroundColor = MaterialTheme.colorScheme.primary,
+                dateTimeTextColor = dateTimeTextColor,
+                onClick = onClick
+            )
 
-            Row(
-                modifier = Modifier.weight(0.8f, fill = false),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                MessageText(
-                    text = message.content,
-                    textColor = Color.White,
-                    date = message.date,
-                    backgroundColor = MaterialTheme.colorScheme.primary,
-                    dateTimeTextColor = dateTimeTextColor
+            if (showSeen) {
+                val seenColor = if (isSystemInDarkTheme()) Color.Gray else Color.DarkGray
+
+                Text(
+                    modifier = Modifier.padding(
+                        top = MaterialTheme.spacing.extraSmall,
+                        end = MaterialTheme.spacing.smallMedium
+                    ),
+                    text = stringResource(id = R.string.message_seen),
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Light),
+                    color = seenColor
                 )
-
-                AnimatedVisibility(
-                    visible = message.state == MessageState.LOADING
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = stringResource(id = R.string.send_message_icon_description),
-                        tint = iconColor,
-                        modifier = Modifier
-                            .padding(start = MaterialTheme.spacing.small)
-                            .size(20.dp)
-                    )
-                }
-
-                AnimatedVisibility(
-                    visible = message.state == MessageState.ERROR
-                ) {
-                    Icon(
-                        painter = painterResource(com.upsaclay.common.R.drawable.ic_error),
-                        contentDescription = stringResource(id = R.string.send_message_icon_description),
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .padding(start = MaterialTheme.spacing.small)
-                            .size(20.dp)
-                    )
-                }
             }
         }
 
-        if (showSeen) {
-            val seenColor = if (isSystemInDarkTheme()) Color.Gray else Color.DarkGray
+        AnimatedVisibility(
+            modifier = Modifier.weight(0.1f),
+            visible = message.state == MessageState.LOADING
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Send,
+                contentDescription = stringResource(id = R.string.send_message_icon_description),
+                tint = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray,
+                modifier = Modifier.size(20.dp)
+            )
+        }
 
-            Text(
-                modifier = Modifier.padding(
-                    top = MaterialTheme.spacing.extraSmall,
-                    end = MaterialTheme.spacing.smallMedium
-                ),
-                text = stringResource(id = R.string.message_seen),
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Light),
-                color = seenColor
+        AnimatedVisibility(
+            modifier = Modifier.weight(0.1f),
+            visible = message.state == MessageState.ERROR
+        ) {
+            Icon(
+                painter = painterResource(com.upsaclay.common.R.drawable.ic_error),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(22.dp)
             )
         }
     }
@@ -182,11 +178,16 @@ private fun MessageText(
     date: LocalDateTime,
     textColor: Color,
     dateTimeTextColor: Color,
-    backgroundColor: Color
+    backgroundColor: Color,
+    onClick: (() -> Unit)? = null
 ) {
     FlowRow(
         modifier = modifier
             .clip(RoundedCornerShape(MaterialTheme.spacing.medium))
+            .clickable(
+                enabled = onClick != null,
+                onClick = onClick ?: {}
+            )
             .background(backgroundColor)
             .padding(
                 vertical = MaterialTheme.spacing.small,

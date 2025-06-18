@@ -2,6 +2,7 @@ package com.upsaclay.message.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -61,6 +62,9 @@ interface MessageDao {
 
     @Upsert
     suspend fun upsertMessage(localMessage: LocalMessage)
+
+    @Delete
+    suspend fun deleteMessage(localMessage: LocalMessage)
 
     @Query("DELETE FROM $MESSAGES_TABLE_NAME WHERE ${MessageField.CONVERSATION_ID} = :conversationId")
     suspend fun deleteMessages(conversationId: String)

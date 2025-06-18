@@ -2,6 +2,7 @@ package com.upsaclay.message.presentation.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.PagingData
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
@@ -10,9 +11,11 @@ import com.upsaclay.common.domain.usecase.GenerateIdUseCase
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
+import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
+import com.upsaclay.message.domain.usecase.ResendMessageUseCase
 import com.upsaclay.message.domain.usecase.SendMessageUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,6 +27,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 
 class ChatViewModel(
@@ -32,6 +36,7 @@ class ChatViewModel(
     private val conversationRepository: ConversationRepository,
     private val messageRepository: MessageRepository,
     private val sendMessageUseCase: SendMessageUseCase,
+    private val resendMessageUseCase: ResendMessageUseCase,
     private val messageNotificationUseCase: MessageNotificationUseCase,
 ): ViewModel() {
     private val user: User? = userRepository.currentUser
@@ -80,6 +85,20 @@ class ChatViewModel(
             viewModelScope.launch {
                 _event.emit(SingleUiEvent.Error(com.upsaclay.common.R.string.current_user_not_found))
             }
+        }
+    }
+
+    fun resendErrorMessage(message: Message) {
+        viewModelScope.launch {
+            resendMessageUseCase(
+                message.copy(date = LocalDateTime.now(ZoneOffset.UTC))
+            )
+        }
+    }
+
+    fun deleteErrorMessage(message: Message) {
+        viewModelScope.launch {
+            messageRepository.deleteLocalMessage(message)
         }
     }
 

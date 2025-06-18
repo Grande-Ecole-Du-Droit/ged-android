@@ -29,6 +29,7 @@ import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
 import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
 import com.upsaclay.common.utils.Phones
+import com.upsaclay.common.utils.getElapsedTimeValue
 import com.upsaclay.news.domain.longAnnouncementFixture
 import com.upsaclay.news.domain.entity.Announcement
 import com.upsaclay.news.domain.entity.AnnouncementState
@@ -38,7 +39,7 @@ internal fun AnnouncementHeader(
     modifier: Modifier = Modifier,
     announcement: Announcement
 ) {
-    val elapsedTimeValue = getElapsedTimeValue(announcement)
+    val elapsedTimeValue = getElapsedTimeValue(announcement.date)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -71,7 +72,7 @@ internal fun ShortAnnouncementItem(
     announcement: Announcement,
     onClick: () -> Unit
 ) {
-    val elapsedTimeValue = getElapsedTimeValue(announcement)
+    val elapsedTimeValue = getElapsedTimeValue(announcement.date)
     when (announcement.state) {
         AnnouncementState.PUBLISHED, AnnouncementState.DRAFT -> {
             DefaultShortAnnouncementItem(
@@ -193,18 +194,6 @@ private fun ErrorShortAnnouncementItem(
             contentDescription = null,
             tint = MaterialTheme.colorScheme.error
         )
-    }
-}
-
-@Composable
-private fun getElapsedTimeValue(announcement: Announcement): String {
-    return when (val elapsedTime = GetElapsedTimeUseCase.fromLocalDateTime(announcement.date)) {
-        is ElapsedTime.Now -> stringResource(com.upsaclay.common.R.string.now, elapsedTime.value)
-        is ElapsedTime.Minute -> stringResource(com.upsaclay.common.R.string.minute_ago_short, elapsedTime.value)
-        is ElapsedTime.Hour -> stringResource(com.upsaclay.common.R.string.hour_ago_short, elapsedTime.value)
-        is ElapsedTime.Day -> stringResource(com.upsaclay.common.R.string.day_ago_short, elapsedTime.value)
-        is ElapsedTime.Week -> stringResource(com.upsaclay.common.R.string.week_ago_short, elapsedTime.value)
-        is ElapsedTime.Later -> FormatLocalDateTimeUseCase.formatDayMonthYear(elapsedTime.value)
     }
 }
 

@@ -8,11 +8,13 @@
     <string name="new_conversation">Nouvelle conversation</string>
     <string name="new_group">Nouveau groupe</string>
     <string name="start_conversation">Démarrer une conversation avec vos amis.</string>
-    <string name="delete_conversation_dialog_title">Supprimer la conversation ?</string>
+    <string name="delete_conversation_dialog_title">Supprimer la conversation</string>
     <string name="delete_conversation_dialog_message">Votre interlocuteur pourra toujours voir la conversation et vous envoyer des messages.</string>
     <string name="conversation_deleted">Conversation supprimé</string>
 
     <string name="message_placeholder">Envoyer un message</string>
+    <string name="delete_message_dialog_title">Supprimer le message</string>
+    <string name="delete_message_dialog_message">Êtes-vous sûr de vouloir supprimer ce message ?</string>
     <string name="send_message_icon_description">Bouton d\'envoi de message</string>
     <string name="tap_to_chat">Appuyer pour discuter</string>
     <string name="message_seen">Vu</string>

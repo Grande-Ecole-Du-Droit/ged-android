@@ -29,6 +29,9 @@ internal class MessageRepositoryImpl(
         messageRemoteDataSource.createMessage(message)
     }
 
+    override suspend fun createRemoteMessage(message: Message) {
+        messageRemoteDataSource.createMessage(message)
+    }
     override suspend fun updateSeenMessages(conversationId: String, userId: String) {
         messageLocalDataSource.getUnreadMessagesByUser(conversationId, userId).forEach { message ->
             messageRemoteDataSource.updateSeenMessage(message.copy(seen = true))
@@ -47,6 +50,10 @@ internal class MessageRepositoryImpl(
 
     override suspend fun upsertLocalMessage(message: Message) {
         messageLocalDataSource.upsertMessage(message)
+    }
+
+    override suspend fun deleteLocalMessage(message: Message) {
+        messageLocalDataSource.deleteMessage(message)
     }
 
     override suspend fun deleteLocalMessages(conversationId: String) {
