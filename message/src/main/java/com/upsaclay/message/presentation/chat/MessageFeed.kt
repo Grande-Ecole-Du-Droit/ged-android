@@ -66,20 +66,11 @@ internal fun MessageFeed(
     LaunchedEffect(newMessageEvent) {
         newMessageEvent?.let { event ->
             when {
-                listState.firstVisibleItemIndex <= 1 &&
-                        listState.layoutInfo.visibleItemsInfo.size < messageItems.itemCount ->
-                    listState.animateScrollToItem(0)
+                listState.firstVisibleItemIndex <= 1 -> listState.animateScrollToItem(0)
 
                 listState.firstVisibleItemIndex > 1 && event.message.senderId == interlocutor.id ->
                     showNewMessageIndicator = true
             }
-        }
-    }
-
-    LaunchedEffect(messageItems.itemCount) {
-        if (listState.firstVisibleItemIndex <= 1 &&
-            listState.layoutInfo.visibleItemsInfo.size < messageItems.itemCount) {
-            listState.animateScrollToItem(0)
         }
     }
 

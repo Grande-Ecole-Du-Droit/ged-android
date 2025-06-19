@@ -28,14 +28,22 @@ internal class MessageLocalDataSource(private val messageDao: MessageDao) {
         }
     }
 
-    suspend fun getUnreadMessagesByUser(conversationId: String, userId: String): List<Message> =
-        messageDao.getUnreadMessagesByUser(conversationId, userId).map { it.toMessage() }
+    suspend fun getUnreadMessagesByUser(conversationId: String, userId: String): List<Message> {
+        return withContext(Dispatchers.IO) {
+            messageDao.getUnreadMessagesByUser(conversationId, userId).map { it.toMessage() }
+        }
+    }
 
     fun getLastMessageFlow(conversationId: String): Flow<Message?> =
         messageDao.getLastMessageFlow(conversationId).map { it?.toMessage() }
 
-    suspend fun getLastMessage(conversationId: String): Message? =
+    suspend fun getLastMessage(conversationId: String): Message? = withContext(Dispatchers.IO) {
         messageDao.getLastMessage(conversationId)?.toMessage()
+    }
+
+    suspend fun getUnsentMessages(): List<Message> = withContext(Dispatchers.IO) {
+        messageDao.getUnsentMessages().map { it.toMessage() }
+    }
 
     suspend fun insertMessage(message: Message) {
         withContext(Dispatchers.IO) {

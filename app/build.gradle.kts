@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.room.paging)
     implementation(libs.firebase.messaging.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.koin)
@@ -96,6 +97,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(libs.koin.test)
     testImplementation(libs.koin.test.junit4)
+
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

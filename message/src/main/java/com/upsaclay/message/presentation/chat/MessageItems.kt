@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -113,7 +112,7 @@ fun SentMessageItem(
 
         AnimatedVisibility(
             modifier = Modifier.weight(0.1f),
-            visible = message.state == MessageState.LOADING
+            visible = message.state == MessageState.SENDING
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Send,
@@ -349,7 +348,7 @@ private fun SentMessageItemPreview() {
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
 
-            SentMessageItem(message = messageFixture.copy(state = MessageState.LOADING))
+            SentMessageItem(message = messageFixture.copy(state = MessageState.SENDING))
         }
     }
 }

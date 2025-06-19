@@ -2,7 +2,6 @@ package com.upsaclay.message.presentation.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.PagingData
 import com.upsaclay.common.domain.entity.SingleUiEvent
 import com.upsaclay.common.domain.entity.User
@@ -11,7 +10,6 @@ import com.upsaclay.common.domain.usecase.GenerateIdUseCase
 import com.upsaclay.message.domain.entity.Conversation
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.entity.MessageState
-import com.upsaclay.message.domain.messageFixture
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
 import com.upsaclay.message.domain.usecase.MessageNotificationUseCase
@@ -27,7 +25,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.ZoneOffset
 
 class ChatViewModel(
@@ -77,7 +74,7 @@ class ChatViewModel(
                 recipientId = conversation.interlocutor.id,
                 content = text,
                 date = LocalDateTime.now(ZoneOffset.UTC),
-                state = MessageState.DRAFT
+                state = MessageState.SENDING
             )
             sendMessageUseCase(message, conversation, user.id)
             _uiState.update { it.copy(text = "") }
@@ -114,7 +111,6 @@ class ChatViewModel(
         viewModelScope.launch {
             messageRepository.getLastMessageFlow(conversation.id)
                 .filterNotNull()
-                .filter { it.senderId != user?.id }
                 .filter { Duration.between(it.date, LocalDateTime.now(ZoneOffset.UTC)).toMinutes() < 1L }
                 .collect {
                     _event.emit(MessageEvent.NewMessage(it))

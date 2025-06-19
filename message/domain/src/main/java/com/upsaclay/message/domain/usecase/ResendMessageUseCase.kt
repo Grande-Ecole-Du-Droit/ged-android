@@ -9,7 +9,7 @@ class ResendMessageUseCase(
 ) {
     suspend operator fun invoke(message: Message) {
         try {
-            messageRepository.updateLocalMessage(message.copy(state = MessageState.LOADING))
+            messageRepository.updateLocalMessage(message.copy(state = MessageState.SENDING))
             messageRepository.createRemoteMessage(message)
             messageRepository.updateLocalMessage(message.copy(state = MessageState.SENT))
         } catch (_: Exception) {

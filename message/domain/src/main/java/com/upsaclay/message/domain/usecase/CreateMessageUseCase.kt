@@ -9,7 +9,7 @@ class CreateMessageUseCase(
 ) {
     suspend operator fun invoke(message: Message) {
         try {
-            messageRepository.createMessage(message.copy(state = MessageState.LOADING))
+            messageRepository.createMessage(message.copy(state = MessageState.SENDING))
             messageRepository.updateLocalMessage(message.copy(state = MessageState.SENT))
         } catch (_: Exception) {
             messageRepository.updateLocalMessage(message.copy(state = MessageState.ERROR))
