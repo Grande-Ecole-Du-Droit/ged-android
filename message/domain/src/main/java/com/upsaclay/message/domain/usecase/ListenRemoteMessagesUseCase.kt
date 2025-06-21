@@ -24,7 +24,7 @@ class ListenRemoteMessagesUseCase(
     fun start() {
         job?.cancel()
         job = scope.launch {
-            getConversationsFlow()
+            filteredConversationsFlow()
                 .collect { conversations ->
                     conversations.forEach { conversation ->
                         messageJobs[conversation.id]?.job?.cancel()
@@ -43,7 +43,7 @@ class ListenRemoteMessagesUseCase(
         messageJobs.clear()
     }
 
-    internal fun getConversationsFlow(): Flow<List<Conversation>> {
+    internal fun filteredConversationsFlow(): Flow<List<Conversation>> {
         return conversationRepository.getConversationsFlow()
             .map {
                 it.filter { conversation ->

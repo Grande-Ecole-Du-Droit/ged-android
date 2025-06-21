@@ -31,7 +31,7 @@ class ResendMessageUseCaseTest {
         useCase(messageFixture)
 
         // Then
-         coVerify { messageRepository.updateLocalMessage(messageFixture.copy(state = MessageState.LOADING)) }
+         coVerify { messageRepository.updateLocalMessage(messageFixture.copy(state = MessageState.SENDING)) }
     }
 
     @Test

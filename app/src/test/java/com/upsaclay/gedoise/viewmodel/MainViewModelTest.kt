@@ -38,7 +38,6 @@ class MainViewModelTest {
 
         every { userRepository.user } returns MutableStateFlow(userFixture)
         every { authenticationRepository.authenticated } returns flowOf(true)
-        coEvery { userRepository.getCurrentUser() } returns userFixture
         coEvery { userRepository.getUsers() } returns usersFixture
         coEvery { userRepository.getUser(any()) } returns userFixture
         coEvery { userRepository.storeUser(any()) } returns Unit

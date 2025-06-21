@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.androidx.room.paging)
     implementation(libs.androidx.paging.common)
     implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.gson)
     implementation(libs.jakewharton.timber)
     implementation(platform(libs.firebase.bom))

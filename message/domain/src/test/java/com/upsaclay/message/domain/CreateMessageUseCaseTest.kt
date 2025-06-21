@@ -26,31 +26,31 @@ class CreateMessageUseCaseTest {
     @Test
     fun createMessage_should_create_message_with_loading_state() = runTest {
         // Given
-        val message = messageFixture.copy(state = MessageState.DRAFT)
+        val message = messageFixture.copy(state = MessageState.ERROR)
 
         // When
         useCase(message)
 
         // Then
-        coVerify { messageRepository.createMessage(message.copy(state = MessageState.LOADING)) }
+        coVerify { messageRepository.createMessage(message.copy(state = MessageState.SENDING)) }
     }
 
     @Test
     fun createMessage_should_update_local_message_to_created_state_when_succeeds() = runTest {
         // Given
-        val message = messageFixture.copy(state = MessageState.DRAFT)
+        val message = messageFixture.copy(state = MessageState.ERROR)
 
         // When
         useCase(message)
 
         // Then
-        coVerify { messageRepository.createMessage(message.copy(state = MessageState.LOADING)) }
+        coVerify { messageRepository.createMessage(message.copy(state = MessageState.SENDING)) }
     }
 
     @Test
     fun createMessage_should_update_local_message_state_to_error_state_when_fails() = runTest {
         // Given
-        val message = messageFixture.copy(state = MessageState.DRAFT)
+        val message = messageFixture.copy(state = MessageState.SENDING)
         coEvery { messageRepository.createMessage(any()) } throws Exception()
 
         // When

@@ -12,6 +12,8 @@ interface MessageRepository {
 
     suspend fun getLastMessage(conversationId: String): Message?
 
+    suspend fun getUnsentMessages(): List<Message>
+
     fun fetchRemoteMessages(conversationId: String, interlocutorId: String, offsetTime: LocalDateTime?): Flow<Message>
 
     suspend fun createMessage(message: Message)

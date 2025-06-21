@@ -21,7 +21,7 @@ data class Conversation(
 
 enum class ConversationState {
     DRAFT,
-    LOADING,
+    CREATING,
     CREATED,
     ERROR
 }

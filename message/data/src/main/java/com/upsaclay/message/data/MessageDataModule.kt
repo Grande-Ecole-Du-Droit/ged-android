@@ -13,6 +13,8 @@ import com.upsaclay.message.data.remote.api.MessageApiImpl
 import com.upsaclay.message.data.repository.ConversationMessageRepositoryImpl
 import com.upsaclay.message.data.repository.ConversationRepositoryImpl
 import com.upsaclay.message.data.repository.MessageRepositoryImpl
+import com.upsaclay.message.data.worker.MessageWorkerBuilder
+import com.upsaclay.message.data.worker.MessageWorkerLauncher
 import com.upsaclay.message.domain.repository.ConversationMessageRepository
 import com.upsaclay.message.domain.repository.ConversationRepository
 import com.upsaclay.message.domain.repository.MessageRepository
@@ -20,6 +22,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
@@ -56,4 +59,11 @@ val messageDataModule = module {
     singleOf(::MessageApiImpl) { bind<MessageApi>() }
     singleOf(::MessageRemoteDataSource)
     singleOf(::MessageLocalDataSource)
+    singleOf(::MessageWorkerBuilder)
+    single {
+        MessageWorkerLauncher(
+            context = androidContext(),
+            messageWorkerBuilder = get()
+        )
+    }
 }

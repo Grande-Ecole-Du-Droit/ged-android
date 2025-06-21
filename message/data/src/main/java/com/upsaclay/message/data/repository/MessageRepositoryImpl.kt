@@ -5,7 +5,9 @@ import com.upsaclay.message.data.local.MessageLocalDataSource
 import com.upsaclay.message.data.remote.MessageRemoteDataSource
 import com.upsaclay.message.domain.entity.Message
 import com.upsaclay.message.domain.repository.MessageRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 
 internal class MessageRepositoryImpl(
@@ -21,8 +23,13 @@ internal class MessageRepositoryImpl(
     override suspend fun getLastMessage(conversationId: String): Message? =
         messageLocalDataSource.getLastMessage(conversationId)
 
-    override fun fetchRemoteMessages(conversationId: String, interlocutorId: String, offsetTime: LocalDateTime?): Flow<Message> =
-        messageRemoteDataSource.listenMessages(conversationId, interlocutorId, offsetTime)
+    override suspend fun getUnsentMessages(): List<Message> = messageLocalDataSource.getUnsentMessages()
+
+    override fun fetchRemoteMessages(
+        conversationId: String,
+        interlocutorId: String,
+        offsetTime: LocalDateTime?
+    ): Flow<Message> = messageRemoteDataSource.listenMessages(conversationId, interlocutorId, offsetTime)
 
     override suspend fun createMessage(message: Message) {
         messageLocalDataSource.insertMessage(message)

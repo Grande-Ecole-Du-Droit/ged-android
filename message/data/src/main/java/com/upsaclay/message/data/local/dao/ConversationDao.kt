@@ -7,6 +7,8 @@ import androidx.room.Update
 import androidx.room.Upsert
 import com.upsaclay.message.data.local.model.LocalConversation
 import com.upsaclay.message.data.model.CONVERSATIONS_TABLE_NAME
+import com.upsaclay.message.data.model.ConversationField
+import com.upsaclay.message.data.model.ConversationField.Local.CONVERSATION_STATE
 import com.upsaclay.message.data.model.ConversationField.Local.INTERLOCUTOR_ID
 import kotlinx.coroutines.flow.Flow
 
@@ -23,6 +25,9 @@ interface ConversationDao {
 
     @Query("SELECT * FROM $CONVERSATIONS_TABLE_NAME WHERE $INTERLOCUTOR_ID = :interlocutorId")
     suspend fun getConversation(interlocutorId: String): LocalConversation?
+
+    @Query("SELECT * FROM $CONVERSATIONS_TABLE_NAME WHERE $CONVERSATION_STATE = 'CREATING'")
+    suspend fun getUnCreateConversations(): List<LocalConversation>
 
     @Insert
     suspend fun insertConversation(localConversation: LocalConversation)

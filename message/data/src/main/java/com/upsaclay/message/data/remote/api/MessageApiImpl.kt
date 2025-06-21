@@ -17,7 +17,11 @@ import kotlinx.coroutines.tasks.await
 internal class MessageApiImpl : MessageApi {
     private val conversationsCollection = Firebase.firestore.collection(CONVERSATIONS_TABLE_NAME)
 
-    override fun listenMessages(conversationId: String, interlocutorId: String, offsetTime: Timestamp?): Flow<RemoteMessage> = callbackFlow {
+    override fun listenMessages(
+        conversationId: String,
+        interlocutorId: String,
+        offsetTime: Timestamp?
+    ): Flow<RemoteMessage> = callbackFlow {
         val listener = conversationsCollection
             .document(conversationId)
             .collection(MESSAGES_TABLE_NAME)
@@ -31,10 +35,10 @@ internal class MessageApiImpl : MessageApi {
                 snapshot?.documents
                     ?.filterNot { it.metadata.isFromCache || it.metadata.hasPendingWrites() }
                     ?.forEach { document ->
-                    document.toObject(RemoteMessage::class.java)?.let {
-                        trySend(it)
+                        document.toObject(RemoteMessage::class.java)?.let {
+                            trySend(it)
+                        }
                     }
-                }
             }
 
         awaitClose { listener.remove() }

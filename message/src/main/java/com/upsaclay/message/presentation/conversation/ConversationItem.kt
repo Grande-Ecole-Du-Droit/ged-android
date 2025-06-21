@@ -26,15 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.upsaclay.common.domain.entity.ElapsedTime
 import com.upsaclay.common.domain.entity.User
-import com.upsaclay.common.domain.usecase.GetElapsedTimeUseCase
 import com.upsaclay.common.domain.userFixture
 import com.upsaclay.common.presentation.components.ProfilePicture
 import com.upsaclay.common.presentation.theme.GedoiseTheme
 import com.upsaclay.common.presentation.theme.previewText
 import com.upsaclay.common.presentation.theme.spacing
-import com.upsaclay.common.utils.FormatLocalDateTimeUseCase
 import com.upsaclay.common.utils.Phones
 import com.upsaclay.common.utils.getElapsedTimeValue
 import com.upsaclay.message.R
@@ -54,8 +51,8 @@ fun ConversationItem(
     val interlocutor = conversationUi.interlocutor
     val elapsedTimeValue = getElapsedTimeValue(lastMessage.date)
     val text = when(lastMessage.state) {
-        MessageState.SENT, MessageState.DRAFT, MessageState.ERROR -> lastMessage.content
-        MessageState.LOADING -> stringResource(R.string.sending)
+        MessageState.SENT, MessageState.ERROR -> lastMessage.content
+        MessageState.SENDING -> stringResource(R.string.sending)
     }
     val isNotSender = lastMessage.senderId == interlocutor.id
 
@@ -88,7 +85,7 @@ private fun SwitchConversationItem(
         onClick = onClick,
         onLongClick = onLongClick
     ) { innerModifier ->
-        if (conversationState == ConversationState.LOADING) {
+        if (conversationState == ConversationState.CREATING) {
             ReadConversationItemContent(
                 modifier = innerModifier
                     .alpha(0.5f)
@@ -291,7 +288,7 @@ private fun SendingConversationItemPreview() {
         Surface {
             SwitchConversationItem(
                 interlocutor = userFixture,
-                conversationState = ConversationState.LOADING,
+                conversationState = ConversationState.CREATING,
                 isUnread = false,
                 text = messageFixture.content,
                 elapsedTime = "1 min",
