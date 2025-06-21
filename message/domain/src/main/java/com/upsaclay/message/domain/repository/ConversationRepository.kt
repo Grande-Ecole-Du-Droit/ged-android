@@ -12,9 +12,13 @@ interface ConversationRepository {
 
     suspend fun getConversation(interlocutorId: String): Conversation?
 
+    suspend fun getUnCreateConversations(): List<Conversation>
+
     suspend fun fetchRemoteConversations(userId: String): Flow<Conversation>
 
     suspend fun createConversation(conversation: Conversation, userId: String)
+
+    suspend fun createRemoteConversation(conversation: Conversation, userId: String)
 
     suspend fun updateLocalConversation(conversation: Conversation)
 

@@ -35,6 +35,9 @@ internal class ConversationRepositoryImpl(
     override suspend fun getConversation(interlocutorId: String): Conversation? =
         conversationLocalDataSource.getConversation(interlocutorId)
 
+    override suspend fun getUnCreateConversations(): List<Conversation> =
+        conversationLocalDataSource.getUnCreateConversations()
+
     override suspend fun fetchRemoteConversations(userId: String): Flow<Conversation> {
         return conversationRemoteDataSource.listenConversations(userId)
             .flatMapMerge { remoteConversation ->
@@ -53,6 +56,10 @@ internal class ConversationRepositoryImpl(
 
     override suspend fun createConversation(conversation: Conversation, userId: String) {
         conversationLocalDataSource.upsertConversation(conversation)
+        conversationRemoteDataSource.createConversation(conversation, userId)
+    }
+
+    override suspend fun createRemoteConversation(conversation: Conversation, userId: String) {
         conversationRemoteDataSource.createConversation(conversation, userId)
     }
 

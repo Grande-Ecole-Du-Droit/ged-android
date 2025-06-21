@@ -10,7 +10,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -43,7 +42,7 @@ class ListenRemoteMessagesUseCaseTest {
     }
 
     @Test
-    fun getConversationsFlow_should_not_return_already_fetched_conversation() = runTest {
+    fun filteredConversationsFlow_should_not_return_already_fetched_conversation() = runTest {
         // Given
         val conversations = listOf(
             conversationFixture,
@@ -55,7 +54,7 @@ class ListenRemoteMessagesUseCaseTest {
         every { conversationRepository.getConversationsFlow() } returns flowOf(conversations)
 
         // When
-        val result = useCase.getConversationsFlow()
+        val result = useCase.filteredConversationsFlow()
 
         // Then
         assert(

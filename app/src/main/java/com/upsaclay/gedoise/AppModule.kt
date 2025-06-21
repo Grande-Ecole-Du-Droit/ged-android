@@ -12,7 +12,7 @@ import com.upsaclay.common.domain.IntentHelper
 import com.upsaclay.common.domain.e
 import com.upsaclay.common.domain.repository.RouteRepository
 import com.upsaclay.gedoise.data.GedoiseDatabase
-import com.upsaclay.gedoise.data.WorkerLauncher
+import com.upsaclay.common.data.WorkerLauncher
 import com.upsaclay.gedoise.data.repository.RouteRepositoryImpl
 import com.upsaclay.gedoise.domain.usecase.ClearDataUseCase
 import com.upsaclay.gedoise.domain.usecase.FcmTokenUseCase
@@ -99,6 +99,4 @@ val appModule = module {
     }
 
     singleOf(::IntentHelperImpl) { bind<IntentHelper>() }
-
-    single { WorkerLauncher(context = androidContext()) }
 }

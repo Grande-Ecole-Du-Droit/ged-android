@@ -35,7 +35,7 @@ class CreateConversationUseCaseTest {
         // Then
         coVerify {
             conversationRepository.createConversation(
-                conversation.copy(state = ConversationState.LOADING),
+                conversation.copy(state = ConversationState.CREATING),
                 userFixture.id
             )
         }

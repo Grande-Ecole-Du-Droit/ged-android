@@ -7,7 +7,7 @@ import com.upsaclay.message.domain.entity.MessageState
 import com.upsaclay.message.domain.repository.MessageRepository
 import org.koin.java.KoinJavaComponent.inject
 
-class SynchronizeMessageWorker(
+internal class SynchronizeMessageWorker(
     context: Context,
     params: WorkerParameters
 ): CoroutineWorker(context, params) {

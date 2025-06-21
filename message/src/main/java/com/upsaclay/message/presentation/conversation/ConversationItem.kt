@@ -85,7 +85,7 @@ private fun SwitchConversationItem(
         onClick = onClick,
         onLongClick = onLongClick
     ) { innerModifier ->
-        if (conversationState == ConversationState.LOADING) {
+        if (conversationState == ConversationState.CREATING) {
             ReadConversationItemContent(
                 modifier = innerModifier
                     .alpha(0.5f)
@@ -288,7 +288,7 @@ private fun SendingConversationItemPreview() {
         Surface {
             SwitchConversationItem(
                 interlocutor = userFixture,
-                conversationState = ConversationState.LOADING,
+                conversationState = ConversationState.CREATING,
                 isUnread = false,
                 text = messageFixture.content,
                 elapsedTime = "1 min",

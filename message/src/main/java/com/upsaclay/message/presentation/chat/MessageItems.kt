@@ -110,15 +110,12 @@ fun SentMessageItem(
             }
         }
 
-        AnimatedVisibility(
-            modifier = Modifier.weight(0.1f),
-            visible = message.state == MessageState.SENDING
-        ) {
+        if (message.state == MessageState.SENDING) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Send,
                 contentDescription = stringResource(id = R.string.send_message_icon_description),
                 tint = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp).weight(0.1f)
             )
         }
 
