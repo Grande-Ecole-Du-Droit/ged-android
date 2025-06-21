@@ -1,6 +1,7 @@
 package com.upsaclay.gedoise.presentation.profile.account
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,6 +57,10 @@ fun AccountDestination(
         }
     }
 
+    BackHandler(enabled = uiState.screenState == AccountScreenState.EDIT) {
+        viewModel.cancelEdit()
+    }
+
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
@@ -76,7 +81,7 @@ fun AccountDestination(
         onScreenStateChange = viewModel::onScreenStateChange,
         onDeleteProfilePictureClick = viewModel::deleteProfilePicture,
         onSaveProfilePictureClick = viewModel::updateProfilePicture,
-        onCancelUpdateProfilePictureClick = viewModel::resetValues,
+        onCancelUpdateProfilePictureClick = viewModel::cancelEdit,
         onBackClick = onBackClick
     )
 }

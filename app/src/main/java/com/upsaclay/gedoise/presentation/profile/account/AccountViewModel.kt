@@ -50,11 +50,11 @@ class AccountViewModel(
                 _uiState.value.profilePictureUri?.let { uri ->
                     updateState(loading = true)
                     updateProfilePictureUseCase(user, uri)
-                    resetValues()
+                    cancelEdit()
                     _event.emit(SingleUiEvent.Success(R.string.profile_picture_updated))
                 }
             } catch (e: Exception) {
-                resetValues()
+                cancelEdit()
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             }
         }
@@ -72,10 +72,10 @@ class AccountViewModel(
                 user.profilePictureUrl?.let {
                     deleteProfilePictureUseCase(user.id, it)
                 }
-                resetValues()
+                cancelEdit()
                 _event.emit(SingleUiEvent.Success(R.string.profile_picture_deleted))
             } catch (e: Exception) {
-                resetValues()
+                cancelEdit()
                 _event.emit(SingleUiEvent.Error(mapErrorMessage(e)))
             }
         }
@@ -85,7 +85,7 @@ class AccountViewModel(
         updateState(screenState = screenState)
     }
 
-    fun resetValues() {
+    fun cancelEdit() {
         updateState(
             screenState = AccountScreenState.READ,
             profilePictureUri = null,
