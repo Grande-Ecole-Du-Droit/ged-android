@@ -66,7 +66,7 @@ fun OutlineTextField(
     OutlinedTextField(
         modifier = modifier,
         value = value,
-        label = { Text(text = label, color = MaterialTheme.colorScheme.inputForeground) },
+        label = { Text(text = label) },
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
         isError = errorMessage != null,

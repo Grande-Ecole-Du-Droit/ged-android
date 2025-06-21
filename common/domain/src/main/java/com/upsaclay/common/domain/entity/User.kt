@@ -12,5 +12,5 @@ data class User(
     val isMember: Boolean = false,
     val profilePictureUrl: String? = null
 ) {
-    val fullName: String = firstName + lastName
+    val fullName: String = "$firstName $lastName"
 }

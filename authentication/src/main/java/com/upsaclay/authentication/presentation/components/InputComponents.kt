@@ -62,12 +62,7 @@ fun OutlinePasswordTextField(
     OutlinedTextField(
         modifier = modifier,
         value = text,
-        label = {
-            Text(
-                text = stringResource(id = R.string.password),
-                color = MaterialTheme.colorScheme.inputForeground
-            )
-        },
+        label = { Text(text = stringResource(id = R.string.password)) },
         onValueChange = onValueChange,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         keyboardActions = keyboardActions,

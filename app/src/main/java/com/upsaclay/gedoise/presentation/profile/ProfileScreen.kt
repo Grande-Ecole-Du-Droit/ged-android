@@ -2,6 +2,7 @@ package com.upsaclay.gedoise.presentation.profile
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -166,14 +167,13 @@ private fun TopSection(profilePictureUrl: String?, userFullName: String) {
                 end = MaterialTheme.spacing.medium,
                 bottom = MaterialTheme.spacing.medium
             ),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
     ) {
         ProfilePicture(
             url = profilePictureUrl,
             scale = 0.7f
         )
-
-        Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
 
         Text(
             text = userFullName,
