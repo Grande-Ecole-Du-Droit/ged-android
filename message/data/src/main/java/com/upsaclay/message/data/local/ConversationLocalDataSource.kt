@@ -26,9 +26,6 @@ internal class ConversationLocalDataSource(
     suspend fun getConversation(interlocutorId: String): Conversation? =
         conversationDao.getConversation(interlocutorId)?.toConversation()
 
-    suspend fun getUnCreateConversations(): List<Conversation> =
-        conversationDao.getUnCreateConversations().map { it.toConversation() }
-
     suspend fun updateConversation(conversation: Conversation) {
         withContext(Dispatchers.IO) {
             conversationDao.updateConversation(conversation.toLocal())
@@ -38,6 +35,12 @@ internal class ConversationLocalDataSource(
     suspend fun upsertConversation(conversation: Conversation) {
         withContext(Dispatchers.IO) {
             conversationDao.upsertConversation(conversation.toLocal())
+        }
+    }
+
+    suspend fun deleteConversation(conversation: Conversation) {
+        withContext(Dispatchers.IO) {
+            conversationDao.deleteConversation(conversation.toLocal())
         }
     }
 

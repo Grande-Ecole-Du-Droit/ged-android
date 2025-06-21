@@ -35,9 +35,6 @@ internal class ConversationRepositoryImpl(
     override suspend fun getConversation(interlocutorId: String): Conversation? =
         conversationLocalDataSource.getConversation(interlocutorId)
 
-    override suspend fun getUnCreateConversations(): List<Conversation> =
-        conversationLocalDataSource.getUnCreateConversations()
-
     override suspend fun fetchRemoteConversations(userId: String): Flow<Conversation> {
         return conversationRemoteDataSource.listenConversations(userId)
             .flatMapMerge { remoteConversation ->
@@ -71,10 +68,9 @@ internal class ConversationRepositoryImpl(
         conversationLocalDataSource.upsertConversation(conversation)
     }
 
-    override suspend fun deleteConversation(conversation: Conversation, userId: String) {
-        val deleteTime = LocalDateTime.now(ZoneOffset.UTC)
-        conversationLocalDataSource.updateConversation(conversation.copy(deleteTime = deleteTime))
+    override suspend fun deleteConversation(conversation: Conversation, userId: String, deleteTime: LocalDateTime) {
         conversationRemoteDataSource.updateConversationDeleteTime(conversation.id, userId, deleteTime)
+        conversationLocalDataSource.deleteConversation(conversation)
     }
 
     override suspend fun deleteLocalConversations() {

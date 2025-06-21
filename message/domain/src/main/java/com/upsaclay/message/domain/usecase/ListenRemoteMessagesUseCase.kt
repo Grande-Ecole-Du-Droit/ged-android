@@ -65,10 +65,21 @@ class ListenRemoteMessagesUseCase(
 
     }
 
-    private fun getOffsetTime(conversation: Conversation, lastMessage: Message?): LocalDateTime? {
-        return conversation.deleteTime?.takeIf {
-            it > lastMessage?.date
-        } ?: lastMessage?.date
+    private fun getOffsetTime(conversation: Conversation, lastMessage: Message?): LocalDateTime {
+        return when {
+            conversation.deleteTime != null && lastMessage?.date != null -> {
+                if (conversation.deleteTime > lastMessage.date) {
+                    conversation.deleteTime
+                } else {
+                    lastMessage.date
+                }
+            }
+            conversation.deleteTime != null -> conversation.deleteTime
+
+            lastMessage?.date != null -> lastMessage.date
+
+            else -> conversation.createdAt
+        }
     }
 
 
