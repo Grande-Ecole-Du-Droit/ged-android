@@ -53,7 +53,7 @@ class ResendAnnouncementUseCaseTest {
     }
 
     @Test
-    fun resendAnnouncement_should_update_local_announcement_to_published_state_when_succeeds() = runTest {
+    fun resendAnnouncement_should_update_local_announcement_to_published_state_when_succeeds() = runTest(testScope.testScheduler) {
         // Given
         val announcement = announcementFixture.copy(state = AnnouncementState.DRAFT)
 

@@ -18,9 +18,21 @@ internal class SynchronizeConversationWorker (
     override suspend fun doWork(): Result {
         return try {
             val userId = userRepository.getCurrentUser()?.id ?: return Result.failure()
-            conversationRepository.getUnCreateConversations().forEach { conversation ->
-                conversationRepository.createRemoteConversation(conversation, userId)
-                conversationRepository.updateLocalConversation(conversation.copy(state = ConversationState.CREATED))
+            conversationRepository.getConversations().forEach { conversation ->
+                when (conversation.state) {
+                    ConversationState.CREATING -> {
+                        conversationRepository.createRemoteConversation(conversation, userId)
+                        conversationRepository.updateLocalConversation(conversation.copy(state = ConversationState.CREATED))
+                    }
+
+                    ConversationState.DELETING -> {
+                        conversation.deleteTime?.let {
+                            conversationRepository.deleteConversation(conversation, userId, it)
+                        }
+                    }
+
+                    else -> Unit
+                }
             }
             Result.success()
         } catch (e: Exception) {

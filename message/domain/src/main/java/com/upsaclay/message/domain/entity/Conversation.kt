@@ -23,5 +23,6 @@ enum class ConversationState {
     DRAFT,
     CREATING,
     CREATED,
+    DELETING,
     ERROR
 }

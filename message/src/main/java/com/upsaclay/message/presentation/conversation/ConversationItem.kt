@@ -85,7 +85,7 @@ private fun SwitchConversationItem(
         onClick = onClick,
         onLongClick = onLongClick
     ) { innerModifier ->
-        if (conversationState == ConversationState.CREATING) {
+        if (conversationState == ConversationState.CREATING || conversationState == ConversationState.DELETING) {
             ReadConversationItemContent(
                 modifier = innerModifier
                     .alpha(0.5f)
